@@ -47,4 +47,4 @@ Objetivo de ML: Classificar a afirmação "medicamento X trata/é eficaz para a 
 Pergunta que conecta os dois: se o modelo classificar corretamente 95% das afirmações, o usuário de fato entende melhor o risco e age com mais cautela antes de repassar ou seguir a notícia? Como saberemos — via teste de compreensão nas entrevistas (GQ3) e acompanhamento de uso real.
 
 ## 4. Escopo em uma frase
-Nosso sistema TRATA afirmações sobre eficácia de medicamentos para doenças específicas, extraídas de notícias e conteúdos em português, comparando-as com evidências de bases científicas reconhecidas (PubMed, Cochrane, ANVISA) — e NÃO TRATA diagnóstico individual, recomendação de tratamento personalizado, nem medicamentos sem estudo clínico publicado.
+Nosso sistema TRATA afirmações sobre eficácia de medicamentos para doenças específicas, extraídas de notícias e conteúdos em português, comparando-as com evidências de bases científicas reconhecidas (PubMed, Cochrane, ANVISA) e NÃO TRATA diagnóstico individual, recomendação de tratamento personalizado, nem medicamentos sem estudo clínico publicado.
