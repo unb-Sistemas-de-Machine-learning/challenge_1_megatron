@@ -23,8 +23,8 @@ Este sistema é apenas informativo e **não substitui orientação médica**.
                 </a>
             </td>
             <td align="center">
-                <a href="https://github.com/phmoraes39">
-                    <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/30751876?v=4" width="150px;"/>
+                <a href="https://github.com/PedroMoraes39">
+                    <img style="border-radius: 50%;" src="https://avatars.githubusercontent.com/u/78734372?v=4" width="150px;"/>
                     <h5 class="text-center">Pedro Henrique Caldeira <br>190036427</h5>
                 </a>
             </td>
