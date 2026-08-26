@@ -8,9 +8,10 @@ Learning (UnB/FCTE, 2026/2) — Equipe Megatron.
 
 Todo dia circulam notícias sobre medicamentos "milagrosos" ou tratamentos
 alternativos, muitas vezes sem qualquer respaldo científico. Este projeto
-nasce para atacar esse problema: dado um **medicamento** e uma **doença**,
-o sistema busca evidências em bases científicas confiáveis e retorna uma
-estimativa da **taxa de eficácia**, com nível de confiança e fontes citadas.
+nasce para atacar esse problema: dado o **link de uma notícia**, o sistema
+identifica o medicamento e a condição clínica mencionados, busca evidências
+em bases científicas confiáveis e retorna uma estimativa da **taxa de
+eficácia**, com nível de confiança e fontes citadas.
 
 O objetivo não é dar um veredito médico, mas dar à pessoa uma **ferramenta de
 checagem** — algo entre um fact-checker e um resumo de literatura científica,
@@ -32,10 +33,11 @@ O sistema consulta bases de instituições reconhecidas:
 
 ## Fluxo de uso
 
-1. O usuário informa o **medicamento** e a **doença**.
-2. O sistema busca evidências científicas relacionadas nas bases acima.
-3. As evidências são sintetizadas, com nível de confiança e citação das fontes.
-4. O usuário recebe uma resposta clara sobre o que a ciência já sabe (ou não sabe) a respeito.
+1. O usuário insere o **link da notícia** no site.
+2. O sistema analisa a notícia e identifica o medicamento e a condição clínica mencionados.
+3. O sistema busca evidências científicas relacionadas nas bases acima.
+4. As evidências são sintetizadas, com nível de confiança e citação das fontes.
+5. O usuário recebe uma resposta clara sobre o que a ciência já sabe (ou não sabe) a respeito.
 
 ## Equipe
 
