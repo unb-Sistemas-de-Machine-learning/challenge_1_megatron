@@ -1,9 +1,11 @@
 # Verdade ou Fake?
 ### Evidência Científica de Tratamentos Medicamentosos
+
 Documentação técnica do **Challenge 1** da disciplina de Sistemas de Machine
 Learning (UnB/FCTE, 2026/2) — Equipe Megatron.
 
 ## O que é este projeto?
+
 Todo dia circulam notícias sobre medicamentos "milagrosos" ou tratamentos
 alternativos, muitas vezes sem qualquer respaldo científico. Este projeto
 nasce para atacar esse problema: dado um **medicamento** e uma **doença**,
@@ -19,7 +21,9 @@ acessível para quem não tem formação técnica.
     evidências disponíveis publicamente, não uma prescrição.
 
 ## Fontes de dados
+
 O sistema consulta bases de instituições reconhecidas:
+
 - **PubMed** — literatura biomédica revisada por pares
 - **Cochrane** — revisões sistemáticas e meta-análises
 - **ANVISA** — regulação de medicamentos no Brasil
@@ -27,12 +31,14 @@ O sistema consulta bases de instituições reconhecidas:
 - **ClinicalTrials.gov** — registro de ensaios clínicos
 
 ## Fluxo de uso
+
 1. O usuário informa o **medicamento** e a **doença**.
 2. O sistema busca evidências científicas relacionadas nas bases acima.
 3. As evidências são sintetizadas, com nível de confiança e citação das fontes.
 4. O usuário recebe uma resposta clara sobre o que a ciência já sabe (ou não sabe) a respeito.
 
 ## Equipe
+
 <div align="center">
    <table style="margin-left: auto; margin-right: auto;">
         <tr>
