@@ -7,8 +7,18 @@ repo_url: https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatr
 
 markdown_extensions:
   - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
 
-nav: 
+nav:
   - Home: index.md
+  - Arquitetura: arquitetura.md
+  - Fontes de Dados: dados.md
   - Guiding Questions: guiding-questions.md
   - Canvas: canva.md

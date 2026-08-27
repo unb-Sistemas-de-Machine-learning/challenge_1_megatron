@@ -1,16 +1,63 @@
-# Verdade ou Fake? — Evidência Científica de Tratamentos Medicamentosos
+# Verdade ou Fake? — Detecção de Desinformação em Notícias de Saúde
 **Challenge 1** - Equipe Megatron - Sistemas de Machine Learning 2026/02
 
-## Tema
-Ajudar pessoas que leram notícias sobre medicamentos a identificar se essas informações possuem **base científica** para o tratamento de determinadas doenças. O sistema usa dados de artigos científicos e bases de instituições confiáveis (PubMed, Cochrane, ANVISA, FDA, ClinicalTrials.gov) para estimar a **taxa de eficácia** do medicamento por condição clínica.
+📖 **[Documentação completa](https://unb-sistemas-de-machine-learning.github.io/challenge_1_megatron/)**
 
-## Como funciona (visão geral)
-1. Usuário informa o medicamento + a doença.
-2. O sistema busca evidências em bases científicas confiáveis.
-3. As evidências são sintetizadas e retornadas com nível de confiança e fontes.
+## Tema
+Plataforma web onde o usuário **cola o link de uma notícia** sobre saúde e recebe uma
+avaliação da probabilidade de o conteúdo ser falso ou enganoso, acompanhada das
+evidências científicas que sustentam ou contradizem a alegação.
+
+O escopo é restrito a **medicamentos, tratamentos e terapias** — não cobre saúde em
+geral, diagnóstico individual nem recomendação personalizada.
+
+## Como funciona
+
+```
+🔗 link → [0] extrai texto → ┬→ [1] Camada 1: risco textual (ML) ──┐
+                            │                                     ├→ [3] fusão → veredito
+                            └→ [2] Camada 2: evidência científica ─┘   + confiança
+                                                                      + fontes
+```
+
+Duas camadas independentes analisam a notícia, e regras explícitas combinam os
+resultados:
+
+- **Camada 1 — Risco textual.** Classificador supervisionado treinado em corpus rotulado de notícias em português. Detecta padrões de escrita típicos de desinformação.
+- **Camada 2 — Verificação por evidência.** Extrai o par *medicamento + condição clínica* do texto, consulta o PubMed e classifica se a literatura apoia, contradiz ou não cobre a alegação.
+
+**Por que duas camadas.** A Camada 1 sozinha aprende *estilo*, não *fato* — ela erra em
+alegações falsas bem escritas, justamente o caso mais perigoso em saúde. A Camada 2
+existe para cobrir essa lacuna. Detalhes em [Arquitetura](docs/arquitetura.md).
+
+## Stack
+
+Python 3.11 · scikit-learn · Hugging Face Transformers (BERTimbau) · trafilatura ·
+PubMed E-utilities · Streamlit · MkDocs
+
+**Orçamento zero:** nenhum componente do sistema depende de API paga.
+
+## Fontes de dados
+
+| Finalidade | Fontes |
+|---|---|
+| Treino da Camada 1 | Fake.br Corpus, FakeRecogna (recorte de saúde) + coleta em agências de checagem BR |
+| Consulta da Camada 2 | PubMed, DeCS/MeSH, DCB/ANVISA, Cochrane, ClinicalTrials.gov |
+
+Levantamento completo e limitações em [Fontes de Dados](docs/dados.md).
+
+## Documentação
+
+| Documento | Conteúdo |
+|---|---|
+| [Arquitetura](docs/arquitetura.md) | Pipeline, stack, fases e frentes de trabalho |
+| [Fontes de Dados](docs/dados.md) | Datasets, bases científicas, riscos e governança |
+| [Guiding Questions](docs/guiding-questions.md) | Perguntas norteadoras do projeto |
+| [Canvas](docs/canva.md) | Objetivos de negócio e de ML, escopo, cronograma |
 
 ## Aviso
-Este sistema é apenas informativo e **não substitui orientação médica**.
+Este sistema é apenas informativo e **não substitui orientação médica**. As respostas
+são uma síntese de evidências públicas, não uma prescrição.
 
 ## Equipe
 <div align="center">

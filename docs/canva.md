@@ -14,7 +14,8 @@ de negócio e de ML e do escopo do sistema.
 ### Usuário
 | # | Pergunta | Atividade | Recurso | Responsável | Prazo |
 |---|----------|-----------|---------|--------------|-------|
-| GQ3 | Como o usuário formula a pergunta (medicamento + doença) e que nível de linguagem torna a resposta compreensível sem simplificar demais a ciência? | Entrevistar 5-8 pessoas leigas mostrando 2 formatos de resposta (técnico vs. simplificado) e comparar compreensão. | Roteiro de entrevista curto + protótipo de tela de resposta | Membro 3 | 27/08 |
+| GQ3 | O usuário cola o **link da notícia** — que nível de linguagem torna a resposta compreensível sem simplificar demais a ciência? | Entrevistar 5-8 pessoas leigas mostrando 2 formatos de resposta (técnico vs. simplificado) e comparar compreensão. | Roteiro de entrevista curto + protótipo de tela de resposta | Membro 3 | 27/08 |
+| GQ8 | O extrator de texto funciona nos portais de notícia brasileiros que importam? | Rodar `trafilatura` contra 20 links reais de portais diferentes e medir taxa de extração limpa. | Lista de links de teste + biblioteca `trafilatura` | Membro 3 | 31/08 |
 
 ### Modelo
 | # | Pergunta | Atividade | Recurso | Responsável | Prazo |
@@ -42,9 +43,40 @@ Objetivo de negócio: Reduzir decisões de saúde tomadas com base em notícias 
 
 
 ## 3. Objetivos de ML
-Objetivo de ML: Classificar a afirmação "medicamento X trata/é eficaz para a doença Y" em uma das categorias — com base científica sólida / evidência limitada ou contestada / sem evidência disponível — e estimar uma taxa de eficácia agregada quando houver dados suficientes. Medível no MODELO (ex.: F1/acurácia da classificação por categoria, calibração da taxa estimada frente a meta-análises de referência, taxa de citações verificáveis/corretas).
+O sistema tem **duas camadas**, com objetivos de ML distintos e métricas próprias
+(detalhes em [Arquitetura](arquitetura.md)):
 
-Pergunta que conecta os dois: se o modelo classificar corretamente 95% das afirmações, o usuário de fato entende melhor o risco e age com mais cautela antes de repassar ou seguir a notícia? Como saberemos — via teste de compreensão nas entrevistas (GQ3) e acompanhamento de uso real.
+**Camada 1 — Risco textual.** Dado o texto da notícia, classificar como
+desinformação ou conteúdo legítimo. Medível no MODELO: F1 por classe (nunca acurácia
+isolada, por causa do desbalanceamento) e desempenho em portais não vistos no treino,
+para detectar viés de fonte.
+
+**Camada 2 — Verificação por evidência.** Extrair o par *medicamento + condição
+clínica* da notícia e classificar a alegação em — com base científica sólida /
+evidência limitada ou contestada / sem evidência disponível. Medível no MODELO:
+acurácia da extração do par, precisão da classificação de suporte e taxa de citações
+verificáveis.
+
+**Fusão.** Regras explícitas combinam os dois sinais. Não é um modelo treinado: não há
+dado rotulado para supervisioná-la, e regras são auditáveis pelo usuário.
+
+Pergunta que conecta negócio e ML: se o sistema classificar corretamente as
+afirmações, o usuário de fato entende melhor o risco e age com mais cautela antes de
+repassar ou seguir a notícia? Como saberemos — via teste de compreensão nas entrevistas
+(GQ3) e acompanhamento de uso real.
 
 ## 4. Escopo em uma frase
-Nosso sistema TRATA afirmações sobre eficácia de medicamentos para doenças específicas, extraídas de notícias e conteúdos em português, comparando-as com evidências de bases científicas reconhecidas (PubMed, Cochrane, ANVISA) e NÃO TRATA diagnóstico individual, recomendação de tratamento personalizado, nem medicamentos sem estudo clínico publicado.
+Nosso sistema TRATA **links de notícias em português** sobre eficácia de medicamentos e
+tratamentos para doenças específicas, avaliando o texto por um classificador treinado e
+comparando a alegação com evidências de bases científicas reconhecidas (PubMed, DeCS,
+ANVISA, Cochrane), e NÃO TRATA diagnóstico individual, recomendação de tratamento
+personalizado, conteúdo fora do domínio de saúde, nem medicamentos sem estudo clínico
+publicado.
+
+## 5. Limitação declarada
+Um classificador treinado em corpus de fake news aprende **estilo de escrita**, não
+**fatos** — ele erra em alegações falsas bem redigidas, justamente o caso mais perigoso
+em saúde. A Camada 2 existe para cobrir essa lacuna, mas depende de haver literatura
+publicada sobre o par medicamento/doença. Quando não há, o sistema responde **"não foi
+possível verificar"**, nunca **"é falso"**: ausência de evidência não é evidência de
+ausência.
