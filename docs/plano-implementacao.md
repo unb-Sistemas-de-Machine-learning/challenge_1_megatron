@@ -2213,11 +2213,110 @@ A PoC está concluída quando:
 
 ## O que vem na Fase 2
 
-Fora do escopo deste plano, registrado para não se perder:
+Fora do escopo deste plano, registrado para não se perder. As tarefas de fine-tuning são as mais críticas — elas só começam depois que as métricas do baseline da Fase 1 forem conhecidas.
 
-- Fine-tuning do BERTimbau, comparado contra o baseline
-- NLI para distinguir **apoia** de **contradiz** na Camada 2c
-- Ampliação do vocabulário com o DeCS completo (decisão D1)
-- Onda 2 de coleta de dados nas agências de checagem
-- Separação em API FastAPI
-- Avaliação em portais fora do conjunto de treino, para medir viés de fonte
+### Task 10: Fine-tuning do BERTimbau (Camada 1)
+
+**Pré-condição:** Task 6 concluída e F1 do baseline registrado no Canvas.
+
+**Arquivos:**
+
+- Criar: `scripts/treina_bert.py`, `tests/test_classificador_bert.py`
+- Modificar: `src/verdade_ou_fake/classificador.py` (adicionar funções para o modelo BERT)
+
+**Interfaces adicionais ao `classificador.py`:**
+
+- `construir_modelo_bert() -> BertForSequenceClassification`
+- `treinar_bert(textos, rotulos, caminho_saida) -> None`
+- `prever_risco_bert(texto: str, modelo, tokenizer) -> float`
+
+**Critério de entrada:** o BERTimbau só substitui o baseline se superar o F1 macro do TF-IDF no conjunto de teste — incluindo em portais não vistos no treino. Ganho marginal não justifica o custo de inferência.
+
+**Pontos de atenção no script `treina_bert.py`:**
+
+```python
+from transformers import BertForSequenceClassification, BertTokenizer, Trainer, TrainingArguments
+
+# Truncamento: 512 tokens é o limite do BERT.
+# Avaliar antes se título + lead (primeiros ~200 tokens) já carregam o sinal —
+# se sim, textos mais curtos treinam mais rápido sem perda de F1.
+tokenizer = BertTokenizer.from_pretrained("neuralmind/bert-base-portuguese-cased")
+model = BertForSequenceClassification.from_pretrained(
+    "neuralmind/bert-base-portuguese-cased", num_labels=2
+)
+
+args = TrainingArguments(
+    output_dir="modelos/bertimbau",
+    num_train_epochs=3,
+    per_device_train_batch_size=16,
+    evaluation_strategy="epoch",
+    save_strategy="epoch",
+    load_best_model_at_end=True,
+    metric_for_best_model="f1",   # nunca acurácia
+)
+```
+
+Desbalanceamento de classes: passar `class_weight` via pesos no `CrossEntropyLoss` dentro de um `Trainer` customizado, ou usar `WeightedRandomSampler` no DataLoader — mesma razão do baseline.
+
+---
+
+### Task 11: NLI zero-shot para Camada 2c
+
+**Pré-condição:** Task 4 concluída (cliente PubMed funcionando).
+
+**Arquivos:**
+- Criar: `src/verdade_ou_fake/suporte.py`, `tests/test_suporte.py`, `tests/fixtures/nli_casos.json`
+
+**Interface:**
+- Produz: `classificar_suporte(resumo: str, alegacao: str) -> str` — devolve `"apoia"`, `"contradiz"` ou `"nao_determinado"`
+
+**Abordagem zero-shot (sem fine-tuning):**
+
+```python
+from transformers import pipeline
+
+# Usar zero-shot antes de anotar dados. Mede se o modelo multilíngue
+# já é suficiente para o domínio biomédico PT antes de investir em rotulação.
+nli = pipeline(
+    "zero-shot-classification",
+    model="MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7",
+)
+
+def classificar_suporte(resumo: str, alegacao: str) -> str:
+    resultado = nli(
+        sequences=resumo,
+        candidate_labels=["apoia a alegação", "contradiz a alegação"],
+        hypothesis_template="Este texto {}.",
+    )
+    rotulo = resultado["labels"][0]
+    score = resultado["scores"][0]
+    if score < 0.65:   # limiar conservador — abaixo disso, não afirmar
+        return "nao_determinado"
+    return "apoia" if "apoia" in rotulo else "contradiz"
+```
+
+**Avaliação antes de fine-tuning:** rodar `classificar_suporte` sobre 50–100 pares anotados manualmente e medir acurácia. Se acurácia ≥ 0,75, o zero-shot é suficiente para a Fase 2. Se não, partir para a Task 12.
+
+---
+
+### Task 12: Fine-tuning do mDeBERTa (Camada 2c) — condicional
+
+**Pré-condição:** Task 11 concluída e acurácia do zero-shot abaixo de 0,75 na avaliação manual.
+
+**Dados de treino:** pares no formato NLI padrão —
+- **premise** = resumo do artigo (PubMed)
+- **hypothesis** = alegação extraída da notícia
+- **label** ∈ {entailment, contradiction, neutral}
+
+Fontes: [MedNLI](https://physionet.org/content/mednli/1.0.0/) (inferência médica em inglês, usada como pré-treino) + ~500 pares PT-BR anotados manualmente a partir do PubMed.
+
+**Critério de entrada:** só executar se o zero-shot falhar. Anotar 500 pares leva ~2 semanas de trabalho; o custo precisa se justificar pela melhoria medida na Task 11.
+
+---
+
+### Outras entregas da Fase 2
+
+- Ampliação do vocabulário com o DeCS completo (decisão D1) — desbloqueia medicamentos fora das ~38 entradas do seed
+- Onda 2 de coleta nas agências de checagem (Aos Fatos, Lupa, Boatos.org) — aumenta o recorte de saúde se D2 falhar
+- Separação em API FastAPI — isola o pipeline do frontend para deploy independente
+- Avaliação em portais fora do treino — detecta viés de fonte antes de considerar o modelo estável

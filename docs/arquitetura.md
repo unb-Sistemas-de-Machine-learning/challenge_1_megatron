@@ -19,8 +19,7 @@ flowchart TD
 
     subgraph C1["<b>[1] CAMADA 1 — Risco textual</b>"]
         direction TB
-        C1A["TF-IDF + Regressão Logística<br/><i>(baseline)</i>"]
-        C1B["BERTimbau<br/><i>(modelo final)</i>"]
+        C1A["BERTimbau<br/><i>(modelo final)</i>"]
         C1A -.evolui para.-> C1B
         C1B --> C1C["P(desinformação) ∈ [0,1]"]
     end
@@ -64,6 +63,20 @@ A evolução é deliberada, do simples para o complexo:
 | Baseline | TF-IDF + Regressão Logística | Referência mínima. Rápido, interpretável, roda em CPU. Nenhum modelo posterior entra sem superá-lo. |
 | Final | BERTimbau (`neuralmind/bert-base-portuguese-cased`) | Fine-tuning. Entende contexto e semântica, não só frequência de palavra. |
 
+#### Como fazer o fine-tuning do BERTimbau
+
+Substituir a cabeça de classificação do modelo pré-treinado e ajustar os pesos sobre o recorte de saúde PT-BR gerado na Task 5. A estrutura é `BertForSequenceClassification(num_labels=2)` sobre `neuralmind/bert-base-portuguese-cased`, treinada com a API `Trainer` do `transformers`.
+
+| Decisão | Recomendação |
+|---|---|
+| Truncamento | 512 tokens — limite do BERT. Avaliar se título + lead já carregam o sinal antes de usar o texto completo. |
+| Desbalanceamento | Pesos no `CrossEntropyLoss` ou `WeightedRandomSampler` — mesma razão do baseline. |
+| Métrica de parada | F1 macro, nunca acurácia. Usar `load_best_model_at_end=True` com `metric_for_best_model="f1"`. |
+| Avaliação OOD | Medir em portais **não vistos no treino** antes de declarar melhora sobre o baseline — detecta viés de fonte. |
+
+!!! note "O baseline entra antes do BERTimbau"
+    O fine-tuning só se justifica se as métricas do TF-IDF no recorte de saúde já forem conhecidas. Amershi et al. chamam isso de *no model before pipeline* — um modelo melhor num pipeline quebrado é invisível. Se o baseline já atingir F1 ≥ 0,80, avaliar se o custo de fine-tuning vale a margem.
+
 !!! warning "Limitação fundamental desta camada"
     Um classificador treinado em corpus de fake news aprende **estilo de escrita**
     (sensacionalismo, caixa alta, apelo emocional), **não fatos**. Ele erra em
@@ -93,11 +106,15 @@ tradução automática nem custo de API.
 (`esearch` + `efetch`), priorizando revisões sistemáticas e meta-análises, que ocupam o
 topo da hierarquia de evidência.
 
-**2c — Classificação de suporte.** Decide se a literatura recuperada **apoia**,
-**contradiz** ou **não cobre** a alegação, via NLI (*natural language inference*)
-zero-shot com modelo aberto multilíngue
-(`MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`), rodando gratuitamente
-no Colab.
+**2c — Classificação de suporte.** Decide se a literatura recuperada **apoia**, **contradiz** ou **não cobre** a alegação, via NLI (*natural language inference*). A abordagem evolui em fases para não investir em dados antes de saber se são necessários:
+
+| Fase | Abordagem | Entrega |
+|---|---|---|
+| **Fase 1 (PoC)** | Sem NLI — responde só **encontrou** ou **não cobre**, com força pelo tipo de estudo | Valida que o pipeline funciona ponta a ponta |
+| **Fase 2a — zero-shot** | `MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`, sem treino adicional | Gratuito no Colab; mede se zero-shot basta antes de anotar dados |
+| **Fase 2b — fine-tuning** | Fine-tuning do mDeBERTa em pares `(resumo, alegação, rótulo)` anotados | Apenas se o zero-shot for impreciso no domínio biomédico PT |
+
+Para a Fase 2b, cada exemplo segue o formato NLI padrão: **premise** = resumo do artigo do PubMed, **hypothesis** = alegação extraída da notícia, **label** ∈ {entailment, contradiction, neutral}. A fonte de dados mais viável é o [MedNLI](https://physionet.org/content/mednli/1.0.0/) (inferência em linguagem médica) complementado por anotação manual de ~500 pares selecionados do PubMed.
 
 ### [3] Fusão — combinando os dois sinais
 
