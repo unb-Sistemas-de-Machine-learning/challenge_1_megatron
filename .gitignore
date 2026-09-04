@@ -12,3 +12,9 @@ site/
 .vscode/
 .idea/
 *.swp
+
+dados/raw/
+dados/processed/
+modelos/
+*.joblib
+.pytest_cache/
