@@ -2,12 +2,13 @@
 **Challenge 1** - Equipe Megatron - Sistemas de Machine Learning 2026/02
 
 ## Tema
-Ajudar pessoas que leram notícias sobre medicamentos a identificar se essas informações possuem **base científica** para o tratamento de determinadas doenças. O sistema usa dados de artigos científicos e bases de instituições confiáveis (PubMed, Cochrane, ANVISA, FDA, ClinicalTrials.gov) para estimar a **taxa de eficácia** do medicamento por condição clínica.
+Ajudar pessoas que leram notícias sobre medicamentos a identificar se essas informações possuem respaldo científico para o tratamento de determinadas doenças. O sistema usa dados de artigos científicos e bases de instituições confiáveis (PubMed, Cochrane, ANVISA, FDA, ClinicalTrials.gov) para estimar a taxa de eficácia do medicamento por condição clínica.
 
 ## Como funciona (visão geral)
-1. Usuário informa o medicamento + a doença.
-2. O sistema busca evidências em bases científicas confiáveis.
-3. As evidências são sintetizadas e retornadas com nível de confiança e fontes.
+1. O usuário coleta e insere o link da notícia no site.
+2. O sistema analisa a notícia.
+3. O sistema busca evidências em bases científicas confiáveis.
+4. As evidências são sintetizadas e retornadas com nível de confiança e fontes.
 
 ## Aviso
 Este sistema é apenas informativo e **não substitui orientação médica**.
