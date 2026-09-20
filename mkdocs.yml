@@ -20,5 +20,6 @@ nav:
   - Home: index.md
   - Arquitetura: arquitetura.md
   - Fontes de Dados: dados.md
+  - Plano de Implementação: plano-implementacao.md
   - Guiding Questions: guiding-questions.md
   - Canvas: canva.md
