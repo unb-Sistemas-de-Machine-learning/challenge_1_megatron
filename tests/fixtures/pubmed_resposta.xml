@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<PubmedArticleSet>
+  <PubmedArticle>
+    <MedlineCitation>
+      <PMID>33473311</PMID>
+      <Article>
+        <ArticleTitle>Ivermectin for preventing and treating COVID-19</ArticleTitle>
+        <Abstract>
+          <AbstractText>We assessed the efficacy of ivermectin in COVID-19.</AbstractText>
+        </Abstract>
+        <PublicationTypeList>
+          <PublicationType>Journal Article</PublicationType>
+          <PublicationType>Systematic Review</PublicationType>
+          <PublicationType>Meta-Analysis</PublicationType>
+        </PublicationTypeList>
+      </Article>
+      <DateCompleted><Year>2021</Year></DateCompleted>
+    </MedlineCitation>
+  </PubmedArticle>
+  <PubmedArticle>
+    <MedlineCitation>
+      <PMID>34145166</PMID>
+      <Article>
+        <ArticleTitle>A randomized trial of ivermectin in mild COVID-19</ArticleTitle>
+        <Abstract>
+          <AbstractText Label="BACKGROUND">Trial background.</AbstractText>
+          <AbstractText Label="RESULTS">No significant difference was found.</AbstractText>
+        </Abstract>
+        <PublicationTypeList>
+          <PublicationType>Randomized Controlled Trial</PublicationType>
+        </PublicationTypeList>
+      </Article>
+      <DateCompleted><Year>2022</Year></DateCompleted>
+    </MedlineCitation>
+  </PubmedArticle>
+</PubmedArticleSet>
