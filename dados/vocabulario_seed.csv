@@ -1,0 +1,39 @@
+termo_pt,termo_en,tipo
+hidroxicloroquina,Hydroxychloroquine,medicamento
+cloroquina,Chloroquine,medicamento
+ivermectina,Ivermectin,medicamento
+azitromicina,Azithromycin,medicamento
+dipirona,Dipyrone,medicamento
+paracetamol,Acetaminophen,medicamento
+ibuprofeno,Ibuprofen,medicamento
+dexametasona,Dexamethasone,medicamento
+prednisona,Prednisone,medicamento
+metformina,Metformin,medicamento
+insulina,Insulin,medicamento
+omeprazol,Omeprazole,medicamento
+amoxicilina,Amoxicillin,medicamento
+vitamina d,Vitamin D,medicamento
+vitamina c,Ascorbic Acid,medicamento
+zinco,Zinc,medicamento
+melatonina,Melatonin,medicamento
+sinvastatina,Simvastatin,medicamento
+losartana,Losartan,medicamento
+fluoxetina,Fluoxetine,medicamento
+canabidiol,Cannabidiol,medicamento
+semaglutida,Semaglutide,medicamento
+nimesulida,Nimesulide,medicamento
+covid-19,COVID-19,condicao
+covid,COVID-19,condicao
+diabetes,Diabetes Mellitus,condicao
+hipertensao,Hypertension,condicao
+cancer,Neoplasms,condicao
+depressao,Depressive Disorder,condicao
+ansiedade,Anxiety Disorders,condicao
+obesidade,Obesity,condicao
+alzheimer,Alzheimer Disease,condicao
+artrite,Arthritis,condicao
+asma,Asthma,condicao
+dengue,Dengue,condicao
+gripe,"Influenza, Human",condicao
+enxaqueca,Migraine Disorders,condicao
+autismo,Autism Spectrum Disorder,condicao
