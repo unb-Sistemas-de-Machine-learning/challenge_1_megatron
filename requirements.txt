@@ -1,8 +1,8 @@
 trafilatura>=2.0
+lxml_html_clean>=0.4
 requests>=2.32
 pandas>=2.2
 scikit-learn>=1.5
 joblib>=1.4
-datasets>=3.0
 streamlit>=1.40
 pytest>=8.0

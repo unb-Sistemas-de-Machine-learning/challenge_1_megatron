@@ -1122,6 +1122,16 @@ git commit -m "feat: busca de evidência científica no PubMed"
 
 - Produz: `termos_de_saude(caminho_vocabulario: Path) -> set[str]` e `filtrar_saude(df: pd.DataFrame, coluna_texto: str, termos: set[str]) -> pd.DataFrame`
 
+!!! danger "Atualização: o código desta task mudou"
+    O espelho `fake-news-UFG/fakebr` do Hugging Face é só um script de carga, e a
+    biblioteca `datasets` parou de executar scripts na versão 4.0: o `load_dataset`
+    dos Passos 1 e 5 **não funciona mais**. A versão final de
+    `scripts/prepara_dataset.py` baixa o corpus do GitHub oficial fixado em um
+    commit, verifica uma impressão digital do conteúdo, usa os textos
+    normalizados por tamanho, marca `rotulo` 1 = falsa e mantém os pares
+    fake/true juntos. O script e o [datasheet](https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron/blob/main/dados/README.md)
+    são a referência; os blocos de código abaixo ficam como histórico.
+
 !!! warning "Inspecionar antes de filtrar"
     Os nomes das colunas do Fake.br no Hugging Face **não estão documentados aqui de
     propósito** — verifique-os no Passo 1 em vez de assumir. A função de filtro recebe
@@ -1540,7 +1550,7 @@ from pathlib import Path
 
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GroupShuffleSplit
 
 RAIZ = Path(__file__).parent.parent
 sys.path.insert(0, str(RAIZ / "src"))
@@ -1552,21 +1562,18 @@ CAMINHO_MODELO = RAIZ / "modelos" / "baseline.joblib"
 
 
 def main() -> None:
-    # ATENÇÃO: ajuste os nomes das colunas conforme o dataset gerado na Task 5.
-    coluna_texto = "text"
-    coluna_rotulo = "label"
-
-    df = pd.read_csv(CAMINHO_DADOS)
+    # Colunas geradas pela Task 5 (ver dados/README.md). rotulo: 1 = desinformação.
+    df = pd.read_csv(CAMINHO_DADOS, dtype={"id_par": str})
     print(f"Notícias: {len(df)}")
-    print(df[coluna_rotulo].value_counts(), "\n")
+    print(df["rotulo"].value_counts(), "\n")
 
-    treino_x, teste_x, treino_y, teste_y = train_test_split(
-        df[coluna_texto].astype(str).tolist(),
-        df[coluna_rotulo].tolist(),
-        test_size=0.2,
-        random_state=42,
-        stratify=df[coluna_rotulo].tolist(),
-    )
+    # A divisão é por par: a falsa e a verdadeira de um mesmo assunto ficam
+    # sempre do mesmo lado. Separá-las vazaria o assunto entre treino e teste.
+    divisor = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+    indices_treino, indices_teste = next(divisor.split(df, groups=df["id_par"]))
+    treino, teste = df.iloc[indices_treino], df.iloc[indices_teste]
+    treino_x, treino_y = treino["texto"].tolist(), treino["rotulo"].tolist()
+    teste_x, teste_y = teste["texto"].tolist(), teste["rotulo"].tolist()
 
     modelo = treinar(treino_x, treino_y)
     previsto = modelo.predict(teste_x)
