@@ -1597,7 +1597,7 @@ if __name__ == "__main__":
 python scripts/treina_modelo.py
 ```
 
-Copie o relatório para o [Canvas](canva.md) como resposta parcial à GQ4.
+Copie o relatório para o [Canvas](canva.md), seção 3 (Objetivos de ML, Camada 1).
 
 **Reporte F1 por classe, nunca acurácia isolada.** Com classes desbalanceadas, um
 modelo que chuta sempre "legítima" pode ter 85% de acurácia e ser inútil — a matriz de
@@ -2214,7 +2214,7 @@ A PoC está concluída quando:
 - [ ] `pytest` passa inteiro, sem nenhum teste tocando a rede
 - [ ] `streamlit run app.py` recebe um link real e devolve veredito com fontes
 - [ ] A taxa de extração da Task 2 está registrada no Canvas (GQ8)
-- [ ] O relatório de classificação da Task 6 está registrado no Canvas (GQ4)
+- [ ] O relatório de classificação da Task 6 está registrado no Canvas (seção 3, Camada 1)
 - [ ] O `dados/README.md` está preenchido com os números reais
 - [ ] Os quatro cenários da Task 9 foram testados manualmente
 
