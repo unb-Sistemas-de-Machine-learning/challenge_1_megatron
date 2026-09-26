@@ -51,6 +51,31 @@ desinformação ou conteúdo legítimo. Medível no MODELO: F1 por classe (nunca
 isolada, por causa do desbalanceamento) e desempenho em portais não vistos no treino,
 para detectar viés de fonte.
 
+!!! info "Resultado do baseline — Fase 1 (Task 6, 2026-09-24)"
+    TF-IDF (uni+bigramas) + Regressão Logística, treinado no recorte de saúde do
+    Fake.br (350 notícias em 175 pares, 50/50; ver `dados/README.md`). A divisão
+    treino/teste é **por par**, então a falsa e a verdadeira de um mesmo assunto
+    nunca ficam em lados opostos.
+
+    | Avaliação | F1 legítima | F1 desinformação |
+    |---|---|---|
+    | Teste separado (20%, 35 pares; `scripts/treina_modelo.py`) | 0,82 | 0,81 |
+    | Validação cruzada por par (10 dobras), F1 macro | 0,80 ± 0,08 (mín. 0,63, máx. 0,91) | |
+    | Treino só nos pares G1 → teste nos pares Estadão/Folha etc. (63 pares) | 0,78 | 0,81 |
+
+    Matriz de confusão do teste separado (linhas = real, colunas = previsto;
+    legítima, desinformação): `[[29, 6], [7, 28]]`.
+
+    **Leitura honesta:** o número é otimista. Os termos que o modelo mais usa
+    para "legítima" são `g1`, `nesta`, `feira`, `2017`, `são paulo`, marcas do
+    estilo de redação do G1. Os de "desinformação" são `lula`, `dilma`,
+    `petista`, `vídeo`, `você`, `eu`, do estilo do `diariodobrasil.org`, de onde
+    vêm 93% das falsas. O modelo mede em boa parte **qual portal escreveu o
+    texto**, não sinais de desinformação em saúde. O teste fora da fonte só varia
+    as fontes das verdadeiras: as falsas continuam vindo do mesmo site. A régua
+    para o BERTimbau é 0,80 de F1 macro, mas uma comparação justa exige a Onda 2
+    de coleta, com fontes novas nas duas classes.
+
 **Camada 2 — Verificação por evidência.** Extrair o par *medicamento + condição
 clínica* da notícia e classificar a alegação em — com base científica sólida /
 evidência limitada ou contestada / sem evidência disponível. Medível no MODELO:
