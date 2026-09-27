@@ -1,0 +1,50 @@
+[
+  {
+    "descricao": "resumo mostra eficácia clara do medicamento na condição",
+    "resumo": "In this randomized controlled trial, patients treated with the drug showed a statistically significant reduction in symptoms compared to placebo, supporting its use as an effective treatment.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "apoia a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.91,
+    "esperado": "apoia"
+  },
+  {
+    "descricao": "resumo mostra ausência de efeito, contradizendo a alegação",
+    "resumo": "No significant difference was found between the treatment and placebo groups, indicating the drug had no measurable benefit for this condition.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "contradiz a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.87,
+    "esperado": "contradiz"
+  },
+  {
+    "descricao": "resumo ambíguo, modelo pouco confiante mesmo apontando para apoio",
+    "resumo": "The role of the compound in this condition remains under investigation, with mixed preliminary results across small cohorts.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "apoia a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.52,
+    "esperado": "nao_determinado"
+  },
+  {
+    "descricao": "score exatamente no limiar de confiança conta como determinado",
+    "resumo": "The study reports a moderate association between treatment and symptom improvement.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "apoia a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.75,
+    "esperado": "apoia"
+  },
+  {
+    "descricao": "score logo abaixo do limiar conta como não determinado",
+    "resumo": "Results were inconclusive and require confirmation in larger trials.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "contradiz a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.74,
+    "esperado": "nao_determinado"
+  },
+  {
+    "descricao": "alta confiança de contradição com margem grande sobre o outro rótulo",
+    "resumo": "The trial was terminated early after treated patients showed worse outcomes than the control group, raising safety concerns about the drug in this population.",
+    "alegacao": "o medicamento trata a condição",
+    "rotulo_vencedor_simulado": "contradiz a alegação de que o medicamento trata a condição",
+    "score_simulado": 0.98,
+    "esperado": "contradiz"
+  }
+]
