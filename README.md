@@ -37,6 +37,26 @@ PubMed E-utilities · Streamlit · MkDocs
 
 **Orçamento zero:** nenhum componente do sistema depende de API paga.
 
+## Como rodar
+
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+python scripts/prepara_dataset.py    # gera o recorte de saúde
+python scripts/treina_modelo.py      # treina e salva o baseline TF-IDF (comparação)
+python scripts/treina_bert.py        # treina e salva o BERTimbau (classificador em produção)
+streamlit run app.py                 # abre a interface
+
+pytest                               # roda os testes
+```
+
+A interface (`app.py`) usa o BERTimbau como classificador de risco (Task 10,
+Fase 2 — F1 macro 0,90 contra 0,80 do baseline TF-IDF), então
+`scripts/treina_bert.py` precisa ter rodado ao menos uma vez antes de
+`streamlit run app.py`. O baseline TF-IDF continua no repositório como
+referência de comparação.
+
 ## Fontes de dados
 
 | Finalidade | Fontes |
