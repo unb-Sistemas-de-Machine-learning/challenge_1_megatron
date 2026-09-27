@@ -1,0 +1,1214 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../dados/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Arquitetura - Challenge 1 - Megatron</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arquitetura-do-sistema" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Challenge 1 - Megatron" class="md-header__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Challenge 1 - Megatron
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Arquitetura
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Challenge 1 - Megatron" class="md-nav__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Challenge 1 - Megatron
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-quatro-etapas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As quatro etapas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="As quatro etapas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#0-ingestao-do-link-ao-texto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0] Ingestão — do link ao texto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-camada-1-risco-textual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1] Camada 1 — Risco textual
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1] Camada 1 — Risco textual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-fazer-o-fine-tuning-do-bertimbau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como fazer o fine-tuning do BERTimbau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-camada-2-verificacao-por-evidencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [2] Camada 2 — Verificação por evidência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-fusao-combinando-os-dois-sinais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [3] Fusão — combinando os dois sinais
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-de-construcao-fatia-vertical-fina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de construção: fatia vertical fina
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estratégia de construção: fatia vertical fina">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frentes-de-trabalho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frentes de trabalho
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisoes-pendentes-de-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisões pendentes de validação
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fontes de Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plano-implementacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Plano de Implementação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guiding-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guiding Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#as-quatro-etapas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        As quatro etapas
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="As quatro etapas">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#0-ingestao-do-link-ao-texto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [0] Ingestão — do link ao texto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#1-camada-1-risco-textual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [1] Camada 1 — Risco textual
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="[1] Camada 1 — Risco textual">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#como-fazer-o-fine-tuning-do-bertimbau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como fazer o fine-tuning do BERTimbau
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-camada-2-verificacao-por-evidencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [2] Camada 2 — Verificação por evidência
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-fusao-combinando-os-dois-sinais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        [3] Fusão — combinando os dois sinais
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack-tecnica" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack técnica
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrategia-de-construcao-fatia-vertical-fina" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estratégia de construção: fatia vertical fina
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estratégia de construção: fatia vertical fina">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#frentes-de-trabalho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Frentes de trabalho
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decisoes-pendentes-de-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decisões pendentes de validação
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="arquitetura-do-sistema">Arquitetura do Sistema</h1>
+<p>Como o sistema transforma <strong>um link de notícia</strong> em um <strong>veredito com evidências</strong>.</p>
+<h2 id="visao-geral">Visão geral</h2>
+<p>O usuário cola o link de uma notícia sobre saúde. O sistema extrai o texto, analisa
+esse texto por <strong>duas camadas independentes</strong> e combina os dois resultados por regras
+explícitas.</p>
+<pre class="mermaid"><code>flowchart TD
+    L["🔗 Link da notícia (PT-BR)"] --&gt; I
+
+    I["&lt;b&gt;[0] INGESTÃO&lt;/b&gt;&lt;br/&gt;HTML → texto limpo&lt;br/&gt;&lt;i&gt;trafilatura&lt;/i&gt;"]
+
+    I --&gt; C1
+    I --&gt; C2
+
+    subgraph C1["&lt;b&gt;[1] CAMADA 1 — Risco textual&lt;/b&gt;"]
+        direction TB
+        C1A["BERTimbau&lt;br/&gt;&lt;i&gt;(modelo final)&lt;/i&gt;"]
+        C1A -.evolui para.-&gt; C1B
+        C1B --&gt; C1C["P(desinformação) ∈ [0,1]"]
+    end
+
+    subgraph C2["&lt;b&gt;[2] CAMADA 2 — Verificação por evidência&lt;/b&gt;"]
+        direction TB
+        C2A["&lt;b&gt;2a&lt;/b&gt; Extrai medicamento + condição&lt;br/&gt;&lt;i&gt;dicionário DeCS + DCB/ANVISA&lt;/i&gt;"]
+        C2B["&lt;b&gt;2b&lt;/b&gt; Busca literatura&lt;br/&gt;&lt;i&gt;PubMed E-utilities&lt;/i&gt;"]
+        C2C["&lt;b&gt;2c&lt;/b&gt; A evidência apoia, contradiz&lt;br/&gt;ou não cobre?&lt;br/&gt;&lt;i&gt;NLI zero-shot&lt;/i&gt;"]
+        C2A --&gt; C2B --&gt; C2C
+    end
+
+    C1 --&gt; F
+    C2 --&gt; F
+
+    F["&lt;b&gt;[3] FUSÃO&lt;/b&gt;&lt;br/&gt;regras explícitas e auditáveis"]
+    F --&gt; R["&lt;b&gt;Resposta&lt;/b&gt;&lt;br/&gt;veredito + confiança&lt;br/&gt;+ fontes citadas + aviso"]</code></pre>
+<h2 id="as-quatro-etapas">As quatro etapas</h2>
+<h3 id="0-ingestao-do-link-ao-texto">[0] Ingestão — do link ao texto</h3>
+<p>Baixa a página e extrai título, corpo, data e domínio, descartando menu, banner de
+cookie, "leia também" e rodapé.</p>
+<p>Usamos <strong><code>trafilatura</code></strong> em vez de um parser próprio porque portais de notícia
+brasileiros variam muito de estrutura, e extração suja contamina as duas camadas
+seguintes de uma vez. Esta é a etapa cuja dificuldade é mais subestimada, por isso é a
+primeira a ser testada — contra 20 links reais de portais diferentes.</p>
+<h3 id="1-camada-1-risco-textual">[1] Camada 1 — Risco textual</h3>
+<p>Classificador supervisionado treinado em corpus rotulado de notícias em português.
+Recebe o texto e devolve uma probabilidade de o conteúdo ser desinformação.</p>
+<p>A evolução é deliberada, do simples para o complexo:</p>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Modelo</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline</td>
+<td>TF-IDF + Regressão Logística</td>
+<td>Referência mínima. Rápido, interpretável, roda em CPU. Nenhum modelo posterior entra sem superá-lo.</td>
+</tr>
+<tr>
+<td>Final</td>
+<td>BERTimbau (<code>neuralmind/bert-base-portuguese-cased</code>)</td>
+<td>Fine-tuning. Entende contexto e semântica, não só frequência de palavra.</td>
+</tr>
+</tbody>
+</table>
+<h4 id="como-fazer-o-fine-tuning-do-bertimbau">Como fazer o fine-tuning do BERTimbau</h4>
+<p>Substituir a cabeça de classificação do modelo pré-treinado e ajustar os pesos sobre o recorte de saúde PT-BR gerado na Task 5. A estrutura é <code>BertForSequenceClassification(num_labels=2)</code> sobre <code>neuralmind/bert-base-portuguese-cased</code>, treinada com a API <code>Trainer</code> do <code>transformers</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Decisão</th>
+<th>Recomendação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Truncamento</td>
+<td>512 tokens — limite do BERT. Avaliar se título + lead já carregam o sinal antes de usar o texto completo.</td>
+</tr>
+<tr>
+<td>Desbalanceamento</td>
+<td>Pesos no <code>CrossEntropyLoss</code> ou <code>WeightedRandomSampler</code> — mesma razão do baseline.</td>
+</tr>
+<tr>
+<td>Métrica de parada</td>
+<td>F1 macro, nunca acurácia. Usar <code>load_best_model_at_end=True</code> com <code>metric_for_best_model="f1"</code>.</td>
+</tr>
+<tr>
+<td>Avaliação OOD</td>
+<td>Medir em portais <strong>não vistos no treino</strong> antes de declarar melhora sobre o baseline — detecta viés de fonte.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">O baseline entra antes do BERTimbau</p>
+<p>O fine-tuning só se justifica se as métricas do TF-IDF no recorte de saúde já forem conhecidas. Amershi et al. chamam isso de <em>no model before pipeline</em> — um modelo melhor num pipeline quebrado é invisível. Se o baseline já atingir F1 ≥ 0,80, avaliar se o custo de fine-tuning vale a margem.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Limitação fundamental desta camada</p>
+<p>Um classificador treinado em corpus de fake news aprende <strong>estilo de escrita</strong>
+(sensacionalismo, caixa alta, apelo emocional), <strong>não fatos</strong>. Ele erra em
+alegações falsas bem redigidas — justamente o caso mais perigoso em saúde.</p>
+<p>Esta não é uma falha de implementação, é uma limitação do paradigma. A Camada 2
+existe exatamente para cobri-la. Amershi et al. descrevem o fenômeno como
+<em>mismatch between the real world and evaluation sets</em> (Seção II-C do artigo-base).</p>
+</div>
+<h3 id="2-camada-2-verificacao-por-evidencia">[2] Camada 2 — Verificação por evidência</h3>
+<p>Enquanto a Camada 1 olha <em>como</em> a notícia foi escrita, a Camada 2 olha <em>o que ela
+afirma</em>.</p>
+<p><strong>2a — Extração da alegação.</strong> Identifica no texto o par <em>medicamento + condição
+clínica</em> por casamento com dicionário controlado, sem treinar um NER próprio:</p>
+<ul>
+<li><strong><a href="https://decs.bvsalud.org/">DeCS</a></strong> (Descritores em Ciências da Saúde, BIREME/BVS) — vocabulário trilíngue PT/EN/ES com 35.033 descritores, dos quais 31.110 vêm do MeSH.</li>
+<li><strong><a href="https://www.gov.br/anvisa/pt-br/assuntos/farmacopeia/dcb">DCB/ANVISA</a></strong> (Denominações Comuns Brasileiras) — nomenclatura oficial de princípios ativos no Brasil.</li>
+</ul>
+<p><strong>A ponte PT↔EN.</strong> A notícia está em português; o PubMed responde em inglês. O DeCS
+resolve isso por ser trilíngue e mapear para MeSH: <code>"hidroxicloroquina"</code> →
+<code>Hydroxychloroquine[MeSH]</code> vira uma query válida. É o que torna a Camada 2 viável sem
+tradução automática nem custo de API.</p>
+<p><strong>2b — Busca de evidência.</strong> Consulta a <a href="https://www.ncbi.nlm.nih.gov/books/NBK25501/">PubMed E-utilities</a>
+(<code>esearch</code> + <code>efetch</code>), priorizando revisões sistemáticas e meta-análises, que ocupam o
+topo da hierarquia de evidência.</p>
+<p><strong>2c — Classificação de suporte.</strong> Decide se a literatura recuperada <strong>apoia</strong>, <strong>contradiz</strong> ou <strong>não cobre</strong> a alegação, via NLI (<em>natural language inference</em>). A abordagem evolui em fases para não investir em dados antes de saber se são necessários:</p>
+<table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Abordagem</th>
+<th>Entrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Fase 1 (PoC)</strong></td>
+<td>Sem NLI — responde só <strong>encontrou</strong> ou <strong>não cobre</strong>, com força pelo tipo de estudo</td>
+<td>Valida que o pipeline funciona ponta a ponta</td>
+</tr>
+<tr>
+<td><strong>Fase 2a — zero-shot</strong></td>
+<td><code>MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7</code>, sem treino adicional</td>
+<td>Gratuito no Colab; mede se zero-shot basta antes de anotar dados</td>
+</tr>
+<tr>
+<td><strong>Fase 2b — fine-tuning</strong></td>
+<td>Fine-tuning do mDeBERTa em pares <code>(resumo, alegação, rótulo)</code> anotados</td>
+<td>Apenas se o zero-shot for impreciso no domínio biomédico PT</td>
+</tr>
+</tbody>
+</table>
+<p>Para a Fase 2b, cada exemplo segue o formato NLI padrão: <strong>premise</strong> = resumo do artigo do PubMed, <strong>hypothesis</strong> = alegação extraída da notícia, <strong>label</strong> ∈ {entailment, contradiction, neutral}. A fonte de dados mais viável é o <a href="https://physionet.org/content/mednli/1.0.0/">MedNLI</a> (inferência em linguagem médica) complementado por anotação manual de ~500 pares selecionados do PubMed.</p>
+<h3 id="3-fusao-combinando-os-dois-sinais">[3] Fusão — combinando os dois sinais</h3>
+<table>
+<thead>
+<tr>
+<th>Camada 2 (evidência)</th>
+<th>Camada 1 (estilo)</th>
+<th>Veredito</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contradiz</td>
+<td>qualquer</td>
+<td><strong>Sem base científica</strong> — a evidência prevalece</td>
+</tr>
+<tr>
+<td>Apoia</td>
+<td>risco alto</td>
+<td><strong>Base existe, mas a matéria exagera</strong></td>
+</tr>
+<tr>
+<td>Apoia</td>
+<td>risco baixo</td>
+<td><strong>Com base científica</strong></td>
+</tr>
+<tr>
+<td>Não cobre</td>
+<td>qualquer</td>
+<td><strong>Não foi possível verificar</strong> (confiança baixa)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Por que regras e não um terceiro modelo.</strong> Por duas razões. Primeiro, não existe
+dado rotulado para treinar a fusão — seria um modelo sem supervisão possível. Segundo,
+regras são auditáveis: o usuário consegue ver <em>por que</em> recebeu aquele veredito, o que
+responde diretamente às perguntas de transparência levantadas em
+<a href="../guiding-questions/">Guiding Questions</a>.</p>
+<div class="admonition danger">
+<p class="admonition-title">Ausência de evidência não é evidência de ausência</p>
+<p>A última linha da tabela é a mais importante. Quando o PubMed não retorna nada, o
+sistema responde <strong>"não foi possível verificar"</strong> — nunca <strong>"é falso"</strong>. Um
+tratamento pode simplesmente não ter sido estudado ainda.</p>
+</div>
+<h2 id="stack-tecnica">Stack técnica</h2>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Tecnologia</th>
+<th>Custo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linguagem</td>
+<td>Python 3.11</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Ingestão de notícias</td>
+<td><code>trafilatura</code>, <code>requests</code></td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Manipulação de dados</td>
+<td><code>pandas</code></td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Baseline e métricas</td>
+<td><code>scikit-learn</code></td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Modelo final Camada 1</td>
+<td><code>transformers</code> + PyTorch (BERTimbau)</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Vocabulário médico</td>
+<td>DeCS/MeSH + DCB da ANVISA</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Busca de evidência</td>
+<td>PubMed E-utilities</td>
+<td>grátis, sem chave obrigatória</td>
+</tr>
+<tr>
+<td>Inferência de suporte</td>
+<td>mDeBERTa-v3 XNLI</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Interface (PoC)</td>
+<td>Streamlit</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Interface (fase 2)</td>
+<td>FastAPI + front dedicado</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>Experimentação</td>
+<td>Jupyter / Google Colab</td>
+<td>GPU gratuita</td>
+</tr>
+<tr>
+<td>Documentação</td>
+<td>MkDocs Material + GitHub Pages</td>
+<td>grátis</td>
+</tr>
+<tr>
+<td>CI</td>
+<td>GitHub Actions</td>
+<td>grátis</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Restrição de projeto: orçamento zero.</strong> Nenhum componente depende de API paga. Isso
+não é só economia — força a Camada 2 a ser aprendizado de máquina de verdade em vez de
+uma chamada a um LLM comercial.</p>
+<p><strong>Por que Streamlit na PoC.</strong> É Python puro: a equipe não precisa aprender JavaScript
+para ter tela funcionando. A separação em API (FastAPI) fica para a fase 2, quando o
+pipeline já estiver estável e valer a pena isolá-lo.</p>
+<h2 id="estrategia-de-construcao-fatia-vertical-fina">Estratégia de construção: fatia vertical fina</h2>
+<p>A PoC constrói a <strong>fatia mais estreita possível que atravessa as quatro etapas</strong>, com
+cada peça deliberadamente simples, em vez de aperfeiçoar uma etapa por vez.</p>
+<p>Isso segue a recomendação central de Amershi et al. (Seção V-A, <em>end-to-end pipeline
+support</em>) e tem uma razão prática: os problemas caros aparecem nas <strong>junções</strong> entre
+etapas, não dentro delas. Descobrir na semana 2 que o PubMed responde em inglês é
+barato; descobrir na semana 10 é fatal.</p>
+<h3 id="fases">Fases</h3>
+<table>
+<thead>
+<tr>
+<th>Fase</th>
+<th>Entrega</th>
+<th>Etapas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1 — PoC</strong> <em>(Challenge 1)</em></td>
+<td>Fatia vertical fina rodando ponta a ponta</td>
+<td>Ingestão + baseline TF-IDF + PubMed + Streamlit</td>
+</tr>
+<tr>
+<td><strong>2 — Modelo</strong></td>
+<td>Qualidade preditiva</td>
+<td>Dataset ampliado, fine-tuning do BERTimbau, NLI na Camada 2c, FastAPI</td>
+</tr>
+<tr>
+<td><strong>3 — Produção</strong></td>
+<td>Sustentação</td>
+<td>Versionamento de dados, monitoramento, reingestão periódica</td>
+</tr>
+</tbody>
+</table>
+<h3 id="frentes-de-trabalho">Frentes de trabalho</h3>
+<p>Quatro frentes paralelas desde o dia 1, uma por integrante:</p>
+<table>
+<thead>
+<tr>
+<th>Frente</th>
+<th>Responsabilidade</th>
+<th>Guiding Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>A — Dados</strong></td>
+<td>Recorte de saúde do corpus PT-BR, coleta complementar, <em>datasheet</em></td>
+<td>GQ1, GQ2</td>
+</tr>
+<tr>
+<td><strong>B — Modelo</strong></td>
+<td>Baseline, métricas, análise de erro, fine-tuning</td>
+<td>GQ4</td>
+</tr>
+<tr>
+<td><strong>C — Evidência</strong></td>
+<td>Dicionário DeCS + DCB, cliente PubMed, classificação de suporte</td>
+<td>GQ5</td>
+</tr>
+<tr>
+<td><strong>D — Produto</strong></td>
+<td>Ingestão de links, regras de fusão, interface, redação dos avisos</td>
+<td>GQ3, GQ6, GQ7</td>
+</tr>
+</tbody>
+</table>
+<p>As frentes se encontram numa <strong>integração semanal</strong>: cada uma entrega sua peça com
+interface definida, e o pipeline completo roda de ponta a ponta toda semana, mesmo
+imperfeito.</p>
+<h2 id="decisoes-pendentes-de-validacao">Decisões pendentes de validação</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Decisão</th>
+<th>Risco</th>
+<th>Plano B</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>D1</td>
+<td>DeCS acessível para download em massa</td>
+<td>Bloqueia a ponte PT↔EN</td>
+<td>MeSH direto + dicionário PT manual dos ~50 fármacos mais citados</td>
+</tr>
+<tr>
+<td>D2</td>
+<td>Recorte de saúde do corpus PT-BR tem volume suficiente</td>
+<td>Modelo fraco por falta de dado</td>
+<td>Coleta complementar em agências de checagem</td>
+</tr>
+<tr>
+<td>D3</td>
+<td>NLI zero-shot funciona em texto biomédico em português</td>
+<td>Camada 2c imprecisa</td>
+<td>Heurística por tipo de estudo (revisão sistemática = forte)</td>
+</tr>
+<tr>
+<td>D4</td>
+<td><code>trafilatura</code> extrai bem dos portais BR alvo</td>
+<td>Contamina as duas camadas</td>
+<td>Regras por domínio nos 5 portais mais frequentes</td>
+</tr>
+</tbody>
+</table>
+<p>Cada uma é validada por uma tarefa curta na primeira semana. São hipóteses, não
+suposições — e é assim que estão sendo tratadas.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
