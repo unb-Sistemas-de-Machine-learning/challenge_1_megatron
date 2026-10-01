@@ -36,10 +36,25 @@
 - Create: `tests/fixtures/fakerecogna_mini.parquet`
 - Create: `tests/test_prepara_fakerecogna.py`
 - Create: `scripts/prepara_fakerecogna.py`
+- Modify: `requirements.txt`
 
 **Interfaces:**
 - Produz: `ler_fakerecogna(caminho_parquet: Path) -> pd.DataFrame` com colunas `["Titulo", "Noticia", "Categoria", "URL", "Classe"]`
 - Produz: `filtrar_categoria_saude(df: pd.DataFrame) -> pd.DataFrame`
+
+- [ ] **Step 0: Adicionar `pyarrow` a `requirements.txt`**
+
+`pd.read_parquet` exige o pacote `pyarrow` instalado — sem ele, tanto o teste
+desta tarefa quanto o CI (que instala a partir de `requirements.txt` em um
+ambiente limpo) falham com `ImportError: Unable to find a usable engine`.
+Adicionar a `requirements.txt`, junto das demais dependências de dados:
+
+```
+pyarrow>=14
+```
+
+Rodar `pip install -r requirements.txt` (ou só `pip install pyarrow>=14` no
+venv local) antes de prosseguir.
 
 - [ ] **Step 1: Gerar a fixture parquet mínima**
 
