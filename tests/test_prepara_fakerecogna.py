@@ -1,7 +1,9 @@
+import hashlib
 from pathlib import Path
 
 from prepara_fakerecogna import (
     filtrar_categoria_saude,
+    impressao_digital_parquet,
     ler_fakerecogna,
     reextrair_textos,
     taxa_de_extracao,
@@ -85,3 +87,13 @@ def test_mapeia_classe_fakerecogna_para_rotulo_do_projeto():
     linha_campanha = df[df["URL"].str.contains("campanha-vacinacao")].iloc[0]
     assert linha_campanha["Classe"] == 1.0
     assert set(resultado["rotulo"]) == {0, 1}
+
+
+def test_impressao_digital_e_deterministica():
+    assert impressao_digital_parquet(FIXTURE) == impressao_digital_parquet(FIXTURE)
+
+
+def test_impressao_digital_muda_se_o_arquivo_mudar(tmp_path):
+    copia = tmp_path / "fakerecogna.parquet"
+    copia.write_bytes(FIXTURE.read_bytes() + b"\x00")
+    assert impressao_digital_parquet(copia) != impressao_digital_parquet(FIXTURE)
