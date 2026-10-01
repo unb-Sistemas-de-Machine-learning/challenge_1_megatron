@@ -3,8 +3,10 @@
 Uso: python scripts/treina_modelo.py
 """
 
+import subprocess
 import sys
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -15,10 +17,22 @@ RAIZ = Path(__file__).parent.parent
 sys.path.insert(0, str(RAIZ / "src"))
 
 from verdade_ou_fake.classificador import prever_risco, salvar, treinar
+from verdade_ou_fake.model_card import calcular_hash_artefato, montar_card, salvar_card
 
 CAMINHO_DADOS = RAIZ / "dados" / "processed" / "saude_ptbr.csv"
 CAMINHO_DADOS_FAKERECOGNA = RAIZ / "dados" / "processed" / "saude_fakerecogna.csv"
 CAMINHO_MODELO = RAIZ / "modelos" / "baseline.joblib"
+CAMINHO_CARD = RAIZ / "modelos" / "cards" / "baseline.json"
+
+
+def _commit_atual() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=RAIZ, text=True
+        ).strip()
+    except subprocess.CalledProcessError:
+        return "desconhecido"
+
 
 TreinarFn = Callable[[list[str], list[int]], object]
 MetricaFn = Callable[[object, list[str], list[int]], float]
@@ -104,6 +118,30 @@ def main() -> None:
 
     salvar(modelo, CAMINHO_MODELO)
     print(f"Modelo salvo em {CAMINHO_MODELO}")
+
+    card = montar_card(
+        nome="baseline",
+        tipo="tfidf_logreg",
+        commit=_commit_atual(),
+        dados={
+            "fontes": ["fakebr"] if not CAMINHO_DADOS_FAKERECOGNA.exists() else ["fakebr", "fakerecogna"],
+            "hash_fakebr": None,
+            "hash_fakerecogna": None,
+            "volume_treino": len(treino_x),
+            "volume_teste": len(teste_x),
+        },
+        metricas={
+            "f1_macro_same_source": f1_same_source,
+            "f1_macro_cross_source_fakebr_para_fakerecogna": cross_source["fakebr_para_fakerecogna"],
+            "f1_macro_cross_source_fakerecogna_para_fakebr": cross_source["fakerecogna_para_fakebr"],
+        },
+        limiar_aprovacao={"f1_macro_same_source_minimo": 0.75, "queda_maxima_cross_source": 0.20},
+        artefato_hash=calcular_hash_artefato(CAMINHO_MODELO),
+        treinado_em=datetime.now().astimezone().isoformat(),
+        treinado_por="scripts/treina_modelo.py",
+    )
+    salvar_card(card, CAMINHO_CARD)
+    print(f"Model card salvo em {CAMINHO_CARD}")
 
 
 if __name__ == "__main__":
