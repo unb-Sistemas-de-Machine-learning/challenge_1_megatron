@@ -26,3 +26,13 @@ def test_apoio_com_texto_sensacionalista_ainda_alerta_sobre_o_estilo():
 
     assert veredito.rotulo == "Existe literatura, mas o texto tem sinais de alerta"
     assert veredito.confianca == "media"
+
+
+def test_apoio_com_evidencia_fraca_nao_e_escondido_atras_de_literatura_limitada():
+    evidencia = Evidencia(cobertura="encontrada", forca="fraca", artigos=[], suporte="apoia")
+
+    veredito = fundir(0.2, ALEGACAO, evidencia)
+
+    assert veredito.rotulo == "Literatura aponta a favor, mas é limitada"
+    assert veredito.confianca == "baixa"
+    assert "apoia" in veredito.explicacao.lower() or "a favor" in veredito.explicacao.lower()

@@ -82,6 +82,27 @@ def fundir(
             ),
         )
 
+    # Evidência fraca com suporte="apoia" é o par simétrico do contradiz+fraca
+    # acima: sem este caso, o sinal da Camada 2c (que o NLI leu e decidiu que os
+    # resumos apoiam a alegação) desaparecia silenciosamente dentro do rótulo
+    # genérico "Literatura limitada" — o usuário nunca saberia que os poucos
+    # estudos fracos encontrados ao menos apontavam a favor.
+    if evidencia.forca == "fraca" and evidencia.suporte == "apoia":
+        return Veredito(
+            rotulo="Literatura aponta a favor, mas é limitada",
+            confianca="baixa",
+            risco_textual=risco_textual,
+            alegacao=alegacao,
+            evidencia=evidencia,
+            explicacao=(
+                f"Encontramos estudos sobre {alegacao.medicamento_pt} e "
+                f"{alegacao.condicao_pt} que apontam a favor da alegação, mas são de "
+                "tipos que oferecem evidência fraca (relatos de caso, estudos "
+                "preliminares) — vale cautela antes de considerar isso uma "
+                "confirmação. " + AVISO
+            ),
+        )
+
     if evidencia.forca == "fraca":
         return Veredito(
             rotulo="Literatura limitada sobre o tema",
