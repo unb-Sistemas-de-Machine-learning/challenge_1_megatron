@@ -49,6 +49,7 @@ python scripts/treina_bert.py        # treina e salva o BERTimbau (classificador
 streamlit run app.py                 # abre a interface
 
 pytest                               # roda os testes
+pytest -m "not rede"                 # roda os testes sem tocar a rede (CI offline)
 ```
 
 A interface (`app.py`) usa o BERTimbau como classificador de risco (Task 10,
