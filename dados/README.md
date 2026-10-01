@@ -87,3 +87,34 @@ mudar a compressão dos pacotes sem aviso.
   das verdadeiras, 2300 vêm de `g1.globo.com` e a maior parte do resto do Estadão.
   O modelo pode aprender o estilo editorial de cada site em vez de sinais de
   desinformação. Por isso é essencial testar em notícias de outras fontes.
+
+## Segunda fonte: FakeRecogna (Onda 2)
+
+**Origem:** [recogna-nlp/FakeRecogna](https://huggingface.co/datasets/recogna-nlp/FakeRecogna)
+(Hugging Face, licença MIT), categoria "saúde" (4.456 notícias na fonte original).
+
+**Por que não usar o texto da tabela direto:** o campo `Noticia` vem lematizado
+pelo pipeline de pré-processamento dos autores originais (ex.: "o governar
+federal contar logístico" em vez de "o governo conta com a logística"). Misturar
+isso com o texto natural do Fake.br ensinaria o modelo a distinguir o *dataset de
+origem*, não fake/real. Em vez disso, `scripts/prepara_fakerecogna.py` usa a
+tabela como índice (URL + rótulo) e reextrai o texto original via
+`ingestao.extrair_noticia` — a mesma função que já serve a etapa [0] do pipeline.
+
+**Como gerar:**
+
+```bash
+python scripts/prepara_fakerecogna.py
+```
+
+Saída: `dados/processed/saude_fakerecogna.csv`, commitado no git (diferente do
+`saude_ptbr.csv`, que é regenerado em segundos a partir de um commit fixo do
+Fake.br — o FakeRecogna depende de milhares de requisições de rede a sites de
+terceiros, não regenerável a cada execução do CI).
+
+**Mapeamento de rótulo:** no FakeRecogna, `Classe=0.0` é falsa e `Classe=1.0` é
+real — invertido em relação à convenção do projeto (`rotulo=1` é desinformação).
+O script já faz essa conversão.
+
+**Volume e taxa de extração:** _preencher após rodar `scripts/prepara_fakerecogna.py`
+pela primeira vez — não prometer números antes de medir._
