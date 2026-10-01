@@ -12,10 +12,12 @@ RAIZ = Path(__file__).parent
 sys.path.insert(0, str(RAIZ / "src"))
 
 from verdade_ou_fake.classificador import carregar
+from verdade_ou_fake.model_card import validar_modelo_para_producao
 from verdade_ou_fake.pipeline import analisar_link
 from verdade_ou_fake.vocabulario import carregar_vocabulario
 
 CAMINHO_MODELO = RAIZ / "modelos" / "baseline.joblib"
+CAMINHO_MODEL_CARD = RAIZ / "modelos" / "cards" / "baseline.json"
 CAMINHO_VOCABULARIO = RAIZ / "dados" / "vocabulario_seed.csv"
 
 CORES = {"alta": "🟢", "media": "🟡", "baixa": "⚪"}
@@ -42,6 +44,11 @@ if not CAMINHO_MODELO.exists():
         f"Modelo não encontrado em `{CAMINHO_MODELO}`. "
         "Rode `python scripts/treina_modelo.py` antes de iniciar a interface."
     )
+    st.stop()
+
+modelo_ok, motivo = validar_modelo_para_producao(CAMINHO_MODEL_CARD, CAMINHO_MODELO)
+if not modelo_ok:
+    st.error(f"Modelo não validado para produção: {motivo}")
     st.stop()
 
 modelo, vocabulario = carregar_recursos()

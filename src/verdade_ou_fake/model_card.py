@@ -95,3 +95,29 @@ def aprovar_gate(card: dict) -> bool:
         return False
 
     return True
+
+
+def validar_modelo_para_producao(caminho_card: Path, caminho_artefato: Path) -> tuple[bool, str]:
+    """Confere que o artefato em disco corresponde ao model card de produção.
+
+    Usado por `app.py` antes de carregar o modelo: evita servir silenciosamente
+    um modelo desatualizado (card trocado sem retreinar) ou corrompido (hash
+    não bate). Retorna (True, "") em sucesso, (False, motivo) em falha.
+    """
+    caminho_card = Path(caminho_card)
+    if not caminho_card.exists():
+        return False, f"Model card não encontrado em {caminho_card}."
+
+    card = carregar_card(caminho_card)
+
+    if card["status"] != "producao":
+        return False, f"Model card tem status '{card['status']}', esperado 'producao'."
+
+    hash_atual = calcular_hash_artefato(caminho_artefato)
+    if hash_atual != card["artefato_hash_sha256"]:
+        return False, (
+            "Hash do artefato em disco não corresponde ao registrado no model card — "
+            "o modelo pode ter sido retreinado sem atualizar o card, ou está corrompido."
+        )
+
+    return True, ""
