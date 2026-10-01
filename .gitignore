@@ -16,6 +16,9 @@ site/
 dados/raw/
 dados/processed/*
 !dados/processed/saude_fakerecogna.csv
-modelos/
+modelos/*
+!modelos/cards/
+modelos/cards/*
+!modelos/cards/*.json
 *.joblib
 .pytest_cache/

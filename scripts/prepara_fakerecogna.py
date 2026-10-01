@@ -36,7 +36,14 @@ CAMINHO_SAIDA = RAIZ / "dados" / "processed" / "saude_fakerecogna.csv"
 def ler_fakerecogna(caminho_parquet) -> pd.DataFrame:
     """Lê o parquet do FakeRecogna, mantendo só as colunas usadas pelo recorte."""
     df = pd.read_parquet(caminho_parquet)
-    return df[["Titulo", "Noticia", "Categoria", "URL", "Classe"]]
+    colunas_esperadas = ["Titulo", "Noticia", "Categoria", "URL", "Classe"]
+    try:
+        return df[colunas_esperadas]
+    except KeyError as e:
+        raise KeyError(
+            f"Schema inesperado em {caminho_parquet} (FakeRecogna) — colunas "
+            f"esperadas {colunas_esperadas} não encontradas: {e}"
+        ) from e
 
 
 def filtrar_categoria_saude(df: pd.DataFrame) -> pd.DataFrame:
@@ -105,6 +112,15 @@ def main() -> None:
     resultado = reextrair_textos(df, extrair=extrair_noticia)
     taxa = taxa_de_extracao(total=len(df), sucesso=len(resultado))
     print(f"Taxa de extração bem-sucedida: {taxa:.1%} ({len(resultado)}/{len(df)})")
+
+    if len(resultado) == 0:
+        print(
+            "Erro: Nenhuma notícia foi extraída com sucesso — abortando sem "
+            "sobrescrever a saída. Verifique a conectividade de rede e se o "
+            "schema do FakeRecogna mudou."
+        )
+        sys.exit(1)
+
     print(resultado["rotulo"].value_counts().to_string(), "\n")
 
     CAMINHO_SAIDA.parent.mkdir(parents=True, exist_ok=True)

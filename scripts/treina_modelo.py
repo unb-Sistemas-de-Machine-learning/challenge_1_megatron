@@ -16,6 +16,7 @@ from sklearn.model_selection import GroupShuffleSplit
 RAIZ = Path(__file__).parent.parent
 sys.path.insert(0, str(RAIZ / "src"))
 
+from prepara_dataset import IMPRESSAO_DIGITAL_FAKEBR
 from verdade_ou_fake.classificador import prever_risco, salvar, treinar
 from verdade_ou_fake.model_card import calcular_hash_artefato, montar_card, salvar_card
 
@@ -124,8 +125,20 @@ def main() -> None:
         tipo="tfidf_logreg",
         commit=_commit_atual(),
         dados={
-            "fontes": ["fakebr"] if not CAMINHO_DADOS_FAKERECOGNA.exists() else ["fakebr", "fakerecogna"],
-            "hash_fakebr": None,
+            # Hardcoded: `treinar()` acima só é chamado com dados do Fake.br.
+            # `df_combinado`/FakeRecogna entram apenas na avaliação cross-source
+            # (diagnóstico de viés de fonte), nunca no treino em si — então a
+            # existência do CSV do FakeRecogna não deve mudar o que este card
+            # declara como fonte de treino. Treino combinado é um reforço
+            # futuro deliberadamente fora do escopo desta correção.
+            "fontes": ["fakebr"],
+            "hash_fakebr": IMPRESSAO_DIGITAL_FAKEBR,
+            # FakeRecogna: o hash do parquet varia a cada download e não é
+            # persistido entre scripts hoje (prepara_fakerecogna.py calcula o
+            # seu próprio hash, mas só imprime — não grava em lugar algum que
+            # este script possa ler). Encanar essa passagem de metadata entre
+            # scripts é um reforço futuro, não feito aqui para manter esta
+            # correção enxuta.
             "hash_fakerecogna": None,
             "volume_treino": len(treino_x),
             "volume_teste": len(teste_x),

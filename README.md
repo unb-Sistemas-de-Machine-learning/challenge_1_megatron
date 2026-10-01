@@ -63,8 +63,13 @@ pip install -r requirements.txt
 
 python scripts/prepara_dataset.py       # gera o recorte de saúde (Fake.br)
 python scripts/prepara_fakerecogna.py   # opcional: gera a 2ª fonte (FakeRecogna) — demorado, faz milhares de requisições de rede
-python scripts/treina_modelo.py         # treina, avalia (incl. cross-source se a 2ª fonte existir) e gera o model card
-streamlit run app.py                    # abre a interface
+python scripts/treina_modelo.py         # treina, avalia (incl. cross-source se a 2ª fonte existir) e gera modelos/cards/baseline.json (status: staging)
+python scripts/verifica_gate.py modelos/cards/baseline.json   # confere se o modelo passa no gate de qualidade
+
+# Se aprovado, revise as métricas em modelos/cards/baseline.json e, manualmente,
+# mude "status": "staging" para "status": "producao" antes de rodar o app —
+# essa promoção é uma decisão humana deliberada, não automática.
+streamlit run app.py                    # só serve o modelo se o card estiver em status "producao"
 
 pytest                                  # roda os testes
 pytest -m "not rede"                    # roda os testes sem tocar a rede (CI offline)

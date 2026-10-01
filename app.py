@@ -48,6 +48,11 @@ if not CAMINHO_MODELO.exists():
 
 modelo_ok, motivo = validar_modelo_para_producao(CAMINHO_MODEL_CARD, CAMINHO_MODELO)
 if not modelo_ok:
+    if "esperado 'producao'" in motivo:
+        motivo += (
+            " A promoção é manual: revise as métricas no model card e troque "
+            f'"status": "staging" por "status": "producao" em `{CAMINHO_MODEL_CARD}`.'
+        )
     st.error(f"Modelo não validado para produção: {motivo}")
     st.stop()
 
