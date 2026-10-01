@@ -2,7 +2,7 @@
 
 A Task 11 previu isso como condicional: só valeria a pena fazer fine-tuning
 "se a Task 11 for avaliada em 50-100 pares anotados manualmente e ficar com
-acurácia abaixo de 0,75". `scripts/avalia_suporte.py` mediu 40,5% de acurácia
+acurácia abaixo de 0,75". `scripts/avalia_suporte.py` mediu 48,1% de acurácia
 nos 79 pares de `dados/avaliacao/suporte_pubmed.json` — bem abaixo do limiar,
 então esse módulo existe.
 

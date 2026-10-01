@@ -1,18 +1,27 @@
 """Testa a plumbing do fine-tuning da etapa [2c] (Task 12, Fase 2 — condicional).
 
-A Task 11 mediu 40,5% de acurácia do zero-shot nos 79 pares anotados em
+A Task 11 mediu 48,1% de acurácia do zero-shot nos 79 pares anotados em
 `dados/avaliacao/suporte_pubmed.json` — abaixo do limiar de 75% do plano, o
 que aciona o critério de entrada da Task 12. Como no resto do projeto, os
 testes usam um checkpoint de NLI minúsculo para exercitar a integração sem
 pagar o custo do modelo de produção (mDeBERTa-v3-base, 279M parâmetros) a
 cada rodada — o fine-tuning real acontece em `scripts/treina_suporte.py`.
+
+ATENÇÃO — mesma exceção de test_classificador_bert.py: o checkpoint minúsculo
+é baixado do Hugging Face Hub via `from_pretrained`, então estes testes tocam
+rede. Marcados com `@pytest.mark.rede` para que `pytest -m "not rede"` rode a
+suíte inteira offline.
 """
 
 from pathlib import Path
 
+import pytest
+
 from verdade_ou_fake.suporte_treino import construir_modelo_treinavel, treinar_suporte
 
 CHECKPOINT_DE_TESTE = "hf-internal-testing/tiny-random-DebertaV2ForSequenceClassification"
+
+pytestmark = pytest.mark.rede
 
 PARES = [
     ("A trial found significant reduction in symptoms with the drug.", "o remédio trata a doença", "apoia"),
