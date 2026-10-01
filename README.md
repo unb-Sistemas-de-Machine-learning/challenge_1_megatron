@@ -55,6 +55,21 @@ Levantamento completo e limitações em [Fontes de Dados](docs/dados.md).
 | [Guiding Questions](docs/guiding-questions.md) | Perguntas norteadoras do projeto |
 | [Canvas](docs/canva.md) | Objetivos de negócio e de ML, escopo, cronograma |
 
+## Como rodar
+
+```bash
+python3 -m venv venv && source venv/bin/activate
+pip install -r requirements.txt
+
+python scripts/prepara_dataset.py       # gera o recorte de saúde (Fake.br)
+python scripts/prepara_fakerecogna.py   # opcional: gera a 2ª fonte (FakeRecogna) — demorado, faz milhares de requisições de rede
+python scripts/treina_modelo.py         # treina, avalia (incl. cross-source se a 2ª fonte existir) e gera o model card
+streamlit run app.py                    # abre a interface
+
+pytest                                  # roda os testes
+pytest -m "not rede"                    # roda os testes sem tocar a rede (CI offline)
+```
+
 ## Aviso
 Este sistema é apenas informativo e **não substitui orientação médica**. As respostas
 são uma síntese de evidências públicas, não uma prescrição.
