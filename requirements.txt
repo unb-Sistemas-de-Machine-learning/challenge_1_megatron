@@ -6,3 +6,6 @@ scikit-learn>=1.5
 joblib>=1.4
 streamlit>=1.40
 pytest>=8.0
+torch>=2.2
+transformers>=4.40
+accelerate>=1.1

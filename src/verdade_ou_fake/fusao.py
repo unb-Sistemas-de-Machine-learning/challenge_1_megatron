@@ -49,6 +49,60 @@ def fundir(
             ),
         )
 
+    # Etapa [2c]: quando a Camada 2 leu os resumos e decidiu apoia/contradiz com
+    # confiança, esse sinal fala mais alto que a mera presença de estudos —
+    # é o que diferencia "existe literatura" de "a literatura diz isto".
+    if evidencia.suporte == "contradiz":
+        return Veredito(
+            rotulo="Literatura contradiz a alegação",
+            confianca="alta" if evidencia.forca in ("forte", "moderada") else "media",
+            risco_textual=risco_textual,
+            alegacao=alegacao,
+            evidencia=evidencia,
+            explicacao=(
+                f"Os artigos que encontramos sobre {alegacao.medicamento_pt} e "
+                f"{alegacao.condicao_pt} contradizem a alegação da notícia — eles não "
+                "confirmam o efeito descrito. Vale conferir as fontes originais "
+                "abaixo. " + AVISO
+            ),
+        )
+
+    if evidencia.suporte == "conflitante":
+        return Veredito(
+            rotulo="Literatura tem resultados conflitantes sobre o tema",
+            confianca="baixa",
+            risco_textual=risco_textual,
+            alegacao=alegacao,
+            evidencia=evidencia,
+            explicacao=(
+                f"Encontramos estudos sobre {alegacao.medicamento_pt} e "
+                f"{alegacao.condicao_pt} que apontam em direções diferentes — alguns "
+                "apoiam a alegação, outros a contradizem. O tema ainda não tem "
+                "consenso na literatura. " + AVISO
+            ),
+        )
+
+    # Evidência fraca com suporte="apoia" é o par simétrico do contradiz+fraca
+    # acima: sem este caso, o sinal da Camada 2c (que o NLI leu e decidiu que os
+    # resumos apoiam a alegação) desaparecia silenciosamente dentro do rótulo
+    # genérico "Literatura limitada" — o usuário nunca saberia que os poucos
+    # estudos fracos encontrados ao menos apontavam a favor.
+    if evidencia.forca == "fraca" and evidencia.suporte == "apoia":
+        return Veredito(
+            rotulo="Literatura aponta a favor, mas é limitada",
+            confianca="baixa",
+            risco_textual=risco_textual,
+            alegacao=alegacao,
+            evidencia=evidencia,
+            explicacao=(
+                f"Encontramos estudos sobre {alegacao.medicamento_pt} e "
+                f"{alegacao.condicao_pt} que apontam a favor da alegação, mas são de "
+                "tipos que oferecem evidência fraca (relatos de caso, estudos "
+                "preliminares) — vale cautela antes de considerar isso uma "
+                "confirmação. " + AVISO
+            ),
+        )
+
     if evidencia.forca == "fraca":
         return Veredito(
             rotulo="Literatura limitada sobre o tema",
@@ -74,6 +128,21 @@ def fundir(
                 f"Há estudos sobre {alegacao.medicamento_pt} e {alegacao.condicao_pt}, "
                 "mas a forma como a notícia foi escrita tem características associadas "
                 "a desinformação. Vale conferir as fontes originais abaixo. " + AVISO
+            ),
+        )
+
+    if evidencia.suporte == "apoia":
+        return Veredito(
+            rotulo="Literatura apoia a alegação",
+            confianca="alta",
+            risco_textual=risco_textual,
+            alegacao=alegacao,
+            evidencia=evidencia,
+            explicacao=(
+                f"Os artigos que encontramos sobre {alegacao.medicamento_pt} e "
+                f"{alegacao.condicao_pt} apoiam a alegação da notícia. Isso não prova "
+                "que o caso específico relatado é verdadeiro, mas indica respaldo "
+                "científico para a relação entre eles. " + AVISO
             ),
         )
 
