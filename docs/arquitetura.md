@@ -162,6 +162,33 @@ uma chamada a um LLM comercial.
 para ter tela funcionando. A separação em API (FastAPI) fica para a fase 2, quando o
 pipeline já estiver estável e valer a pena isolá-lo.
 
+## MLOps
+
+A partir da revisão contra Kreuzberger, Kühl & Hirschl (*MLOps: Overview,
+Definition, and Architecture*, arXiv:2205.02302), o projeto adota uma versão
+leve dos componentes do artigo, dimensionada para equipe pequena e orçamento
+zero:
+
+| Princípio do artigo | Implementação neste projeto |
+|---|---|
+| P1 — CI/CD automation | `.github/workflows/ci.yml` roda a suíte de testes a cada push/PR |
+| P4 — Versioning (modelo) | `modelos/cards/*.json`, versionado no git, com hash de integridade do artefato |
+| P6 — Continuous training | `.github/workflows/treino-gate.yml`, acionável manualmente ou por mudança em código/vocabulário relevante |
+| P7 — ML metadata tracking | Métricas, dados de origem e limiares de aprovação registrados no model card |
+
+**Por que não um model registry remoto.** Decisão deliberada: um arquivo JSON
+versionado no git é legível em diff por qualquer membro da equipe sem rodar
+nada, e não exige hospedar um servidor — coerente com o orçamento zero do
+projeto. Fica como possível evolução futura se a equipe crescer.
+
+**Gate de qualidade com detecção de viés de fonte.** Além do F1 macro
+same-source já existente, o treino mede F1 cross-source (treina numa fonte de
+dados, testa na outra) — a assinatura de um modelo que aprendeu o portal de
+origem em vez de desinformação é F1 alto same-source e baixo cross-source. Um
+modelo só é promovido a `status: producao` se a queda entre os dois não
+exceder o limiar configurado no card. Ver
+`src/verdade_ou_fake/model_card.py:aprovar_gate`.
+
 ## Estratégia de construção: fatia vertical fina
 
 A PoC constrói a **fatia mais estreita possível que atravessa as quatro etapas**, com
