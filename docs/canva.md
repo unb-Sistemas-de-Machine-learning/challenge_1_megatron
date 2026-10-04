@@ -76,6 +76,25 @@ para detectar viés de fonte.
     para o BERTimbau é 0,80 de F1 macro, mas uma comparação justa exige a Onda 2
     de coleta, com fontes novas nas duas classes.
 
+!!! info "Resultado do BERTimbau — Fase 2 (Task 10, 2026-09-27)"
+    Fine-tuning de `neuralmind/bert-base-portuguese-cased` no mesmo split do
+    baseline (mesmo `random_state`, mesmo agrupamento por par; ver
+    `scripts/treina_bert.py`). Embeddings e as 8 primeiras das 12 camadas do
+    encoder congeladas — o fine-tuning completo foi morto pelo OOM killer do
+    kernel neste ambiente sem GPU.
+
+    **F1 macro: 0,90**, contra 0,80 ± 0,08 do baseline TF-IDF — supera o
+    critério de entrada da Task 10 (superar o F1 macro do baseline no
+    conjunto de teste).
+
+    **Mesma ressalva do baseline se aplica aqui:** o teste ainda vem das
+    mesmas fontes de treino (93% das falsas em `diariodobrasil.org`, maioria
+    das verdadeiras em `g1.globo.com`), então o ganho de 0,80 → 0,90 pode
+    refletir em parte o modelo aprendendo padrões lexicais mais finos do
+    mesmo viés de fonte, não necessariamente mais sinal de desinformação em
+    saúde. Avaliação em portais fora do treino (Onda 2) continua pendente
+    para os dois modelos.
+
 **Camada 2 — Verificação por evidência.** Extrair o par *medicamento + condição
 clínica* da notícia e classificar a alegação em — com base científica sólida /
 evidência limitada ou contestada / sem evidência disponível. Medível no MODELO:

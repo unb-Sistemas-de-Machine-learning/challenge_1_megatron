@@ -24,6 +24,8 @@ class Artigo:
     resumo: str
     tipos_estudo: list[str]
     ano: int | None
+    # "apoia" | "contradiz" | "nao_determinado" | "nao_avaliado" (etapa [2c], Fase 2).
+    suporte: str = "nao_avaliado"
 
 
 @dataclass
@@ -31,6 +33,9 @@ class Evidencia:
     cobertura: str
     forca: str
     artigos: list[Artigo] = field(default_factory=list)
+    # Agregado de artigos[*].suporte: "apoia" | "contradiz" | "conflitante" |
+    # "nao_determinado" | "nao_avaliado".
+    suporte: str = "nao_avaliado"
 
 
 @dataclass
