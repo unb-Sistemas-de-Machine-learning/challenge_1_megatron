@@ -14,7 +14,11 @@ site/
 *.swp
 
 dados/raw/
-dados/processed/
-modelos/
+dados/processed/*
+!dados/processed/saude_fakerecogna.csv
+modelos/*
+!modelos/cards/
+modelos/cards/*
+!modelos/cards/*.json
 *.joblib
 .pytest_cache/

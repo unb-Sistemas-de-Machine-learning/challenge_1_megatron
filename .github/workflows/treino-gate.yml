@@ -1,0 +1,36 @@
+# Design note: este workflow NÃO roda `prepara_fakerecogna.py` — a extração via rede
+# de ~4.456 URLs de terceiros não deve repetir a cada push. Se
+# `dados/processed/saude_fakerecogna.csv` já existir no repositório (gerado
+# manualmente via prepara-fakerecogna.yml), o treino o usa automaticamente para
+# avaliação cross-source; caso contrário, o treino roda só com Fake.br e avisa
+# que o cross-source foi pulado.
+
+name: Treino Gate
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'dados/vocabulario_seed.csv'
+      - 'src/verdade_ou_fake/classificador.py'
+      - 'src/verdade_ou_fake/fusao.py'
+      - 'dados/processed/saude_fakerecogna.csv'
+
+jobs:
+  treino:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - run: python scripts/prepara_dataset.py
+      - run: python scripts/treina_modelo.py
+      - name: Verificar gate de qualidade
+        run: python scripts/verifica_gate.py modelos/cards/baseline.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: model-card-staging
+          path: modelos/cards/baseline.json
