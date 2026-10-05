@@ -39,18 +39,26 @@ ClassificadorNLI = Callable[[str, list[str]], dict]
 _pipeline_nli = None
 
 
-def _classificar_com_modelo_padrao(sequencia: str, rotulos: list[str]) -> dict:
-    """Casca de I/O: carrega o pipeline zero-shot (uma vez) e classifica.
+def carregar_modelo_nli():
+    """Carrega (uma vez por processo) o pipeline zero-shot de NLI.
 
-    O carregamento é preguiçoso e só acontece na primeira chamada real —
-    os testes nunca chegam aqui porque sempre injetam um `classificador` falso.
+    O app chama isso na inicialização para que o download e a carga do
+    modelo (~560 MB) não caiam na primeira análise de um usuário.
     """
     global _pipeline_nli
     if _pipeline_nli is None:
         from transformers import pipeline
 
         _pipeline_nli = pipeline("zero-shot-classification", model=MODELO_NLI)
-    return _pipeline_nli(sequencia, candidate_labels=rotulos)
+    return _pipeline_nli
+
+
+def _classificar_com_modelo_padrao(sequencia: str, rotulos: list[str]) -> dict:
+    """Casca de I/O: carrega o pipeline zero-shot (uma vez) e classifica.
+
+    Os testes nunca chegam aqui porque sempre injetam um `classificador` falso.
+    """
+    return carregar_modelo_nli()(sequencia, candidate_labels=rotulos)
 
 
 def _interpretar_resultado(rotulo_vencedor: str, score: float) -> str:

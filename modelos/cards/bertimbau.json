@@ -1,0 +1,28 @@
+{
+  "artefato_hash_sha256": "76937e26a4f387bc6f5c0f514f0fe00c7149551a7eca8d8dbf336b7e7d35bac5",
+  "commit": "fbae1bb68308e30c32d0714ade52fee05326630f",
+  "dados": {
+    "fontes": [
+      "fakebr"
+    ],
+    "hash_fakebr": "ce86b8f8d74ec6086a7a9d0018e2e681ea022d88560ac5aaccc914e383df7d29",
+    "hash_fakerecogna": null,
+    "volume_teste": 70,
+    "volume_treino": 280
+  },
+  "limiar_aprovacao": {
+    "f1_macro_same_source_minimo": 0.75,
+    "queda_maxima_cross_source": 0.2
+  },
+  "metricas": {
+    "f1_macro_cross_source_fakebr_para_fakerecogna": null,
+    "f1_macro_cross_source_fakerecogna_para_fakebr": null,
+    "f1_macro_same_source": 0.957134109001837
+  },
+  "nome": "bertimbau",
+  "status": "staging",
+  "tipo": "bert_finetuned",
+  "treinado_em": "2026-10-05T12:16:24.443601-03:00",
+  "treinado_por": "scripts/treina_bert.py",
+  "versao": "2026-10-05-fbae1bb"
+}

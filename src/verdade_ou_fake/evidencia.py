@@ -4,9 +4,17 @@ Usa a API E-utilities do NCBI, que é gratuita e não exige chave. O parsing do
 XML fica em funções puras, testadas com uma resposta gravada; só
 `buscar_evidencia` toca a rede.
 
+Em produção, configure `NCBI_API_KEY` (gratuita, sobe o limite de 3 para 10
+requisições/s por IP) e `NCBI_EMAIL` (contato pedido pelo NCBI). As
+requisições deste processo são espaçadas para respeitar esse limite mesmo
+com vários usuários simultâneos.
+
 Documentação da API: https://www.ncbi.nlm.nih.gov/books/NBK25501/
 """
 
+import os
+import threading
+import time
 import xml.etree.ElementTree as ET
 
 import requests
@@ -16,6 +24,14 @@ from verdade_ou_fake.tipos import Alegacao, Artigo, Evidencia
 BASE_EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 TIMEOUT_SEGUNDOS = 20
 MAX_ARTIGOS = 10
+NOME_FERRAMENTA = "verdade_ou_fake"
+
+# Limites documentados pelo NCBI, com folga de 10%.
+INTERVALO_SEM_CHAVE = 1.1 / 3
+INTERVALO_COM_CHAVE = 1.1 / 10
+
+_trava_ritmo = threading.Lock()
+_ultima_requisicao = 0.0
 
 # Tipos de estudo em ordem decrescente de força de evidência.
 TIPOS_FORTES = {"Systematic Review", "Meta-Analysis"}
@@ -101,9 +117,34 @@ def montar_evidencia(artigos: list[Artigo]) -> Evidencia:
     )
 
 
+def _parametros_ncbi() -> dict:
+    """Identificação pedida pelo NCBI; chave e e-mail vêm do ambiente."""
+    parametros = {"tool": NOME_FERRAMENTA}
+    if chave := os.environ.get("NCBI_API_KEY"):
+        parametros["api_key"] = chave
+    if email := os.environ.get("NCBI_EMAIL"):
+        parametros["email"] = email
+    return parametros
+
+
+def _intervalo_minimo() -> float:
+    return INTERVALO_COM_CHAVE if os.environ.get("NCBI_API_KEY") else INTERVALO_SEM_CHAVE
+
+
+def _aguardar_vez() -> None:
+    """Espaça as requisições ao NCBI feitas por todas as sessões do processo."""
+    global _ultima_requisicao
+    with _trava_ritmo:
+        espera = _ultima_requisicao + _intervalo_minimo() - time.monotonic()
+        if espera > 0:
+            time.sleep(espera)
+        _ultima_requisicao = time.monotonic()
+
+
 def buscar_evidencia(alegacao: Alegacao) -> Evidencia:
     """Consulta o PubMed e devolve a evidência encontrada."""
     try:
+        _aguardar_vez()
         resposta_busca = requests.get(
             f"{BASE_EUTILS}/esearch.fcgi",
             params={
@@ -111,6 +152,7 @@ def buscar_evidencia(alegacao: Alegacao) -> Evidencia:
                 "term": montar_query(alegacao),
                 "retmode": "json",
                 "retmax": MAX_ARTIGOS,
+                **_parametros_ncbi(),
             },
             timeout=TIMEOUT_SEGUNDOS,
         )
@@ -120,9 +162,10 @@ def buscar_evidencia(alegacao: Alegacao) -> Evidencia:
         if not pmids:
             return montar_evidencia([])
 
+        _aguardar_vez()
         resposta_artigos = requests.get(
             f"{BASE_EUTILS}/efetch.fcgi",
-            params={"db": "pubmed", "id": ",".join(pmids), "retmode": "xml"},
+            params={"db": "pubmed", "id": ",".join(pmids), "retmode": "xml", **_parametros_ncbi()},
             timeout=TIMEOUT_SEGUNDOS,
         )
         resposta_artigos.raise_for_status()

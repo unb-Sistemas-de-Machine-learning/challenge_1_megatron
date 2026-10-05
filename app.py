@@ -1,8 +1,16 @@
 """Interface web do Verdade ou Fake.
 
 Uso: streamlit run app.py
+
+Variáveis de ambiente (todas opcionais em desenvolvimento):
+    VOF_MODELO_RISCO          diretório local ou repo do Hugging Face Hub com o
+                              BERTimbau (padrão: modelos/bertimbau)
+    VOF_MODELO_RISCO_REVISAO  branch, tag ou commit do repo no Hub
+    HF_TOKEN                  token de leitura, se o repo do Hub for privado
+    NCBI_API_KEY, NCBI_EMAIL  identificação no PubMed (ver evidencia.py)
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -12,12 +20,17 @@ RAIZ = Path(__file__).parent
 sys.path.insert(0, str(RAIZ / "src"))
 
 from verdade_ou_fake.classificador import construir_modelo_bert, prever_risco_bert
+from verdade_ou_fake.ingestao import UrlNaoPermitida, validar_url
+from verdade_ou_fake.modelo_producao import ModeloIndisponivel, preparar_modelo_de_producao
 from verdade_ou_fake.pipeline import analisar_link
+from verdade_ou_fake.suporte import carregar_modelo_nli
 from verdade_ou_fake.vocabulario import carregar_vocabulario
 
-# BERTimbau (Task 10, Fase 2) substitui o baseline TF-IDF: F1 macro medido de
-# 0,90 contra 0,80 do baseline em scripts/treina_bert.py — ver docs/canva.md.
-CAMINHO_MODELO = RAIZ / "modelos" / "bertimbau"
+# BERTimbau (Task 10, Fase 2) substitui o baseline TF-IDF: F1 macro 0,96 contra
+# 0,80 do baseline — métricas e hash em modelos/cards/bertimbau.json.
+ORIGEM_MODELO = os.environ.get("VOF_MODELO_RISCO", str(RAIZ / "modelos" / "bertimbau"))
+REVISAO_MODELO = os.environ.get("VOF_MODELO_RISCO_REVISAO") or None
+CAMINHO_CARD = RAIZ / "modelos" / "cards" / "bertimbau.json"
 CAMINHO_VOCABULARIO = RAIZ / "dados" / "vocabulario_seed.csv"
 TAMANHO_MAXIMO_TOKENS_BERT = 256  # mesmo truncamento usado no treino
 
@@ -31,10 +44,17 @@ SELOS_SUPORTE = {
 }
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner="Carregando os modelos (só na primeira vez)...")
 def carregar_recursos():
-    """Carrega modelo, tokenizer e vocabulário uma única vez por sessão."""
-    modelo, tokenizer = construir_modelo_bert(str(CAMINHO_MODELO))
+    """Carrega modelos e vocabulário uma única vez por processo.
+
+    O BERTimbau só é carregado se o model card estiver em produção e o hash
+    dos pesos bater. O NLI da Camada 2c é pré-carregado aqui para que o
+    primeiro usuário não pague o download dele no meio da análise.
+    """
+    diretorio = preparar_modelo_de_producao(ORIGEM_MODELO, CAMINHO_CARD, revisao=REVISAO_MODELO)
+    modelo, tokenizer = construir_modelo_bert(str(diretorio))
+    carregar_modelo_nli()
     return modelo, tokenizer, carregar_vocabulario(CAMINHO_VOCABULARIO)
 
 
@@ -48,21 +68,27 @@ st.warning(
     "As respostas são uma síntese de evidências públicas, não uma prescrição."
 )
 
-if not (CAMINHO_MODELO / "config.json").exists():
-    st.error(
-        f"Modelo não encontrado em `{CAMINHO_MODELO}`. "
-        "Rode `python scripts/treina_bert.py` antes de iniciar a interface."
-    )
+try:
+    modelo, tokenizer, vocabulario = carregar_recursos()
+except ModeloIndisponivel as erro:
+    st.error(f"O classificador de risco não pode ser servido: {erro}")
     st.stop()
-
-modelo, tokenizer, vocabulario = carregar_recursos()
 
 url = st.text_input(
     "Cole o link da notícia",
     placeholder="https://portal.exemplo.com/saude/materia",
 )
 
-if st.button("Analisar", type="primary") and url:
+url = url.strip()
+analisar = st.button("Analisar", type="primary") and url
+if analisar:
+    try:
+        validar_url(url)
+    except UrlNaoPermitida as erro:
+        st.error(f"Link não aceito: {erro}")
+        analisar = False
+
+if analisar:
     with st.spinner("Extraindo o texto e consultando a literatura científica..."):
         veredito = analisar_link(
             url,
