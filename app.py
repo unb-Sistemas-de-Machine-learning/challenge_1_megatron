@@ -26,8 +26,6 @@ from verdade_ou_fake.pipeline import analisar_link
 from verdade_ou_fake.suporte import carregar_modelo_nli
 from verdade_ou_fake.vocabulario import carregar_vocabulario
 
-from verdade_ou_fake.fusao import icone_do_veredito
-
 # BERTimbau (Task 10, Fase 2) substitui o baseline TF-IDF: F1 macro 0,96 contra
 # 0,80 do baseline — métricas e hash em modelos/cards/bertimbau.json.
 ORIGEM_MODELO = os.environ.get("VOF_MODELO_RISCO", str(RAIZ / "modelos" / "bertimbau"))
@@ -105,7 +103,7 @@ if analisar:
             "paywall, exigir login, ou usar um formato que ainda não suportamos."
         )
     else:
-        st.subheader(f"{icone_do_veredito(veredito)} {veredito.rotulo}")
+        st.subheader(f"{veredito.icone} {veredito.rotulo}")
         st.write(veredito.explicacao)
 
         col_a, col_b = st.columns(2)
