@@ -20,7 +20,7 @@
     "f1_macro_same_source": 0.957134109001837
   },
   "nome": "bertimbau",
-  "status": "staging",
+  "status": "producao",
   "tipo": "bert_finetuned",
   "treinado_em": "2026-10-05T12:16:24.443601-03:00",
   "treinado_por": "scripts/treina_bert.py",
