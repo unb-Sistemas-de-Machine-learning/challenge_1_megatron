@@ -1,0 +1,34 @@
+# Publica o app no Hugging Face Space a cada push na main (e sob demanda).
+#
+# Configuração única no GitHub (Settings → Secrets and variables → Actions):
+#   - variável HF_SPACE: id do Space, ex.: equipe/verdade-ou-fake
+#   - secret  HF_TOKEN: token do Hugging Face com permissão de escrita
+# Enquanto HF_SPACE não existir, o job é pulado. O script se recusa a publicar
+# se o model card do BERTimbau não estiver em status "producao".
+
+name: Deploy App
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-app
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: vars.HF_SPACE != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
+      - run: pytest -m "not rede" -q
+      - name: Publicar no Hugging Face Space
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/publica_space.py "${{ vars.HF_SPACE }}"

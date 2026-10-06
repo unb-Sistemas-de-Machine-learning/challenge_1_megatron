@@ -1,0 +1,17 @@
+.git
+.github
+venv
+.venv
+env
+**/__pycache__
+**/*.pyc
+.pytest_cache
+.superpowers
+site
+docs
+tests
+dados/raw
+dados/processed
+dados/avaliacao
+modelos/*
+!modelos/cards

@@ -171,9 +171,9 @@ zero:
 
 | Princípio do artigo | Implementação neste projeto |
 |---|---|
-| P1 — CI/CD automation | `.github/workflows/ci.yml` roda a suíte de testes a cada push/PR |
+| P1 — CI/CD automation | `.github/workflows/ci.yml` roda a suíte de testes a cada push/PR; `deploy-app.yml` publica o app no Hugging Face Space a cada push na `main` |
 | P4 — Versioning (modelo) | `modelos/cards/*.json`, versionado no git, com hash de integridade do artefato |
-| P6 — Continuous training | `.github/workflows/treino-gate.yml`, acionável manualmente ou por mudança em código/vocabulário relevante |
+| P6 — Continuous training | `.github/workflows/treino-gate.yml` retreina e aplica o gate ao baseline TF-IDF (manual ou por mudança relevante); o BERTimbau é retreinado localmente por `scripts/treina_bert.py`, que gera o card para o mesmo gate — fine-tuning em CPU do runner do GitHub seria lento demais |
 | P7 — ML metadata tracking | Métricas, dados de origem e limiares de aprovação registrados no model card |
 
 **Por que não um model registry remoto.** Decisão deliberada: um arquivo JSON
@@ -188,6 +188,15 @@ origem em vez de desinformação é F1 alto same-source e baixo cross-source. Um
 modelo só é promovido a `status: producao` se a queda entre os dois não
 exceder o limiar configurado no card. Ver
 `src/verdade_ou_fake/model_card.py:aprovar_gate`.
+
+**O card controla o que vai ao ar.** O classificador servido pelo app é o
+BERTimbau, descrito em `modelos/cards/bertimbau.json` (gerado por
+`scripts/treina_bert.py`). Na inicialização, o app (`src/verdade_ou_fake/modelo_producao.py`)
+só carrega os pesos se o card estiver em `status: producao` e o SHA-256 de
+`model.safetensors` bater com o registrado. Os pesos ficam num repositório de
+modelo do Hugging Face Hub (fora do git) e o app roda num Hugging Face Space
+via Docker — o card no git é o registro; o Hub, só o armazenamento. Passo a
+passo no README, seção *Deploy*.
 
 ## Estratégia de construção: fatia vertical fina
 
