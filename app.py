@@ -34,8 +34,6 @@ CAMINHO_CARD = RAIZ / "modelos" / "cards" / "bertimbau.json"
 CAMINHO_VOCABULARIO = RAIZ / "dados" / "vocabulario_seed.csv"
 TAMANHO_MAXIMO_TOKENS_BERT = 256  # mesmo truncamento usado no treino
 
-CORES = {"alta": "🟢", "media": "🟡", "baixa": "⚪"}
-
 SELOS_SUPORTE = {
     "apoia": "✅ Apoia a alegação",
     "contradiz": "❌ Contradiz a alegação",
@@ -105,7 +103,7 @@ if analisar:
             "paywall, exigir login, ou usar um formato que ainda não suportamos."
         )
     else:
-        st.subheader(f"{CORES[veredito.confianca]} {veredito.rotulo}")
+        st.subheader(f"{veredito.icone} {veredito.rotulo}")
         st.write(veredito.explicacao)
 
         col_a, col_b = st.columns(2)

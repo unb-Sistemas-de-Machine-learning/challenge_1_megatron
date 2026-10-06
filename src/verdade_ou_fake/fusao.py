@@ -21,6 +21,7 @@ def fundir(
         )
         return Veredito(
             rotulo="Não foi possível verificar",
+            icone="⚪",
             confianca="baixa",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -37,6 +38,7 @@ def fundir(
     if evidencia.cobertura == "nao_cobre":
         return Veredito(
             rotulo="Não foi possível verificar",
+            icone="⚪",
             confianca="baixa",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -55,6 +57,7 @@ def fundir(
     if evidencia.suporte == "contradiz":
         return Veredito(
             rotulo="Literatura contradiz a alegação",
+            icone="🔴",
             confianca="alta" if evidencia.forca in ("forte", "moderada") else "media",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -70,6 +73,7 @@ def fundir(
     if evidencia.suporte == "conflitante":
         return Veredito(
             rotulo="Literatura tem resultados conflitantes sobre o tema",
+            icone="🟡",          
             confianca="baixa",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -90,6 +94,7 @@ def fundir(
     if evidencia.forca == "fraca" and evidencia.suporte == "apoia":
         return Veredito(
             rotulo="Literatura aponta a favor, mas é limitada",
+            icone="⚪",
             confianca="baixa",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -106,6 +111,7 @@ def fundir(
     if evidencia.forca == "fraca":
         return Veredito(
             rotulo="Literatura limitada sobre o tema",
+            icone="⚪",
             confianca="baixa",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -120,6 +126,7 @@ def fundir(
     if risco_alto:
         return Veredito(
             rotulo="Existe literatura, mas o texto tem sinais de alerta",
+            icone="🟡",
             confianca="media",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -134,6 +141,7 @@ def fundir(
     if evidencia.suporte == "apoia":
         return Veredito(
             rotulo="Literatura apoia a alegação",
+            icone="🟢",
             confianca="alta",
             risco_textual=risco_textual,
             alegacao=alegacao,
@@ -148,6 +156,7 @@ def fundir(
 
     return Veredito(
         rotulo="Tema com respaldo na literatura",
+        icone="🟡",
         confianca="media",
         risco_textual=risco_textual,
         alegacao=alegacao,
@@ -158,3 +167,4 @@ def fundir(
             "afirmação específica da notícia esteja correta. " + AVISO
         ),
     )
+

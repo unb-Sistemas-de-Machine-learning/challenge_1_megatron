@@ -46,3 +46,4 @@ class Veredito:
     alegacao: Alegacao | None
     evidencia: Evidencia | None
     explicacao: str
+    icone: str = "⚪"
