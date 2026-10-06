@@ -158,3 +158,15 @@ def fundir(
             "afirmação específica da notícia esteja correta. " + AVISO
         ),
     )
+
+def icone_do_veredito(veredito: Veredito) -> str:
+    suporte = veredito.evidencia.suporte if veredito.evidencia else "nao_avaliado"
+    if suporte == "contradiz":
+        return "🔴" 
+    if suporte == "conflitante":
+        return "🟡"  
+    if veredito.confianca == "alta":
+        return "🟢"  
+    if veredito.confianca == "media":
+        return "🟡"
+    return "⚪"  
