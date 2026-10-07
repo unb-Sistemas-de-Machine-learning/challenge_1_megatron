@@ -19,7 +19,20 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Arquitetura: arquitetura.md
-  - Fontes de Dados: dados.md
-  - Plano de Implementação: plano-implementacao.md
+  - Avaliação: avaliacao.md
+  - API: api.md
+  - Operação: operacao.md
+  - Dados: dados.md
+  - Decisões (ADRs):
+      - adr/index.md
+      - "0001 RAG com LLM de terceiros": adr/0001-rag-com-llm-de-terceiros.md
+      - "0002 SQLite e busca vetorial exata": adr/0002-sqlite-busca-vetorial-exata.md
+      - "0003 Embeddings multilíngues em ONNX": adr/0003-embeddings-multilingues-onnx.md
+      - "0004 Cliente OpenAI-compatível e Groq": adr/0004-cliente-openai-compativel-groq.md
+      - "0005 FastAPI, SSE e front estático": adr/0005-fastapi-sse-front-estatico.md
+      - "0006 Base em lote e busca ao vivo": adr/0006-base-em-lote-com-busca-ao-vivo.md
+      - "0007 Guardas determinísticas": adr/0007-guardas-deterministicas.md
+      - "0008 Hugging Face Spaces": adr/0008-hugging-face-spaces.md
+      - "0009 BERTimbau como sinal secundário": adr/0009-bertimbau-sinal-secundario.md
   - Guiding Questions: guiding-questions.md
   - Canvas: canva.md
