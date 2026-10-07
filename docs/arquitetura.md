@@ -201,6 +201,9 @@ As dependências ficam separadas em `requirements.txt` (runtime leve),
 Esta seção é o registro de processo que o método CBL pede: documentar, refletir,
 compartilhar. A versão anterior não deu certo, e vale dizer como e por quê.
 
+A comparação lado a lado, com os benefícios e o comportamento atual, está em
+[Antes e depois](antes-e-depois.md).
+
 **A versão anterior.** Um app Streamlit. A cada consulta, o sistema baixava a página,
 passava o texto por um BERTimbau (classificador de estilo), procurava um par
 medicamento + condição num dicionário de 38 termos, consultava o PubMed ao vivo (limite

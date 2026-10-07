@@ -19,6 +19,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Arquitetura: arquitetura.md
+  - Antes e depois: antes-e-depois.md
   - Avaliação: avaliacao.md
   - API: api.md
   - Operação: operacao.md

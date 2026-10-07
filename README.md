@@ -57,6 +57,22 @@ opcional** ("sinal de estilo do texto"), carregado só se PyTorch e os pesos est
 disponíveis. Ele não decide o veredito. Detalhes, decisões e a história da versão
 anterior em [Arquitetura](docs/arquitetura.md).
 
+## O que mudou em relação à primeira versão
+
+| | Antes | Depois |
+|---|---|---|
+| Entrada | Só link | Link, texto colado ou alegação curta |
+| Cobertura | 38 termos de um dicionário | Qualquer alegação de saúde, com busca ampliada no PubMed |
+| Evidência | PubMed consultado a cada pergunta | Base local de 1.069 resumos, atualizada toda semana |
+| Decisão | NLI zero-shot + regras | LLM restrito às fontes + guardas em código |
+| Resposta | Rótulo e lista de artigos, só no fim | Veredito e explicação com citações, em streaming |
+| Banco de dados | Nenhum | SQLite com base, consultas, feedback e cache |
+| Hospedagem | Túnel temporário a partir do Colab | Contêiner Docker em Hugging Face Space |
+
+Sem contar o LLM, o sistema responde em 83 ms. Comparação completa, benefícios, custos
+da mudança e o comportamento em cada situação em
+[Antes e depois](docs/antes-e-depois.md).
+
 ## Stack
 
 Python 3.11 · FastAPI + SSE · SQLite (FTS5) + numpy · fastembed (ONNX,
@@ -178,6 +194,7 @@ Contrato dos eventos e exemplos de `curl` em [API](docs/api.md).
 | Documento | Conteúdo |
 |---|---|
 | [Arquitetura](docs/arquitetura.md) | Fluxo, componentes, MLOps, requisitos não funcionais, o que mudou |
+| [Antes e depois](docs/antes-e-depois.md) | Diferenças entre a arquitetura antiga e a nova, benefícios e comportamento atual |
 | [Avaliação](docs/avaliacao.md) | Medições do sistema |
 | [API](docs/api.md) | Endpoints e eventos de streaming |
 | [Operação](docs/operacao.md) | Variáveis, deploy, atualização da base, monitoramento |
