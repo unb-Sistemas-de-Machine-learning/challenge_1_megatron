@@ -1,0 +1,145 @@
+{
+  "data": "2026-10-07",
+  "modelos": [
+    "qwen2.5:3b"
+  ],
+  "base_sha256": "73e8a4836cde39bc5959bbbb0230e0bf107715040da57c276fe2c135150ac7ee",
+  "resumo": {
+    "casos": 8,
+    "acuracia_do_veredito": 0.625,
+    "afirmativos_com_citacao_valida": 1.0,
+    "casos_com_fontes": 8,
+    "respostas_degradadas": 0,
+    "total_s_mediana": 69.82,
+    "total_s_p95": 93.49,
+    "primeiro_texto_s_mediana": 69.82
+  },
+  "casos": [
+    {
+      "alegacao": "Ivermectina cura covid-19",
+      "esperado": [
+        "CONTESTADA",
+        "INCONCLUSIVA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": false,
+      "fontes": 5,
+      "citadas": 5,
+      "modelo": "qwen2.5:3b",
+      "aviso": null,
+      "primeiro_texto_s": 85.89,
+      "total_s": 85.89
+    },
+    {
+      "alegacao": "Hidroxicloroquina previne e trata a covid-19",
+      "esperado": [
+        "CONTESTADA"
+      ],
+      "obtido": "CONTESTADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 5,
+      "modelo": "qwen2.5:3b",
+      "aviso": null,
+      "primeiro_texto_s": 90.64,
+      "total_s": 93.49
+    },
+    {
+      "alegacao": "Azitromicina é eficaz contra a covid-19",
+      "esperado": [
+        "CONTESTADA"
+      ],
+      "obtido": "INCONCLUSIVA",
+      "confianca": "baixa",
+      "acertou": false,
+      "fontes": 5,
+      "citadas": 0,
+      "modelo": "qwen2.5:3b",
+      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
+      "primeiro_texto_s": 68.96,
+      "total_s": 68.96
+    },
+    {
+      "alegacao": "Vitamina C cura o resfriado comum",
+      "esperado": [
+        "CONTESTADA",
+        "EXAGERADA"
+      ],
+      "obtido": "CONTESTADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 4,
+      "citadas": 2,
+      "modelo": "qwen2.5:3b",
+      "aviso": null,
+      "primeiro_texto_s": 62.05,
+      "total_s": 62.05
+    },
+    {
+      "alegacao": "Zinco em altas doses cura a covid-19",
+      "esperado": [
+        "CONTESTADA",
+        "INCONCLUSIVA",
+        "EXAGERADA"
+      ],
+      "obtido": "INCONCLUSIVA",
+      "confianca": "baixa",
+      "acertou": true,
+      "fontes": 4,
+      "citadas": 4,
+      "modelo": "qwen2.5:3b",
+      "aviso": null,
+      "primeiro_texto_s": 75.43,
+      "total_s": 76.57
+    },
+    {
+      "alegacao": "Vitamina D cura a depressão",
+      "esperado": [
+        "CONTESTADA",
+        "EXAGERADA",
+        "INCONCLUSIVA"
+      ],
+      "obtido": "INCONCLUSIVA",
+      "confianca": "baixa",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 0,
+      "modelo": "qwen2.5:3b",
+      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
+      "primeiro_texto_s": 61.84,
+      "total_s": 61.84
+    },
+    {
+      "alegacao": "Metformina ajuda a controlar a glicose no diabetes tipo 2",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "INCONCLUSIVA",
+      "confianca": "baixa",
+      "acertou": false,
+      "fontes": 5,
+      "citadas": 0,
+      "modelo": "qwen2.5:3b",
+      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
+      "primeiro_texto_s": 64.93,
+      "total_s": 64.93
+    },
+    {
+      "alegacao": "Canabidiol reduz crises em formas graves de epilepsia",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 5,
+      "modelo": "qwen2.5:3b",
+      "aviso": null,
+      "primeiro_texto_s": 70.69,
+      "total_s": 70.69
+    }
+  ]
+}
