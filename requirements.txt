@@ -1,17 +1,8 @@
-# Dependências de runtime (app + scripts de treino), com versões fixadas para
-# que o build de produção seja reprodutível. Testes: requirements-dev.txt.
-#
-# torch: em servidor sem GPU, instale a build de CPU (bem menor):
-#   pip install -r requirements.txt --extra-index-url https://download.pytorch.org/whl/cpu
+fastapi==0.142.4
+uvicorn==0.54.0
+httpx==0.28.1
+numpy==2.2.6
+fastembed==0.9.0
+requests==2.34.2
 trafilatura==2.2.0
 lxml_html_clean==0.4.5
-requests==2.34.2
-pandas==2.3.3
-pyarrow==25.0.1
-scikit-learn==1.7.2
-joblib==1.6.0
-streamlit==1.64.0
-torch==2.14.0
-transformers==5.17.0
-accelerate==1.15.0
-huggingface_hub==1.33.0
