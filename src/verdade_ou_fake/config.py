@@ -63,10 +63,16 @@ class Config:
     )
     fontes_por_resposta: int = 5
     # Abaixo disso a base local não cobre a alegação e vale a ida ao PubMed.
-    similaridade_minima: float = float(os.environ.get("VOF_SIMILARIDADE_MINIMA", "0.45"))
-    cache_horas: int = int(os.environ.get("VOF_CACHE_HORAS", "168"))
-    limite_por_minuto: int = int(os.environ.get("VOF_LIMITE_POR_MINUTO", "12"))
-    busca_ao_vivo: bool = os.environ.get("VOF_BUSCA_AO_VIVO", "1") != "0"
+    similaridade_minima: float = field(
+        default_factory=lambda: float(os.environ.get("VOF_SIMILARIDADE_MINIMA", "0.45"))
+    )
+    cache_horas: int = field(default_factory=lambda: int(os.environ.get("VOF_CACHE_HORAS", "168")))
+    limite_por_minuto: int = field(
+        default_factory=lambda: int(os.environ.get("VOF_LIMITE_POR_MINUTO", "12"))
+    )
+    busca_ao_vivo: bool = field(
+        default_factory=lambda: os.environ.get("VOF_BUSCA_AO_VIVO", "1") != "0"
+    )
 
     @property
     def llm_ativo(self) -> bool:
