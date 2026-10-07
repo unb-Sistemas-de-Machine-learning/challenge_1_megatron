@@ -5,6 +5,18 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parents[2]
 
 
+def carregar_env(caminho: Path | None = None) -> None:
+    caminho = caminho or RAIZ / ".env"
+    if not caminho.is_file():
+        return
+    for linha in caminho.read_text(encoding="utf-8").splitlines():
+        linha = linha.strip()
+        if not linha or linha.startswith("#") or "=" not in linha:
+            continue
+        nome, _, valor = linha.partition("=")
+        os.environ.setdefault(nome.strip(), valor.strip().strip("'\""))
+
+
 def _lista(valor: str) -> list[str]:
     return [item.strip() for item in valor.split(",") if item.strip()]
 

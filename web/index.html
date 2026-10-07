@@ -739,12 +739,19 @@ async function enviarFeedback(valor){
 $("fbSim").addEventListener("click", function(){ enviarFeedback(1); });
 $("fbNao").addEventListener("click", function(){ enviarFeedback(-1); });
 
+(function checarPelaUrl(){
+  try {
+    var q = new URLSearchParams(location.search).get("q");
+    if (q && q.trim().length >= 8) enviar(q.trim().slice(0, 20000));
+  } catch (e) {}
+})();
+
 (async function carregarSaude(){
   try {
     var r = await fetch("/api/saude");
     if (!r.ok) throw new Error("saude");
     var s = await r.json();
-    var n = s.base && s.base.artigos != null ? s.base.artigos : s.documentos;
+    var n = s.documentos != null ? s.documentos : (s.base && s.base.artigos);
     var texto = "";
     if (n != null) texto = "Base: " + Number(n).toLocaleString("pt-BR") + " estudos do PubMed";
     var data = s.base && /^(\d{4})-(\d{2})-(\d{2})/.exec(s.base.gerado_em || "");

@@ -47,6 +47,7 @@ modo degradado: recupera e mostra as fontes, mas não redige o veredito.
 | `LLM_API_KEY` | vazio | Chave do provedor. Se vazia, usa `GROQ_API_KEY`; se ambas vazias, modo degradado |
 | `LLM_MODELOS` | `llama-3.3-70b-versatile,openai/gpt-oss-120b,llama-3.1-8b-instant` | Lista separada por vírgulas, tentada em ordem (fallback em erro de cota ou de servidor) |
 | `LLM_MODELO_RAPIDO` | `llama-3.1-8b-instant` | Modelo pequeno que identifica a alegação |
+| `LLM_TIMEOUT` | `45` | Segundos de espera pela resposta do LLM antes de tentar o próximo modelo |
 | `VOF_BANCO` | `dados/vof.db` | Caminho do arquivo SQLite |
 | `VOF_MODELO_EMBEDDING` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Modelo de embeddings (trocar exige reconstruir o banco) |
 | `VOF_SIMILARIDADE_MINIMA` | `0.45` | Cosseno mínimo para uma fonte contar como relevante; abaixo disso a base local é considerada sem cobertura |

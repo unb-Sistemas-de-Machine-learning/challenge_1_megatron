@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 from verdade_ou_fake import rag, sinal_estilo
 from verdade_ou_fake.banco import Banco
 from verdade_ou_fake.base import construir, ler_manifesto
-from verdade_ou_fake.config import Config
+from verdade_ou_fake.config import Config, carregar_env
 from verdade_ou_fake.embeddings import criar_embutidor
 from verdade_ou_fake.llm import ClienteLLM
 from verdade_ou_fake.recuperacao import Recuperador
@@ -82,7 +82,10 @@ def _aquecer(servico: rag.Servico) -> None:
 
 @asynccontextmanager
 async def ciclo_de_vida(app: FastAPI):
-    servico = getattr(app.state, "servico", None) or criar_servico(Config())
+    servico = getattr(app.state, "servico", None)
+    if servico is None:
+        carregar_env()
+        servico = criar_servico(Config())
     app.state.servico = servico
     app.state.limite = LimiteDeRequisicoes(servico.config.limite_por_minuto)
     threading.Thread(target=_aquecer, args=(servico,), daemon=True).start()

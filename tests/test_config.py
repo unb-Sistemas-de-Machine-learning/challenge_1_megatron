@@ -151,3 +151,24 @@ def test_instancias_criadas_em_momentos_diferentes_leem_o_ambiente_de_cada_momen
 def test_config_e_imutavel():
     with pytest.raises(AttributeError):
         Config().cache_horas = 1
+
+
+def test_carregar_env_define_so_o_que_ainda_nao_esta_no_ambiente(tmp_path, monkeypatch):
+    from verdade_ou_fake.config import carregar_env
+
+    arquivo = tmp_path / ".env"
+    arquivo.write_text("# comentario\nVOF_TESTE_A='do arquivo'\nVOF_TESTE_B=arquivo\nsem_igual\n")
+    monkeypatch.delenv("VOF_TESTE_A", raising=False)
+    monkeypatch.setenv("VOF_TESTE_B", "ambiente")
+    carregar_env(arquivo)
+    import os
+
+    assert os.environ["VOF_TESTE_A"] == "do arquivo"
+    assert os.environ["VOF_TESTE_B"] == "ambiente"
+    monkeypatch.delenv("VOF_TESTE_A")
+
+
+def test_carregar_env_ignora_arquivo_ausente(tmp_path):
+    from verdade_ou_fake.config import carregar_env
+
+    carregar_env(tmp_path / "nao-existe")

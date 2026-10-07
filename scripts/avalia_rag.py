@@ -14,7 +14,7 @@ sys.path.insert(0, str(RAIZ / "src"))
 from verdade_ou_fake import rag  # noqa: E402
 from verdade_ou_fake.api import criar_servico  # noqa: E402
 from verdade_ou_fake.base import construir  # noqa: E402
-from verdade_ou_fake.config import Config  # noqa: E402
+from verdade_ou_fake.config import Config, carregar_env  # noqa: E402
 
 CONJUNTO = RAIZ / "dados" / "avaliacao" / "alegacoes.json"
 SAIDA = RAIZ / "dados" / "avaliacao" / "resultado_rag.json"
@@ -77,6 +77,7 @@ async def main() -> None:
     parser.add_argument("--pausa", type=float, default=2.0)
     args = parser.parse_args()
 
+    carregar_env()
     casos = json.loads(CONJUNTO.read_text(encoding="utf-8"))[: args.limite]
     with tempfile.TemporaryDirectory() as pasta:
         config = Config(banco=Path(pasta) / "avaliacao.db")
