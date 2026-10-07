@@ -81,7 +81,6 @@ def test_taxa_de_extracao_com_total_zero_nao_divide_por_zero():
 def test_mapeia_classe_fakerecogna_para_rotulo_do_projeto():
     df = filtrar_categoria_saude(ler_fakerecogna(FIXTURE))
     resultado = reextrair_textos(df, extrair=_extrator_falso_com_sucesso)
-    # Classe 0.0 (fake) -> rotulo 1 (desinformação); Classe 1.0 (real) -> rotulo 0
     linha_vacina = df[df["URL"].str.contains("vacina-autismo")].iloc[0]
     assert linha_vacina["Classe"] == 0.0
     linha_campanha = df[df["URL"].str.contains("campanha-vacinacao")].iloc[0]

@@ -1,16 +1,3 @@
-"""Configuração do serviço, toda por variável de ambiente.
-
-O LLM é qualquer servidor compatível com a API de chat da OpenAI. Trocar de
-provedor é trocar três variáveis, sem tocar no código:
-
-    Groq (padrão)   LLM_BASE_URL=https://api.groq.com/openai/v1
-    Gemini          LLM_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai
-    Ollama (local)  LLM_BASE_URL=http://localhost:11434/v1   LLM_API_KEY=ollama
-
-Sem LLM_API_KEY o serviço sobe em modo degradado: recupera e mostra as fontes,
-mas não redige o veredito.
-"""
-
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -40,8 +27,6 @@ class Config:
     llm_api_key: str = field(
         default_factory=lambda: os.environ.get("LLM_API_KEY") or os.environ.get("GROQ_API_KEY", "")
     )
-    # Tentados em ordem: se um modelo estoura a cota gratuita (HTTP 429) ou
-    # falha, o próximo assume. Somar as cotas é o que sustenta uma demo.
     llm_modelos: list[str] = field(
         default_factory=lambda: _lista(
             os.environ.get(
@@ -50,11 +35,13 @@ class Config:
             )
         )
     )
-    # Modelo pequeno para a etapa de entender a alegação (JSON curto).
     llm_modelo_rapido: str = field(
         default_factory=lambda: os.environ.get("LLM_MODELO_RAPIDO", "llama-3.1-8b-instant")
     )
 
+    llm_timeout: float = field(
+        default_factory=lambda: float(os.environ.get("LLM_TIMEOUT", "45"))
+    )
     modelo_embedding: str = field(
         default_factory=lambda: os.environ.get(
             "VOF_MODELO_EMBEDDING",
@@ -62,7 +49,6 @@ class Config:
         )
     )
     fontes_por_resposta: int = 5
-    # Abaixo disso a base local não cobre a alegação e vale a ida ao PubMed.
     similaridade_minima: float = field(
         default_factory=lambda: float(os.environ.get("VOF_SIMILARIDADE_MINIMA", "0.45"))
     )

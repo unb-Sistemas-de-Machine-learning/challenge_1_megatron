@@ -53,7 +53,9 @@ def criar_servico(config: Config) -> rag.Servico:
     banco = Banco(config.banco)
     embutir = criar_embutidor(config.modelo_embedding)
     llm = (
-        ClienteLLM(config.llm_base_url, config.llm_api_key, config.llm_modelos)
+        ClienteLLM(
+            config.llm_base_url, config.llm_api_key, config.llm_modelos, config.llm_timeout
+        )
         if config.llm_ativo
         else None
     )

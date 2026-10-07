@@ -1,19 +1,3 @@
-"""Persistência em SQLite: base de conhecimento, cache e registro de uso.
-
-Um único arquivo guarda três coisas:
-
-- `documentos` (+ índice FTS5 `documentos_fts`): os resumos científicos e seus
-  embeddings. É a base de conhecimento do RAG.
-- `consultas`: cada análise feita — veredito, fontes citadas, latência, modelo
-  e o feedback do usuário. É a matéria-prima do monitoramento (P8) e do ciclo
-  de feedback (P9) de Kreuzberger et al.
-- `paginas`: cache do texto extraído de cada link, para não baixar duas vezes.
-
-Por que SQLite e não um banco vetorial dedicado: a base tem alguns milhares de
-documentos, e nessa escala a busca vetorial exata com numpy leva milissegundos.
-Um servidor de banco só acrescentaria um ponto de falha (ver ADR 0002).
-"""
-
 import json
 import sqlite3
 import threading
@@ -81,8 +65,6 @@ class Documento:
 
 
 class Banco:
-    """Conexão única protegida por trava: o serviço é um processo só."""
-
     def __init__(self, caminho: Path | str):
         if str(caminho) != ":memory:":
             Path(caminho).parent.mkdir(parents=True, exist_ok=True)
@@ -94,12 +76,10 @@ class Banco:
             self._con.executescript(ESQUEMA)
             self._con.commit()
 
-    # ------------------------------------------------------------ documentos
 
     def inserir_documentos(
         self, documentos: list[dict], embeddings: np.ndarray, origem: str = "lote"
     ) -> int:
-        """Insere documentos novos; os já existentes (fonte, id_externo) são ignorados."""
         inseridos = 0
         with self._trava:
             for doc, vetor in zip(documentos, embeddings, strict=True):
@@ -141,7 +121,6 @@ class Banco:
             return self._con.execute("SELECT COUNT(*) FROM documentos").fetchone()[0]
 
     def carregar_embeddings(self) -> tuple[np.ndarray, np.ndarray]:
-        """Devolve (ids, matriz) com todos os vetores, para a busca em memória."""
         with self._trava:
             linhas = self._con.execute("SELECT id, embedding FROM documentos ORDER BY id").fetchall()
         if not linhas:
@@ -151,7 +130,6 @@ class Banco:
         return ids, matriz
 
     def buscar_texto(self, expressao_fts: str, limite: int) -> list[int]:
-        """Busca lexical (BM25). Devolve ids em ordem de relevância."""
         if not expressao_fts:
             return []
         with self._trava:
@@ -188,7 +166,6 @@ class Banco:
         }
         return [por_id[i] for i in ids if i in por_id]
 
-    # -------------------------------------------------------------- consultas
 
     def registrar_consulta(self, **campos) -> int:
         campos.setdefault("criado_em", time.time())
@@ -205,7 +182,6 @@ class Banco:
             return cursor.lastrowid
 
     def buscar_cache(self, chave: str, validade_segundos: float) -> list[dict] | None:
-        """Eventos da última resposta gerada (não replay) para a mesma entrada."""
         with self._trava:
             linha = self._con.execute(
                 "SELECT eventos FROM consultas WHERE chave = ? AND do_cache = 0 "
@@ -223,7 +199,6 @@ class Banco:
             return cursor.rowcount > 0
 
     def metricas(self) -> dict:
-        """Indicadores de operação para o painel /api/metricas."""
         with self._trava:
             geral = self._con.execute(
                 "SELECT COUNT(*) AS total, SUM(do_cache) AS do_cache, "
@@ -266,7 +241,6 @@ class Banco:
             "documentos_por_origem": {linha[0]: linha[1] for linha in documentos},
         }
 
-    # ---------------------------------------------------------------- páginas
 
     def obter_pagina(self, url: str) -> tuple[str, str] | None:
         with self._trava:

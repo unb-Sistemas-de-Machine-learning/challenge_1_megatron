@@ -46,5 +46,4 @@ def test_treina_so_com_os_dados_da_fonte_de_origem():
         return {}
 
     avaliar_cross_source(DF_DUAS_FONTES, treinar_fn_espiao, _metrica_fn_falsa)
-    # 2 notícias fakebr treinando p/ testar em fakerecogna, depois 2 fakerecogna p/ testar em fakebr
     assert chamadas == [2, 2]

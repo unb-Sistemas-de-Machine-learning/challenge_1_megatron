@@ -1,7 +1,3 @@
-# Scripts de treino e classificador opcional (BERTimbau). Não entra na imagem de produção.
-#
-# torch: em servidor sem GPU, instale a build de CPU (bem menor):
-#   pip install -r requirements-treino.txt --extra-index-url https://download.pytorch.org/whl/cpu
 -r requirements.txt
 torch==2.14.0
 transformers==5.17.0

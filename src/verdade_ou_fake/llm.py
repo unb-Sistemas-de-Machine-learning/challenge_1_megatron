@@ -1,13 +1,3 @@
-"""Cliente mínimo para qualquer API de chat compatível com a OpenAI.
-
-Sem SDK: são duas chamadas HTTP (com e sem streaming), e depender só de
-`httpx` deixa o mesmo código falar com Groq, Gemini, OpenRouter e Ollama.
-
-Os modelos são tentados em ordem. Se o primeiro responde 429 (cota gratuita
-esgotada) ou erro de servidor, o próximo assume — desde que nenhum token
-tenha sido entregue ainda, para o usuário nunca ver uma resposta emendada.
-"""
-
 import json
 import re
 from collections.abc import AsyncIterator
@@ -19,7 +9,7 @@ PENSAMENTO = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 
 
 class LLMIndisponivel(RuntimeError):
-    """Nenhum dos modelos configurados respondeu."""
+    pass
 
 
 class ClienteLLM:
@@ -55,7 +45,6 @@ class ClienteLLM:
         max_tokens: int = 300,
         formato_json: bool = False,
     ) -> str:
-        """Resposta inteira de uma vez — usada para saídas curtas e estruturadas."""
         ultimo_erro: Exception | None = None
         for nome in self._ordem(modelo):
             corpo = {
@@ -82,7 +71,6 @@ class ClienteLLM:
     async def transmitir(
         self, mensagens: list[dict], max_tokens: int = 600
     ) -> AsyncIterator[str]:
-        """Entrega a resposta em pedaços, conforme o modelo gera."""
         ultimo_erro: Exception | None = None
         for nome in self.modelos:
             corpo = {
@@ -107,7 +95,6 @@ class ClienteLLM:
             except (httpx.HTTPError, ValueError) as erro:
                 ultimo_erro = erro
                 if entregou:
-                    # Já há texto na tela: melhor terminar curto do que recomeçar.
                     return
         raise LLMIndisponivel(str(ultimo_erro))
 
@@ -121,14 +108,13 @@ async def _ler_sse(resposta: httpx.Response) -> AsyncIterator[str]:
             return
         try:
             escolhas = json.loads(dado).get("choices") or []
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, AttributeError):
             continue
         if escolhas and (texto := (escolhas[0].get("delta") or {}).get("content")):
             yield texto
 
 
 async def _sem_pensamento(pedacos: AsyncIterator[str]) -> AsyncIterator[str]:
-    """Remove blocos <think>…</think> que modelos de raciocínio emitem no início."""
     acumulado = ""
     decidido = False
     aparar_inicio = False
@@ -144,7 +130,7 @@ async def _sem_pensamento(pedacos: AsyncIterator[str]) -> AsyncIterator[str]:
         acumulado += pedaco
         inicio = acumulado.lstrip()
         if "<think>".startswith(inicio[:7]) and len(inicio) < 7:
-            continue  # ainda não dá para saber se começa com <think>
+            continue
         if inicio.startswith("<think>"):
             if "</think>" not in inicio:
                 continue

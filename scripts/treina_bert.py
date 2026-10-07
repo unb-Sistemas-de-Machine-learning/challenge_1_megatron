@@ -1,20 +1,3 @@
-"""Faz o fine-tuning do BERTimbau no recorte de saúde e compara com o baseline.
-
-Usa a MESMA divisão treino/teste de `scripts/treina_modelo.py` (mesmo
-`random_state`, mesmo agrupamento por par) para que a comparação de F1 seja
-justa. Por critério da Task 10: o BERTimbau só substitui o baseline TF-IDF se
-superar o F1 macro dele no conjunto de teste — ganho marginal não justifica o
-custo de inferência de um modelo muito maior.
-
-Gera `modelos/cards/bertimbau.json` (status `staging`) com o F1, o hash dos
-pesos e o limiar do gate. O app só serve o modelo depois que uma pessoa revisa
-o card e o promove manualmente a `producao`.
-
-Uso:
-    python scripts/treina_bert.py                    # treina, avalia e gera o card
-    python scripts/treina_bert.py --somente-avaliar  # reavalia o modelo já salvo e regenera o card
-"""
-
 import argparse
 import sys
 from datetime import datetime
@@ -37,10 +20,8 @@ CAMINHO_DADOS = RAIZ / "dados" / "processed" / "saude_ptbr.csv"
 CAMINHO_MODELO = RAIZ / "modelos" / "bertimbau"
 CAMINHO_CARD = RAIZ / "modelos" / "cards" / "bertimbau.json"
 LIMIAR_RISCO = 0.5
-TAMANHO_MAXIMO_TOKENS = 256  # o app usa o mesmo truncamento na inferência
+TAMANHO_MAXIMO_TOKENS = 256
 
-# F1 macro do baseline TF-IDF, registrado em docs/canva.md (validação cruzada
-# por par, 10 dobras): 0,80 ± 0,08.
 F1_BASELINE = 0.80
 
 
@@ -95,8 +76,6 @@ def main(somente_avaliar: bool = False) -> None:
         },
         metricas={
             "f1_macro_same_source": f1_bert,
-            # Avaliar cross-source exigiria dois fine-tunings extras (horas em
-            # CPU); o gate só avalia essa condição quando o valor existe.
             "f1_macro_cross_source_fakebr_para_fakerecogna": None,
             "f1_macro_cross_source_fakerecogna_para_fakebr": None,
         },
@@ -114,11 +93,6 @@ def main(somente_avaliar: bool = False) -> None:
 
 def _treinar(treino_x: list[str], treino_y: list[int]) -> None:
     print("Treinando BERTimbau (pode levar bastante tempo em CPU sem GPU)...\n")
-    # Ambiente sem GPU e com poucos GB de RAM livres: o fine-tuning completo
-    # (110M parâmetros treináveis) já foi morto pelo OOM killer do kernel uma
-    # vez neste projeto. Congelar os embeddings + as 8 primeiras das 12
-    # camadas do encoder e reduzir o tamanho de sequência corta a memória do
-    # otimizador (Adam guarda 2 cópias extras por parâmetro treinável).
     treinar_bert(
         treino_x,
         treino_y,
@@ -131,7 +105,7 @@ def _treinar(treino_x: list[str], treino_y: list[int]) -> None:
 
 
 if __name__ == "__main__":
-    argumentos = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    argumentos = argparse.ArgumentParser(description="Faz o fine-tuning do BERTimbau no recorte de saúde e compara com o baseline")
     argumentos.add_argument(
         "--somente-avaliar",
         action="store_true",

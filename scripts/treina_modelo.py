@@ -1,8 +1,3 @@
-"""Treina o baseline no recorte de saúde e reporta as métricas.
-
-Uso: python scripts/treina_modelo.py
-"""
-
 import subprocess
 import sys
 from collections.abc import Callable
@@ -42,13 +37,6 @@ MetricaFn = Callable[[object, list[str], list[int]], float]
 def avaliar_cross_source(
     df: pd.DataFrame, treinar_fn: TreinarFn, metrica_fn: MetricaFn
 ) -> dict[str, float | None]:
-    """Mede o viés de fonte: treina numa fonte, testa na outra.
-
-    Um modelo que aprendeu o estilo editorial do portal (em vez de sinais de
-    desinformação) terá F1 alto na mesma fonte e baixo na fonte oposta. Exige
-    as duas fontes presentes em `df["fonte"]`; se faltar uma, devolve None nas
-    duas direções em vez de comparar parcialmente.
-    """
     fontes = set(df["fonte"].unique())
     if not {"fakebr", "fakerecogna"} <= fontes:
         return {"fakebr_para_fakerecogna": None, "fakerecogna_para_fakebr": None}
@@ -78,14 +66,11 @@ def _f1_macro(modelo, textos, rotulos) -> float:
 
 
 def main() -> None:
-    # Colunas geradas pela Task 5 (ver dados/README.md). rotulo: 1 = desinformação.
     df = pd.read_csv(CAMINHO_DADOS, dtype={"id_par": str})
     df["fonte"] = "fakebr"
     print(f"Notícias (Fake.br): {len(df)}")
     print(df["rotulo"].value_counts(), "\n")
 
-    # A divisão é por par: a falsa e a verdadeira de um mesmo assunto ficam
-    # sempre do mesmo lado. Separá-las vazaria o assunto entre treino e teste.
     divisor = GroupShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
     indices_treino, indices_teste = next(divisor.split(df, groups=df["id_par"]))
     treino, teste = df.iloc[indices_treino], df.iloc[indices_teste]
@@ -125,20 +110,8 @@ def main() -> None:
         tipo="tfidf_logreg",
         commit=_commit_atual(),
         dados={
-            # Hardcoded: `treinar()` acima só é chamado com dados do Fake.br.
-            # `df_combinado`/FakeRecogna entram apenas na avaliação cross-source
-            # (diagnóstico de viés de fonte), nunca no treino em si — então a
-            # existência do CSV do FakeRecogna não deve mudar o que este card
-            # declara como fonte de treino. Treino combinado é um reforço
-            # futuro deliberadamente fora do escopo desta correção.
             "fontes": ["fakebr"],
             "hash_fakebr": IMPRESSAO_DIGITAL_FAKEBR,
-            # FakeRecogna: o hash do parquet varia a cada download e não é
-            # persistido entre scripts hoje (prepara_fakerecogna.py calcula o
-            # seu próprio hash, mas só imprime — não grava em lugar algum que
-            # este script possa ler). Encanar essa passagem de metadata entre
-            # scripts é um reforço futuro, não feito aqui para manter esta
-            # correção enxuta.
             "hash_fakerecogna": None,
             "volume_treino": len(treino_x),
             "volume_teste": len(teste_x),

@@ -1,9 +1,3 @@
-"""Verifica se um model card passa no gate de qualidade — usado pelo CI.
-
-Uso: python scripts/verifica_gate.py modelos/cards/baseline.json
-Saída: código 0 se aprovado, 1 se reprovado.
-"""
-
 import sys
 from pathlib import Path
 
@@ -14,7 +8,6 @@ from verdade_ou_fake.model_card import aprovar_gate, carregar_card
 
 
 def _formatar_cross_source(valor: float | None) -> str:
-    """Formata uma métrica cross-source, cobrindo o caso de não avaliada (None)."""
     return "não avaliado" if valor is None else f"{valor:.3f}"
 
 

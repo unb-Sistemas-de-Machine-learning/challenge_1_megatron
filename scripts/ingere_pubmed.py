@@ -1,23 +1,3 @@
-"""Ingestão em lote da base de conhecimento do RAG a partir do PubMed.
-
-Para cada par medicamento × condição do vocabulário (e para cada medicamento
-sozinho), busca os estudos mais relevantes — priorizando revisões
-sistemáticas, meta-análises e ensaios randomizados — e grava os resumos em
-`dados/base/pubmed.jsonl`, um artigo por linha.
-
-O JSONL é o dado versionado no git (legível em diff); o banco SQLite com os
-embeddings é derivado dele por `scripts/constroi_base.py`. O manifesto ao lado
-registra data, volume e SHA-256, para que cada resposta do sistema possa ser
-rastreada até a versão da base que a gerou.
-
-Uso:
-    python scripts/ingere_pubmed.py              # ingestão completa (~5 min)
-    python scripts/ingere_pubmed.py --limite 5   # teste rápido com 5 consultas
-
-É o script que o workflow `.github/workflows/ingestao-base.yml` roda toda
-semana (resposta à GQ7: como a base se mantém atualizada).
-"""
-
 import argparse
 import csv
 import hashlib
@@ -50,7 +30,6 @@ def ler_termos(caminho: Path) -> tuple[list[str], list[str]]:
 
 
 def montar_consultas(medicamentos: list[str], condicoes: list[str]) -> list[tuple[str, int]]:
-    """Devolve (termo de busca, quantos artigos pedir)."""
     consultas = [
         (f'"{m}"[Title/Abstract] AND {FILTRO_ESTUDOS_FORTES}', ARTIGOS_POR_MEDICAMENTO)
         for m in medicamentos
@@ -71,7 +50,7 @@ def sha256_do_arquivo(caminho: Path) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser = argparse.ArgumentParser(description="Ingestão em lote da base de conhecimento do RAG a partir do PubMed")
     parser.add_argument("--limite", type=int, help="roda só as N primeiras consultas")
     args = parser.parse_args()
 
@@ -79,13 +58,13 @@ def main() -> None:
     if args.limite:
         consultas = consultas[: args.limite]
 
-    pmids: dict[str, None] = {}  # dict preserva ordem e deduplica
+    pmids: dict[str, None] = {}
     falhas = 0
     for i, (termo, quantos) in enumerate(consultas, 1):
         try:
             for pmid in buscar_pmids(termo, quantos):
                 pmids[pmid] = None
-        except Exception as erro:  # rede instável não pode derrubar a ingestão inteira
+        except Exception as erro:
             falhas += 1
             print(f"  falha em {termo[:60]}: {erro}", file=sys.stderr)
         if i % 25 == 0:

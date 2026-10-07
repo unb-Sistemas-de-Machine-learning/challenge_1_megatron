@@ -1,19 +1,3 @@
-"""Testa a plumbing do classificador BERTimbau (Task 10, Fase 2).
-
-Usa um checkpoint minúsculo (`hf-internal-testing/tiny-random-BertForSequenceClassification`)
-em vez do BERTimbau real (`neuralmind/bert-base-portuguese-cased`, ~440MB) — mesmo
-padrão que os testes já usam para o PubMed e o NLI: exercitar a integração real
-com a biblioteca sem pagar o custo do modelo de produção em cada rodada de teste.
-A avaliação com o BERTimbau real acontece em `scripts/treina_bert.py`, fora da
-suíte automatizada, do mesmo jeito que `scripts/treina_modelo.py` avalia o baseline.
-
-ATENÇÃO — única exceção à regra "testes sem rede" (docs/plano-implementacao.md):
-o checkpoint minúsculo ainda é baixado do Hugging Face Hub na primeira chamada de
-`from_pretrained`. Diferente do PubMed e do NLI (que usam fixture local), aqui não
-há como evitar a rede sem vendorizar o checkpoint no repositório. Marcados com
-`@pytest.mark.rede` para que `pytest -m "not rede"` rode a suíte inteira offline.
-"""
-
 from pathlib import Path
 
 import pytest

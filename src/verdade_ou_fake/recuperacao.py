@@ -1,12 +1,3 @@
-"""Recuperação híbrida: busca vetorial + busca lexical, fundidas por RRF.
-
-As duas buscas erram em lugares diferentes. A vetorial entende paráfrase e
-cruza idiomas, mas confunde fármacos de nome parecido; a lexical (BM25) acerta
-o nome exato do medicamento, mas não sabe que "pressão alta" é "hypertension".
-A fusão por Reciprocal Rank Fusion combina as duas ordenações sem precisar
-calibrar escalas de score diferentes.
-"""
-
 import re
 import threading
 from dataclasses import dataclass
@@ -18,7 +9,6 @@ from verdade_ou_fake.embeddings import Embutidor
 
 K_RRF = 60
 CANDIDATOS_POR_BUSCA = 30
-# Hierarquia de evidência: revisão sistemática vale mais que estudo isolado.
 BONUS_POR_TIPO = {
     "Systematic Review": 1.20,
     "Meta-Analysis": 1.20,
@@ -36,12 +26,11 @@ PALAVRAS_VAZIAS = {
 @dataclass
 class Trecho:
     documento: Documento
-    similaridade: float  # cosseno com a consulta; 0 se veio só da busca lexical
+    similaridade: float
     pontuacao: float
 
 
 def montar_expressao_fts(texto: str, maximo_termos: int = 12) -> str:
-    """Transforma texto livre numa expressão FTS5 segura (termos unidos por OR)."""
     termos: list[str] = []
     for palavra in re.findall(r"[\w-]+", texto.lower()):
         palavra = palavra.strip("-_")
@@ -61,7 +50,6 @@ class Recuperador:
         self._total_carregado = -1
 
     def _garantir_matriz(self) -> None:
-        """Recarrega os vetores se a base cresceu (ingestão ou busca ao vivo)."""
         total = self._banco.total_documentos()
         with self._trava:
             if total != self._total_carregado:
@@ -96,7 +84,6 @@ class Recuperador:
                 continue
             bonus = max((BONUS_POR_TIPO.get(t, 1.0) for t in documento.tipos), default=1.0)
             if doc_id not in similaridade_por_id:
-                # Veio só da busca lexical: calcula o cosseno para a checagem de cobertura.
                 indice = int(np.searchsorted(self._ids, doc_id))
                 similaridade_por_id[doc_id] = float(similaridades[indice])
             trechos.append(

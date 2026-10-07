@@ -1,10 +1,3 @@
-"""Proteção contra SSRF: o servidor só baixa URLs públicas http/https.
-
-Em produção o app roda num servidor e baixa qualquer link colado pelo
-usuário — sem essa trava, alguém poderia apontar para serviços internos
-(localhost, rede privada, endpoint de metadados da nuvem).
-"""
-
 import socket
 
 import pytest
@@ -88,8 +81,6 @@ def test_extrair_noticia_nao_baixa_url_interna(monkeypatch):
 
 
 def test_extrair_noticia_revalida_cada_redirecionamento(monkeypatch):
-    """Um site público não pode redirecionar o servidor para a rede interna."""
-
     def resolver(host, porta, *args, **kwargs):
         ip = "169.254.169.254" if host == "metadados.interno" else "93.184.216.34"
         return _resolver_para(ip)(host, porta)

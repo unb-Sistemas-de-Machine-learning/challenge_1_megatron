@@ -107,13 +107,10 @@ def test_aprova_no_limite_exato_da_queda_permitida():
             "f1_macro_cross_source_fakerecogna_para_fakebr": 0.60,
         }
     )
-    # queda = 0.80 - 0.60 = 0.20, igual ao limiar -> deve aprovar
     assert aprovar_gate(card) is True
 
 
 def test_aprova_sem_avaliar_cross_source_quando_metricas_sao_none():
-    # Cross-source ainda não calculado (ex.: FakeRecogna não gerado) não deve
-    # reprovar por omissão -- só a condição de F1 same-source é exigida.
     card = _card_valido(
         metricas={
             "f1_macro_same_source": 0.81,
