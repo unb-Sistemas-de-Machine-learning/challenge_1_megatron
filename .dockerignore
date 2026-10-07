@@ -1,5 +1,7 @@
 .git
 .github
+.claude
+.env
 venv
 .venv
 env
@@ -10,8 +12,12 @@ env
 site
 docs
 tests
+notebooks
 dados/raw
 dados/processed
 dados/avaliacao
+*.db
+*.db-wal
+*.db-shm
 modelos/*
 !modelos/cards

@@ -22,3 +22,9 @@ modelos/cards/*
 !modelos/cards/*.json
 *.joblib
 .pytest_cache/
+
+.env
+dados/*.db
+dados/*.db-wal
+dados/*.db-shm
+*.db
