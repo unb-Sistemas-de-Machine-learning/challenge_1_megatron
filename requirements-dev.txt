@@ -1,2 +1,2 @@
--r requirements.txt
+-r requirements-treino.txt
 pytest==9.1.1
