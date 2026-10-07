@@ -32,6 +32,8 @@ SEPARADOR = "---"
 TAMANHO_MINIMO = 12
 FOLGA_SIMILARIDADE = 0.12
 CANDIDATOS = 15
+LIMITE_CABECALHO = 700
+SEM_DETALHE = "O modelo não detalhou a análise. Consulte os estudos listados abaixo."
 
 PROMPT_ALEGACAO = """Você extrai a alegação central de saúde de um texto em português.
 Responda apenas com um objeto JSON com as chaves:
@@ -157,6 +159,18 @@ def interpretar_cabecalho(cabecalho: str) -> Resultado:
         confianca=confianca if confianca in ORDEM_CONFIANCA else "baixa",
         resumo=campo("RESUMO"),
     )
+
+
+def separar_cabecalho(texto: str) -> tuple[str, str]:
+    if SEPARADOR in texto:
+        cabecalho, _, corpo = texto.partition(SEPARADOR)
+        return cabecalho, corpo.lstrip("-\n ")
+    linhas = texto.split("\n")
+    fim = 0
+    for indice, linha in enumerate(linhas):
+        if re.match(r"\W*(VEREDITO|CONFIAN[CÇ]A|RESUMO)\s*\W*:", linha, re.IGNORECASE):
+            fim = indice + 1
+    return "\n".join(linhas[:fim]), "\n".join(linhas[fim:]).lstrip("\n ")
 
 
 def aplicar_guardas(resultado: Resultado, fontes: list[dict]) -> bool:
@@ -295,29 +309,36 @@ async def _redigir(
     async for pedaco in servico.llm.transmitir(mensagens):
         if not no_corpo:
             cabecalho += pedaco
-            if SEPARADOR not in cabecalho and len(cabecalho) < 700:
+            if SEPARADOR not in cabecalho and len(cabecalho) < LIMITE_CABECALHO:
                 continue
-            antes, _, pedaco = cabecalho.partition(SEPARADOR)
+            no_corpo = True
+            antes, pedaco = separar_cabecalho(cabecalho)
             interpretado = interpretar_cabecalho(antes)
             resultado.codigo = interpretado.codigo
             resultado.confianca = interpretado.confianca
             resultado.resumo = interpretado.resumo
             yield evento_veredito(resultado)
-            no_corpo = True
-            pedaco = pedaco.lstrip("-\n ")
         limpo = filtro.alimentar(pedaco)
         if limpo:
             resultado.corpo += limpo
             yield {"tipo": "texto", "texto": limpo}
     if not no_corpo:
-        interpretado = interpretar_cabecalho(cabecalho)
+        antes, corpo = separar_cabecalho(cabecalho)
+        interpretado = interpretar_cabecalho(antes)
         resultado.codigo, resultado.confianca = interpretado.codigo, interpretado.confianca
         resultado.resumo = interpretado.resumo
         yield evento_veredito(resultado)
+        limpo = filtro.alimentar(corpo)
+        if limpo:
+            resultado.corpo += limpo
+            yield {"tipo": "texto", "texto": limpo}
     resto = filtro.encerrar()
     if resto:
         resultado.corpo += resto
         yield {"tipo": "texto", "texto": resto}
+    if not resultado.corpo.strip():
+        resultado.corpo = SEM_DETALHE
+        yield {"tipo": "texto", "texto": SEM_DETALHE}
     resultado.citadas = sorted(filtro.citadas)
 
 
@@ -421,6 +442,7 @@ async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
     resultado = Resultado()
     fontes: list[dict] = []
     foi_ao_vivo = False
+    redigiu = False
 
     if not alegacao.saude:
         resultado = Resultado(
@@ -482,6 +504,7 @@ async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
                     yield guardar(evento)
                 if aplicar_guardas(resultado, fontes):
                     yield guardar(evento_veredito(resultado))
+                redigiu = True
             except LLMIndisponivel:
                 resultado = _sem_llm(fontes)
 
@@ -493,7 +516,7 @@ async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
         yield guardar({"tipo": "texto", "texto": resultado.corpo})
 
     latencia = int((time.monotonic() - inicio) * 1000)
-    modelo = servico.llm.ultimo_modelo if servico.llm and resultado.citadas else None
+    modelo = servico.llm.ultimo_modelo if servico.llm and redigiu else None
     fim = {
         "tipo": "fim",
         "latencia_ms": latencia,

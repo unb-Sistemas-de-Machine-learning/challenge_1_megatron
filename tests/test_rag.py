@@ -215,3 +215,25 @@ def test_filtro_de_citacoes_preserva_colchete_que_nao_e_citacao():
 def test_cabecalho_aceita_variacoes_de_formatacao():
     resultado = rag.interpretar_cabecalho("**VEREDITO:** Exagerada\nConfiança: Média\nRESUMO: ok")
     assert (resultado.codigo, resultado.confianca, resultado.resumo) == ("EXAGERADA", "media", "ok")
+
+
+def test_resposta_sem_separador_ainda_entrega_o_corpo():
+    redacao = "VEREDITO: CONTESTADA\nCONFIANCA: alta\nRESUMO: Não funciona.\n\nA meta-análise não viu efeito [1]."
+    eventos = coletar(criar_servico(LLMFalso(ALEGACAO_IVERMECTINA, redacao)), "Ivermectina cura covid-19")
+    texto = "".join(e["texto"] for e in do_tipo(eventos, "texto"))
+    assert texto == "A meta-análise não viu efeito [1]."
+    assert do_tipo(eventos, "veredito")[-1]["codigo"] == "CONTESTADA"
+    assert do_tipo(eventos, "fim")[0]["citadas"] == [1]
+
+
+def test_resposta_so_com_cabecalho_ganha_texto_padrao_e_registra_o_modelo():
+    redacao = "VEREDITO: INCONCLUSIVA\nCONFIANCA: baixa\nRESUMO: Estudos limitados."
+    eventos = coletar(criar_servico(LLMFalso(ALEGACAO_IVERMECTINA, redacao)), "Ivermectina cura covid-19")
+    assert "".join(e["texto"] for e in do_tipo(eventos, "texto")) == rag.SEM_DETALHE
+    assert do_tipo(eventos, "fim")[0]["modelo"] == "modelo-a"
+
+
+def test_cabecalho_longo_sem_separador_nao_vaza_para_o_corpo():
+    cabecalho, corpo = rag.separar_cabecalho("**VEREDITO:** APOIADA\nCONFIANÇA: media\nRESUMO: ok\nTexto [2].")
+    assert corpo == "Texto [2]."
+    assert "RESUMO" in cabecalho

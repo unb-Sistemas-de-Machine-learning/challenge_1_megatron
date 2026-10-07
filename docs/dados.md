@@ -73,8 +73,11 @@ embeddings multilíngue ([ADR 0003](adr/0003-embeddings-multilingues-onnx.md)).
 
 Os metadados do PubMed são mantidos pela National Library of Medicine (NLM). Os resumos
 podem ter direitos autorais dos editores e dos autores. Usamos a base para pesquisa e
-ensino, mostramos apenas o título, o tipo de estudo e o link para o PubMed, e não
-redistribuímos os resumos como produto. Os termos vigentes estão nas políticas do NCBI
+ensino. A interface mostra apenas o título, o tipo de estudo e o link para o PubMed,
+mas o arquivo `dados/base/pubmed.jsonl`, versionado neste repositório público, contém o
+texto dos resumos, e trechos deles são enviados ao provedor de LLM a cada consulta. Esse
+uso precisa ser revisto antes de qualquer aplicação fora do contexto acadêmico. Os
+termos vigentes estão nas políticas do NCBI
 (<https://www.ncbi.nlm.nih.gov/home/about/policies/>) e nos termos de uso dos dados da
 NLM (<https://www.nlm.nih.gov/databases/download/terms_and_conditions.html>). Quem for
 reutilizar o arquivo deve conferir esses termos.
