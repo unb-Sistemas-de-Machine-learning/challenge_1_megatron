@@ -45,8 +45,9 @@ modo degradado: recupera e mostra as fontes, mas não redige o veredito.
 |---|---|---|
 | `LLM_BASE_URL` | `https://api.groq.com/openai/v1` | Endereço da API de chat compatível com OpenAI |
 | `LLM_API_KEY` | vazio | Chave do provedor. Se vazia, usa `GROQ_API_KEY`; se ambas vazias, modo degradado |
-| `LLM_MODELOS` | `llama-3.3-70b-versatile,openai/gpt-oss-120b,llama-3.1-8b-instant` | Lista separada por vírgulas, tentada em ordem (fallback em erro de cota ou de servidor) |
-| `LLM_MODELO_RAPIDO` | `llama-3.1-8b-instant` | Modelo pequeno que identifica a alegação |
+| `LLM_MODELOS` | `openai/gpt-oss-120b,qwen/qwen3.8-27b,openai/gpt-oss-20b` | Lista separada por vírgulas, tentada em ordem (fallback em erro de cota ou de servidor) |
+| `LLM_MODELO_RAPIDO` | `openai/gpt-oss-20b` | Modelo pequeno que identifica a alegação |
+| `LLM_ESFORCO_RACIOCINIO` | `low` | Enviado como `reasoning_effort`; deixe vazio para provedores que não aceitam o parâmetro |
 | `LLM_TIMEOUT` | `45` | Segundos de espera pela resposta do LLM antes de tentar o próximo modelo |
 | `VOF_BANCO` | `dados/vof.db` | Caminho do arquivo SQLite |
 | `VOF_MODELO_EMBEDDING` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Modelo de embeddings (trocar exige reconstruir o banco) |
@@ -54,6 +55,7 @@ modo degradado: recupera e mostra as fontes, mas não redige o veredito.
 | `VOF_CACHE_HORAS` | `168` | Validade do cache de respostas |
 | `VOF_LIMITE_POR_MINUTO` | `12` | Requisições por minuto por cliente em `/api/analisar` |
 | `VOF_BUSCA_AO_VIVO` | `1` | `0` desliga a busca ampliada no PubMed |
+| `VOF_SINAL_ESTILO` | `0` | `1` liga o sinal de estilo do BERTimbau; desligado por padrão porque marca texto legítimo como arriscado |
 | `VOF_MODELO_RISCO` | `modelos/bertimbau` (se existir) | Pasta ou id no Hub dos pesos do BERTimbau (sinal de estilo, opcional) |
 | `VOF_MODELO_RISCO_REVISAO` | vazio | Commit do repositório do modelo no Hub, para fixar a versão |
 | `NCBI_API_KEY` | vazio | Chave gratuita do NCBI: sobe o limite do PubMed de 3 para 10 requisições por segundo |
@@ -76,9 +78,7 @@ provedor não os reconhece.
 
 Limites dos planos gratuitos, **na data da consulta (07/10/2026), sujeitos a mudança**:
 
-- Groq: 30 requisições por minuto; por dia, cerca de 100 mil tokens no
-  `llama-3.3-70b-versatile`, 200 mil no `openai/gpt-oss-120b` e 500 mil no
-  `llama-3.1-8b-instant`. É por isso que a lista de modelos com fallback soma as cotas.
+- Groq: os três modelos de chat disponíveis (`openai/gpt-oss-120b`, `qwen/qwen3.8-27b` e `openai/gpt-oss-20b`) têm, cada um, 8.000 tokens por minuto e 1.000 requisições por dia, lidos dos cabeçalhos de resposta da API. Uma consulta gasta cerca de 2.500 tokens, então cada modelo aguenta umas três consultas novas por minuto; a lista com fallback soma os três.
 - Gemini: modelos Flash no plano gratuito, com limites por projeto exibidos no AI Studio.
 
 Confira `GET /api/saude` depois de trocar: `llm` deve ser `true` e `modelos` deve listar

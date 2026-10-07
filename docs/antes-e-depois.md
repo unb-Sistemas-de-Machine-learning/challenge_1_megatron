@@ -61,10 +61,10 @@ flowchart LR
 ## Benefícios
 
 **Velocidade.** A versão anterior levava dezenas de segundos por resposta, segundo o
-uso da equipe; esse tempo não chegou a ser medido com instrumento. Na versão atual, o
-sistema sem o LLM responde em 83 ms, e a busca na base leva cerca de 10 ms. O que o
-usuário espera é o tempo do provedor de LLM, e ele vê o texto chegando em vez de uma
-tela parada. Uma pergunta repetida vem do cache, sem chamar o LLM.
+uso da equipe; esse tempo não chegou a ser medido com instrumento. Na versão atual, a
+resposta completa com o Groq leva 1,5 s na mediana e 3,8 s no pior caso do conjunto de
+avaliação. Sem o LLM, o sistema gasta 83 ms, e a busca na base, cerca de 10 ms. Uma
+pergunta repetida vem do cache, sem chamar o LLM.
 
 **Cobertura.** Antes, uma alegação fora dos 38 termos terminava em "não foi possível
 verificar". Agora a alegação é entendida em linguagem livre, e a base cresce sozinha:
@@ -93,8 +93,9 @@ sem carregar modelo. O fluxo inteiro é testado com um LLM simulado.
 - **Um tipo novo de erro.** Um LLM pode citar uma fonte e dizer o contrário do que ela
   diz. As guardas conferem se a citação existe, não se ela sustenta a frase. No teste
   com um modelo local pequeno isso aconteceu, como está em [Avaliação](avaliacao.md).
-- **Qualidade ainda não comprovada.** A qualidade do veredito com os modelos de
-  produção não foi medida até 07/10/2026.
+- **Qualidade medida num conjunto pequeno.** O sistema acertou os 20 casos do conjunto
+  com gabarito, mas o conjunto foi escrito pela equipe e o prompt foi ajustado olhando
+  para ele. As ressalvas estão em [Avaliação](avaliacao.md).
 
 ## Como o projeto se comporta agora
 
@@ -111,7 +112,7 @@ sem carregar modelo. O fluxo inteiro é testado com um LLM simulado.
 | LLM responde sem citar fonte | O veredito é rebaixado para "evidência insuficiente", com aviso |
 | Só estudos isolados citados | A confiança é limitada, com aviso de que falta revisão sistemática ou meta-análise |
 | Muitas consultas do mesmo cliente | Recusa com HTTP 429 depois de 12 por minuto |
-| PyTorch e pesos disponíveis | Mostra também o sinal de estilo do BERTimbau, sem influência no veredito |
+| `VOF_SINAL_ESTILO=1`, com PyTorch e pesos | Mostra também o sinal de estilo do BERTimbau, sem influência no veredito. Desligado por padrão |
 
 Em todos os casos a consulta fica registrada com veredito, fontes, latência e modelo, e
 o usuário pode marcar se a resposta foi útil. O contrato dos eventos está em

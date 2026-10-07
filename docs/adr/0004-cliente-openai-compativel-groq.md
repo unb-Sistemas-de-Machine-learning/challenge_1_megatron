@@ -6,9 +6,7 @@ O sistema precisa de um LLM para identificar a alegação e redigir o veredito, 
 zero para a demo. Planos gratuitos têm cota, e uma cota estourada derruba a demo.
 
 Limites do Groq no plano gratuito, **na data da consulta (07/10/2026) e sujeitos a
-mudança**: 30 requisições por minuto; por dia, cerca de 100 mil tokens no
-`llama-3.3-70b-versatile`, 200 mil no `openai/gpt-oss-120b` e 500 mil no
-`llama-3.1-8b-instant`. O Gemini tem modelos Flash no plano gratuito, com limites por
+mudança**: os três modelos de chat disponíveis (`openai/gpt-oss-120b`, `qwen/qwen3.8-27b` e `openai/gpt-oss-20b`) têm, cada um, 8.000 tokens por minuto e 1.000 requisições por dia, lidos dos cabeçalhos de resposta da API. Uma consulta gasta cerca de 2.500 tokens, então cada modelo aguenta umas três consultas novas por minuto; a lista com fallback soma os três. O Gemini tem modelos Flash no plano gratuito, com limites por
 projeto exibidos no AI Studio.
 
 ## Decisão

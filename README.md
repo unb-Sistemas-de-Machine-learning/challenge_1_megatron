@@ -53,8 +53,8 @@ Sem chave de LLM, ou com o provedor fora do ar, o sistema roda em modo degradado
 as fontes recuperadas, sem redigir o veredito.
 
 O BERTimbau treinado pelo grupo continua no repositório como **sinal secundário
-opcional** ("sinal de estilo do texto"), carregado só se PyTorch e os pesos estiverem
-disponíveis. Ele não decide o veredito. Detalhes, decisões e a história da versão
+opcional** ("sinal de estilo do texto"), desligado por padrão e ligado com
+`VOF_SINAL_ESTILO=1`. Ele não decide o veredito. Detalhes, decisões e a história da versão
 anterior em [Arquitetura](docs/arquitetura.md).
 
 ## O que mudou em relação à primeira versão
@@ -69,7 +69,9 @@ anterior em [Arquitetura](docs/arquitetura.md).
 | Banco de dados | Nenhum | SQLite com base, consultas, feedback e cache |
 | Hospedagem | Túnel temporário a partir do Colab | Contêiner Docker em Hugging Face Space |
 
-Sem contar o LLM, o sistema responde em 83 ms. Comparação completa, benefícios, custos
+Com o Groq, a resposta completa leva cerca de 1,5 s na mediana, e o conjunto de 20
+alegações com gabarito teve 20 acertos (detalhes e ressalvas em
+[Avaliação](docs/avaliacao.md)). Comparação completa, benefícios, custos
 da mudança e o comportamento em cada situação em
 [Antes e depois](docs/antes-e-depois.md).
 
@@ -133,9 +135,7 @@ trocar variáveis de ambiente (no `.env`), sem mexer no código. Troque também
 
 `LLM_MODELOS` é uma lista separada por vírgulas, tentada em ordem: se um modelo estoura
 a cota (HTTP 429), o próximo assume. Limites dos planos gratuitos **na data da consulta
-(07/10/2026), sujeitos a mudança**: Groq, 30 requisições por minuto e, por dia, cerca de
-100 mil tokens no `llama-3.3-70b-versatile`, 200 mil no `openai/gpt-oss-120b` e 500 mil
-no `llama-3.1-8b-instant` (por isso a lista soma as cotas). Gemini: modelos Flash no
+(07/10/2026), sujeitos a mudança**: no Groq, os três modelos de chat disponíveis (`openai/gpt-oss-120b`, `qwen/qwen3.8-27b` e `openai/gpt-oss-20b`) têm, cada um, 8.000 tokens por minuto e 1.000 requisições por dia, lidos dos cabeçalhos de resposta da API. Uma consulta gasta cerca de 2.500 tokens, então cada modelo aguenta umas três consultas novas por minuto; a lista com fallback soma os três. Gemini: modelos Flash no
 plano gratuito, com limites por projeto exibidos no AI Studio.
 
 Todas as variáveis de ambiente estão na tabela de [Operação](docs/operacao.md).

@@ -1,18 +1,20 @@
 {
   "data": "2026-10-07",
   "modelos": [
-    "qwen2.5:3b"
+    "openai/gpt-oss-120b",
+    "qwen/qwen3.8-27b",
+    "openai/gpt-oss-20b"
   ],
   "base_sha256": "73e8a4836cde39bc5959bbbb0230e0bf107715040da57c276fe2c135150ac7ee",
   "resumo": {
-    "casos": 8,
-    "acuracia_do_veredito": 0.625,
+    "casos": 20,
+    "acuracia_do_veredito": 1.0,
     "afirmativos_com_citacao_valida": 1.0,
-    "casos_com_fontes": 8,
+    "casos_com_fontes": 18,
     "respostas_degradadas": 0,
-    "total_s_mediana": 69.82,
-    "total_s_p95": 93.49,
-    "primeiro_texto_s_mediana": 69.82
+    "total_s_mediana": 1.5,
+    "total_s_p95": 3.78,
+    "primeiro_texto_s_mediana": 1.48
   },
   "casos": [
     {
@@ -21,15 +23,15 @@
         "CONTESTADA",
         "INCONCLUSIVA"
       ],
-      "obtido": "APOIADA",
+      "obtido": "CONTESTADA",
       "confianca": "alta",
-      "acertou": false,
+      "acertou": true,
       "fontes": 5,
-      "citadas": 5,
-      "modelo": "qwen2.5:3b",
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
       "aviso": null,
-      "primeiro_texto_s": 85.89,
-      "total_s": 85.89
+      "primeiro_texto_s": 1.47,
+      "total_s": 1.51
     },
     {
       "alegacao": "Hidroxicloroquina previne e trata a covid-19",
@@ -40,26 +42,26 @@
       "confianca": "alta",
       "acertou": true,
       "fontes": 5,
-      "citadas": 5,
-      "modelo": "qwen2.5:3b",
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
       "aviso": null,
-      "primeiro_texto_s": 90.64,
-      "total_s": 93.49
+      "primeiro_texto_s": 1.23,
+      "total_s": 1.29
     },
     {
       "alegacao": "Azitromicina é eficaz contra a covid-19",
       "esperado": [
         "CONTESTADA"
       ],
-      "obtido": "INCONCLUSIVA",
-      "confianca": "baixa",
-      "acertou": false,
+      "obtido": "CONTESTADA",
+      "confianca": "alta",
+      "acertou": true,
       "fontes": 5,
-      "citadas": 0,
-      "modelo": "qwen2.5:3b",
-      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
-      "primeiro_texto_s": 68.96,
-      "total_s": 68.96
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.46,
+      "total_s": 1.58
     },
     {
       "alegacao": "Vitamina C cura o resfriado comum",
@@ -67,15 +69,15 @@
         "CONTESTADA",
         "EXAGERADA"
       ],
-      "obtido": "CONTESTADA",
+      "obtido": "EXAGERADA",
       "confianca": "alta",
       "acertou": true,
       "fontes": 4,
       "citadas": 2,
-      "modelo": "qwen2.5:3b",
+      "modelo": "openai/gpt-oss-120b",
       "aviso": null,
-      "primeiro_texto_s": 62.05,
-      "total_s": 62.05
+      "primeiro_texto_s": 1.13,
+      "total_s": 1.13
     },
     {
       "alegacao": "Zinco em altas doses cura a covid-19",
@@ -84,15 +86,15 @@
         "INCONCLUSIVA",
         "EXAGERADA"
       ],
-      "obtido": "INCONCLUSIVA",
-      "confianca": "baixa",
+      "obtido": "EXAGERADA",
+      "confianca": "media",
       "acertou": true,
-      "fontes": 4,
-      "citadas": 4,
-      "modelo": "qwen2.5:3b",
+      "fontes": 3,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
       "aviso": null,
-      "primeiro_texto_s": 75.43,
-      "total_s": 76.57
+      "primeiro_texto_s": 1.48,
+      "total_s": 1.48
     },
     {
       "alegacao": "Vitamina D cura a depressão",
@@ -101,33 +103,18 @@
         "EXAGERADA",
         "INCONCLUSIVA"
       ],
-      "obtido": "INCONCLUSIVA",
-      "confianca": "baixa",
+      "obtido": "EXAGERADA",
+      "confianca": "media",
       "acertou": true,
       "fontes": 5,
-      "citadas": 0,
-      "modelo": "qwen2.5:3b",
-      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
-      "primeiro_texto_s": 61.84,
-      "total_s": 61.84
+      "citadas": 4,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.82,
+      "total_s": 1.82
     },
     {
       "alegacao": "Metformina ajuda a controlar a glicose no diabetes tipo 2",
-      "esperado": [
-        "APOIADA"
-      ],
-      "obtido": "INCONCLUSIVA",
-      "confianca": "baixa",
-      "acertou": false,
-      "fontes": 5,
-      "citadas": 0,
-      "modelo": "qwen2.5:3b",
-      "aviso": "A resposta não citou nenhuma fonte, então o veredito foi rebaixado.",
-      "primeiro_texto_s": 64.93,
-      "total_s": 64.93
-    },
-    {
-      "alegacao": "Canabidiol reduz crises em formas graves de epilepsia",
       "esperado": [
         "APOIADA"
       ],
@@ -135,11 +122,219 @@
       "confianca": "alta",
       "acertou": true,
       "fontes": 5,
-      "citadas": 5,
-      "modelo": "qwen2.5:3b",
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
       "aviso": null,
-      "primeiro_texto_s": 70.69,
-      "total_s": 70.69
+      "primeiro_texto_s": 1.15,
+      "total_s": 1.15
+    },
+    {
+      "alegacao": "Canabidiol reduz crises em formas graves de epilepsia",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "media",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": "Confiança limitada pelo tipo de estudo citado: não há revisão sistemática ou meta-análise entre as fontes usadas.",
+      "primeiro_texto_s": 1.95,
+      "total_s": 1.95
+    },
+    {
+      "alegacao": "Semaglutida ajuda a perder peso em pessoas com obesidade",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.5,
+      "total_s": 1.5
+    },
+    {
+      "alegacao": "Dexametasona reduz a mortalidade em casos graves de covid-19",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "media",
+      "acertou": true,
+      "fontes": 4,
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": "Confiança limitada pelo tipo de estudo citado: não há revisão sistemática ou meta-análise entre as fontes usadas.",
+      "primeiro_texto_s": 1.42,
+      "total_s": 1.43
+    },
+    {
+      "alegacao": "Sinvastatina reduz o colesterol e o risco cardiovascular",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.53,
+      "total_s": 1.53
+    },
+    {
+      "alegacao": "Fluoxetina é eficaz no tratamento da depressão",
+      "esperado": [
+        "APOIADA",
+        "EXAGERADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.28,
+      "total_s": 1.32
+    },
+    {
+      "alegacao": "Losartana reduz a pressão arterial em hipertensos",
+      "esperado": [
+        "APOIADA"
+      ],
+      "obtido": "APOIADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.83,
+      "total_s": 1.87
+    },
+    {
+      "alegacao": "Melatonina cura a ansiedade",
+      "esperado": [
+        "EXAGERADA",
+        "INCONCLUSIVA",
+        "CONTESTADA"
+      ],
+      "obtido": "CONTESTADA",
+      "confianca": "media",
+      "acertou": true,
+      "fontes": 3,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.94,
+      "total_s": 1.95
+    },
+    {
+      "alegacao": "Metformina cura o câncer",
+      "esperado": [
+        "EXAGERADA",
+        "INCONCLUSIVA",
+        "CONTESTADA"
+      ],
+      "obtido": "EXAGERADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.64,
+      "total_s": 1.65
+    },
+    {
+      "alegacao": "Canabidiol cura o autismo",
+      "esperado": [
+        "EXAGERADA",
+        "INCONCLUSIVA",
+        "CONTESTADA"
+      ],
+      "obtido": "EXAGERADA",
+      "confianca": "media",
+      "acertou": true,
+      "fontes": 4,
+      "citadas": 3,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.42,
+      "total_s": 1.42
+    },
+    {
+      "alegacao": "Paracetamol na gravidez causa autismo",
+      "esperado": [
+        "INCONCLUSIVA",
+        "EXAGERADA",
+        "CONTESTADA",
+        "NAO_VERIFICAVEL"
+      ],
+      "obtido": "CONTESTADA",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 5,
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 1.37,
+      "total_s": 1.38
+    },
+    {
+      "alegacao": "Chá de boldo cura câncer de pâncreas",
+      "esperado": [
+        "NAO_VERIFICAVEL",
+        "INCONCLUSIVA"
+      ],
+      "obtido": "NAO_VERIFICAVEL",
+      "confianca": "baixa",
+      "acertou": true,
+      "fontes": 0,
+      "citadas": 0,
+      "modelo": null,
+      "aviso": null,
+      "primeiro_texto_s": 1.54,
+      "total_s": 1.54
+    },
+    {
+      "alegacao": "Água com limão em jejum cura o diabetes",
+      "esperado": [
+        "NAO_VERIFICAVEL",
+        "INCONCLUSIVA",
+        "CONTESTADA"
+      ],
+      "obtido": "INCONCLUSIVA",
+      "confianca": "media",
+      "acertou": true,
+      "fontes": 3,
+      "citadas": 2,
+      "modelo": "openai/gpt-oss-120b",
+      "aviso": null,
+      "primeiro_texto_s": 3.78,
+      "total_s": 3.78
+    },
+    {
+      "alegacao": "O governo anunciou hoje o novo ministro da economia",
+      "esperado": [
+        "FORA_DO_ESCOPO"
+      ],
+      "obtido": "FORA_DO_ESCOPO",
+      "confianca": "alta",
+      "acertou": true,
+      "fontes": 0,
+      "citadas": 0,
+      "modelo": null,
+      "aviso": null,
+      "primeiro_texto_s": 0.49,
+      "total_s": 0.49
     }
   ]
 }

@@ -34,3 +34,11 @@ confiança.
 - Preservamos o registro do processo: baseline, BERTimbau, card, gate.
 - Risco de o leitor dar peso demais ao indicador. A interface o apresenta como sinal de
   estilo, e a documentação diz que ele não mede veracidade.
+
+## Revisão em 07/10/2026
+
+No teste com um link real, o classificador deu 99,8% de risco ao verbete da Wikipédia
+sobre ivermectina, um texto legítimo. Mostrar esse número ao lado do veredito enganaria
+o usuário. O sinal passou a ficar **desligado por padrão** e só é carregado com
+`VOF_SINAL_ESTILO=1`. O modelo, o card e o gate continuam no repositório como registro
+do trabalho de treino e avaliação.
