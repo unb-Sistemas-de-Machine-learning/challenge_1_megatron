@@ -3,7 +3,7 @@
 
 📖 **[Documentação completa](https://unb-sistemas-de-machine-learning.github.io/challenge_1_megatron/)**
 
-🚀 **[Demo ao vivo](https://pregnancy-provide-sterling-behind.trycloudflare.com/)** — app rodando no Google Colab
+🚀 **[Demo ao vivo](https://routing-retired-telephone-distances.trycloudflare.com/)** — app rodando no Google Colab
 (`notebooks/app_colab.ipynb`). O link é um túnel temporário do Cloudflare: só funciona enquanto a
 sessão do Colab estiver aberta e muda a cada nova execução.
 
