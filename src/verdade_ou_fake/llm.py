@@ -131,8 +131,14 @@ async def _sem_pensamento(pedacos: AsyncIterator[str]) -> AsyncIterator[str]:
     """Remove blocos <think>…</think> que modelos de raciocínio emitem no início."""
     acumulado = ""
     decidido = False
+    aparar_inicio = False
     async for pedaco in pedacos:
         if decidido:
+            if aparar_inicio:
+                pedaco = pedaco.lstrip()
+                if not pedaco:
+                    continue
+                aparar_inicio = False
             yield pedaco
             continue
         acumulado += pedaco
@@ -146,6 +152,8 @@ async def _sem_pensamento(pedacos: AsyncIterator[str]) -> AsyncIterator[str]:
             decidido = True
             if resto:
                 yield resto
+            else:
+                aparar_inicio = True
         else:
             decidido = True
             yield acumulado
