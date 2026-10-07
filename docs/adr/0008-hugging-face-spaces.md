@@ -34,3 +34,12 @@ porta 7860.
 - Persistência de verdade exigiria um volume pago ou um banco externo, que deixamos de
   fora por ora.
 - Limites e condições do plano gratuito são do provedor e podem mudar.
+
+## Revisão em 07/10/2026
+
+A premissa desta decisão caiu. Em 07/10/2026 a criação do Space foi recusada pelo Hugging Face: Spaces com Docker no hardware `cpu-basic` passaram a exigir assinatura PRO (9 dólares por mês na data da consulta). O caminho abaixo só vale com essa assinatura. Sem ela, a imagem roda em qualquer host de contêiner com pelo menos 1 GB de RAM: o `Dockerfile` lê a porta de `PORT` e o serviço só precisa de `LLM_API_KEY`.
+
+A decisão fica **em aberto**. Opções: assinar o PRO e manter este desenho; usar outro
+host de contêiner com camada gratuita de 1 GB de RAM; ou servir a demo de uma máquina
+da equipe com um túnel. Render gratuito tem 512 MB de RAM, menos do que os cerca de
+630 MB que o serviço usa em repouso.

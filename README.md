@@ -3,7 +3,7 @@
 
 📖 **[Documentação completa](https://unb-sistemas-de-machine-learning.github.io/challenge_1_megatron/)**
 
-🚀 **Demo:** <URL do Space, preencher após o deploy>
+🚀 **Demo:** ainda sem endereço público; veja [Deploy](#deploy).
 
 ## O que é
 
@@ -67,7 +67,7 @@ anterior em [Arquitetura](docs/arquitetura.md).
 | Decisão | NLI zero-shot + regras | LLM restrito às fontes + guardas em código |
 | Resposta | Rótulo e lista de artigos, só no fim | Veredito e explicação com citações, em streaming |
 | Banco de dados | Nenhum | SQLite com base, consultas, feedback e cache |
-| Hospedagem | Túnel temporário a partir do Colab | Contêiner Docker em Hugging Face Space |
+| Hospedagem | Túnel temporário a partir do Colab | Imagem Docker enxuta, pronta para qualquer host de contêiner |
 
 Com o Groq, a resposta completa leva cerca de 1,5 s na mediana, e o conjunto de 20
 alegações com gabarito teve 20 acertos (detalhes e ressalvas em
@@ -141,6 +141,8 @@ plano gratuito, com limites por projeto exibidos no AI Studio.
 Todas as variáveis de ambiente estão na tabela de [Operação](docs/operacao.md).
 
 ## Deploy
+
+> **Atenção:** Em 07/10/2026 a criação do Space foi recusada pelo Hugging Face: Spaces com Docker no hardware `cpu-basic` passaram a exigir assinatura PRO (9 dólares por mês na data da consulta). O caminho abaixo só vale com essa assinatura. Sem ela, a imagem roda em qualquer host de contêiner com pelo menos 1 GB de RAM: o `Dockerfile` lê a porta de `PORT` e o serviço só precisa de `LLM_API_KEY`.
 
 O app é publicado num **Hugging Face Space** (SDK Docker, CPU gratuito: 2 vCPU, 16 GB de
 RAM) por `scripts/publica_space.py`, chamado pelo workflow `deploy-app.yml` a cada push

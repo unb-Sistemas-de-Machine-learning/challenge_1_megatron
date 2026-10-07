@@ -53,7 +53,7 @@ flowchart LR
 | Modelos em memória | BERTimbau e mDeBERTa, com PyTorch | Um modelo de embeddings em ONNX |
 | Banco de dados | Nenhum | SQLite: base, consultas, feedback e cache |
 | Interface | Streamlit, resposta só no fim | Página estática, resposta em streaming |
-| Hospedagem | Túnel temporário a partir do Colab | Contêiner Docker em Hugging Face Space |
+| Hospedagem | Túnel temporário a partir do Colab | Imagem Docker enxuta, pronta para qualquer host de contêiner (deploy público ainda pendente) |
 | Monitoramento | Nenhum | `/api/metricas`: latência, vereditos, feedback, uso de cache |
 | Atualização dos dados | Não se aplicava | Workflow semanal + artigos da busca ampliada |
 | Quando um serviço externo cai | Resposta vazia ou erro | Modo degradado: mostra as fontes sem o veredito |
@@ -80,7 +80,7 @@ modelos. A atual usa cerca de 630 MB no total, numa imagem de 671 MB que sobe em
 segundos, porque o banco já vem construído.
 
 **Operação.** Existe um banco, um registro de cada consulta, um painel de métricas, um
-botão de feedback e uma demo com endereço fixo. Trocar de provedor de LLM é trocar
+botão de feedback e uma imagem Docker que sobe em qualquer host de contêiner. Trocar de provedor de LLM é trocar
 variáveis de ambiente.
 
 **Testes.** A suíte offline tem 317 testes e roda em cerca de 10 segundos, sem rede e

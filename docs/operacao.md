@@ -86,6 +86,9 @@ os novos.
 
 ## Publicar no Hugging Face Space
 
+!!! warning "Exige plano pago"
+    Em 07/10/2026 a criação do Space foi recusada pelo Hugging Face: Spaces com Docker no hardware `cpu-basic` passaram a exigir assinatura PRO (9 dólares por mês na data da consulta). O caminho abaixo só vale com essa assinatura. Sem ela, a imagem roda em qualquer host de contêiner com pelo menos 1 GB de RAM: o `Dockerfile` lê a porta de `PORT` e o serviço só precisa de `LLM_API_KEY`.
+
 O app roda num Space com SDK Docker, no plano gratuito de CPU (2 vCPU, 16 GB de RAM). O
 Space hiberna após inatividade e acorda no próximo acesso. O disco não é persistente: o
 registro de consultas zera a cada reinício, e a base de conhecimento é reconstruída na
