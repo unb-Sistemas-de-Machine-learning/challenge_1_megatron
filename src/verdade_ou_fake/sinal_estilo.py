@@ -10,6 +10,8 @@ registro = logging.getLogger(__name__)
 
 
 def carregar() -> Callable[[str], float] | None:
+    if os.environ.get("VOF_SINAL_ESTILO", "0") != "1":
+        return None
     origem = os.environ.get("VOF_MODELO_RISCO", str(RAIZ / "modelos" / "bertimbau"))
     if "/" not in origem.strip("./") and not Path(origem).is_dir():
         return None

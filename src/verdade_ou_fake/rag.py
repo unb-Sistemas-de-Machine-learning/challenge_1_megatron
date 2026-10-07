@@ -34,6 +34,8 @@ FOLGA_SIMILARIDADE = 0.12
 CANDIDATOS = 15
 TERMOS_GENERICOS = {"human", "humans", "disease", "diseases", "treatment", "therapy", "drug"}
 LIMITE_CABECALHO = 700
+INICIO_DO_RESUMO = 450
+FIM_DO_RESUMO = 650
 SEM_DETALHE = "O modelo não detalhou a análise. Consulte os estudos listados abaixo."
 
 PROMPT_ALEGACAO = """Você extrai a alegação central de saúde de um texto em português.
@@ -63,9 +65,13 @@ médica individual.
 
 Vereditos possíveis:
 - APOIADA: as fontes sustentam a alegação como foi formulada.
-- CONTESTADA: as fontes mostram que não funciona ou contradizem a alegação.
-- EXAGERADA: existe algum efeito ou base, mas a alegação vai além do que os estudos mostram.
-- INCONCLUSIVA: evidência insuficiente, indireta ou conflitante.
+- CONTESTADA: os melhores estudos não encontram o efeito alegado ou mostram o contrário. \
+Use este também quando estudos iniciais fracos sugeriam benefício e os estudos maiores e \
+mais rigorosos não confirmaram.
+- EXAGERADA: os estudos confirmam um efeito real, mas menor, mais restrito ou menos certo \
+do que a alegação afirma.
+- INCONCLUSIVA: evidência insuficiente, indireta ou conflitante entre estudos de qualidade \
+semelhante.
 
 Responda exatamente neste formato:
 VEREDITO: <APOIADA|CONTESTADA|EXAGERADA|INCONCLUSIVA>
@@ -226,12 +232,16 @@ async def entender_alegacao(servico: Servico, texto: str) -> Alegacao:
                 {"role": "user", "content": texto[:3000]},
             ],
             modelo=servico.config.llm_modelo_rapido,
-            max_tokens=200,
+            max_tokens=500,
             formato_json=True,
         )
         dados = json.loads(bruto[bruto.index("{") : bruto.rindex("}") + 1])
         alegacao = str(dados.get("alegacao") or "").strip()
         consulta = str(dados.get("consulta_en") or "").strip()
+        if dados.get("saude") is False:
+            reserva.texto = alegacao or reserva.texto
+            reserva.saude = False
+            return reserva
         if not alegacao or not consulta:
             return reserva
         pubmed = str(dados.get("pubmed") or "").strip() or reserva.pubmed
@@ -290,13 +300,19 @@ def _fontes(trechos: list[Trecho]) -> list[dict]:
     ]
 
 
+def trecho_do_resumo(texto: str) -> str:
+    if len(texto) <= INICIO_DO_RESUMO + FIM_DO_RESUMO:
+        return texto
+    return f"{texto[:INICIO_DO_RESUMO]} [...] {texto[-FIM_DO_RESUMO:]}"
+
+
 def _mensagens_do_veredito(alegacao: Alegacao, texto: str, trechos: list[Trecho]) -> list[dict]:
     blocos = []
     for n, t in enumerate(trechos, 1):
         tipos = ", ".join(t.documento.tipos[:3]) or "tipo não informado"
         blocos.append(
             f"[{n}] {t.documento.titulo} ({tipos}; {t.documento.ano or 's/d'})\n"
-            f"{t.documento.texto[:1100]}"
+            f"{trecho_do_resumo(t.documento.texto)}"
         )
     usuario = f"ALEGAÇÃO: {alegacao.texto}\n\n"
     if len(texto) > len(alegacao.texto) + 40:

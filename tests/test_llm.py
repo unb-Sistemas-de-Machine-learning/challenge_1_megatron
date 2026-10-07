@@ -365,3 +365,29 @@ def test_sem_pensamento_resposta_vazia_apos_bloco():
 
 def test_sem_pensamento_descarta_pedacos_so_de_espaco_logo_apos_o_bloco():
     assert _filtrar("<think>a</think>", "\n", "\n", "Ok", " fim") == ["Ok", " fim"]
+
+
+def test_esforco_de_raciocinio_vai_no_corpo_quando_configurado():
+    corpos = []
+
+    def responder(request):
+        corpos.append(json.loads(request.content))
+        return httpx.Response(200, json={"choices": [{"message": {"content": "ok"}}]})
+
+    for esforco in ("low", ""):
+        cliente = ClienteLLM("http://x", "k", ["m"], transporte=httpx.MockTransport(responder), esforco=esforco)
+        asyncio.run(cliente.completar([{"role": "user", "content": "oi"}]))
+    assert corpos[0]["reasoning_effort"] == "low"
+    assert "reasoning_effort" not in corpos[1]
+
+
+def test_erro_400_de_um_modelo_passa_para_o_proximo():
+    def responder(request):
+        modelo = json.loads(request.content)["model"]
+        if modelo == "a":
+            return httpx.Response(400, json={"error": {"code": "json_validate_failed"}})
+        return httpx.Response(200, json={"choices": [{"message": {"content": "ok"}}]})
+
+    cliente = ClienteLLM("http://x", "k", ["a", "b"], transporte=httpx.MockTransport(responder))
+    assert asyncio.run(cliente.completar([{"role": "user", "content": "oi"}])) == "ok"
+    assert cliente.ultimo_modelo == "b"

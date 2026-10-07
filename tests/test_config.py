@@ -31,11 +31,11 @@ def test_valores_padrao():
     assert c.llm_base_url == "https://api.groq.com/openai/v1"
     assert c.llm_api_key == ""
     assert c.llm_modelos == [
-        "llama-3.3-70b-versatile",
         "openai/gpt-oss-120b",
-        "llama-3.1-8b-instant",
+        "qwen/qwen3.8-27b",
+        "openai/gpt-oss-20b",
     ]
-    assert c.llm_modelo_rapido == "llama-3.1-8b-instant"
+    assert c.llm_modelo_rapido == "openai/gpt-oss-20b"
     assert c.modelo_embedding == "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
     assert c.fontes_por_resposta == 5
     assert c.similaridade_minima == 0.45

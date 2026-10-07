@@ -43,14 +43,17 @@ class Config:
         default_factory=lambda: _lista(
             os.environ.get(
                 "LLM_MODELOS",
-                "llama-3.3-70b-versatile,openai/gpt-oss-120b,llama-3.1-8b-instant",
+                "openai/gpt-oss-120b,qwen/qwen3.8-27b,openai/gpt-oss-20b",
             )
         )
     )
     llm_modelo_rapido: str = field(
-        default_factory=lambda: os.environ.get("LLM_MODELO_RAPIDO", "llama-3.1-8b-instant")
+        default_factory=lambda: os.environ.get("LLM_MODELO_RAPIDO", "openai/gpt-oss-20b")
     )
 
+    llm_esforco: str = field(
+        default_factory=lambda: os.environ.get("LLM_ESFORCO_RACIOCINIO", "low")
+    )
     llm_timeout: float = field(
         default_factory=lambda: float(os.environ.get("LLM_TIMEOUT", "45"))
     )

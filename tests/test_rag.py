@@ -241,3 +241,17 @@ def test_cabecalho_longo_sem_separador_nao_vaza_para_o_corpo():
 
 def test_conceitos_ignoram_termos_genericos_do_vocabulario():
     assert rag._conceitos("Vitamin D AND Influenza, Human") == [["vitamin"], ["influenza"]]
+
+
+def test_trecho_do_resumo_preserva_o_inicio_e_a_conclusao():
+    texto = "INICIO " + "x" * 3000 + " CONCLUSAO"
+    trecho = rag.trecho_do_resumo(texto)
+    assert trecho.startswith("INICIO") and trecho.endswith("CONCLUSAO")
+    assert len(trecho) < 1200
+    assert rag.trecho_do_resumo("curto") == "curto"
+
+
+def test_fora_de_saude_com_campos_vazios_ainda_e_fora_do_escopo():
+    falso = LLMFalso({"saude": False, "alegacao": "", "consulta_en": "", "pubmed": ""}, "x")
+    eventos = coletar(criar_servico(falso), "O governo anunciou hoje o novo ministro da economia")
+    assert do_tipo(eventos, "veredito")[-1]["codigo"] == "FORA_DO_ESCOPO"

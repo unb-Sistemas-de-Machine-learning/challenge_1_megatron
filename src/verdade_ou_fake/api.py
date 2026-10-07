@@ -54,7 +54,11 @@ def criar_servico(config: Config) -> rag.Servico:
     embutir = criar_embutidor(config.modelo_embedding)
     llm = (
         ClienteLLM(
-            config.llm_base_url, config.llm_api_key, config.llm_modelos, config.llm_timeout
+            config.llm_base_url,
+            config.llm_api_key,
+            config.llm_modelos,
+            config.llm_timeout,
+            esforco=config.llm_esforco,
         )
         if config.llm_ativo
         else None

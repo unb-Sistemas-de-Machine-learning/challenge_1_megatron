@@ -4,7 +4,7 @@ from collections.abc import AsyncIterator
 
 import httpx
 
-CODIGOS_PARA_TENTAR_OUTRO = {404, 408, 413, 429, 500, 502, 503, 504}
+CODIGOS_PARA_TENTAR_OUTRO = {400, 404, 408, 413, 429, 500, 502, 503, 504}
 PENSAMENTO = re.compile(r"<think>.*?</think>\s*", re.DOTALL)
 
 
@@ -20,8 +20,10 @@ class ClienteLLM:
         modelos: list[str],
         timeout: float = 45.0,
         transporte: httpx.AsyncBaseTransport | None = None,
+        esforco: str = "",
     ):
         self.modelos = modelos
+        self._extras = {"reasoning_effort": esforco} if esforco else {}
         self.ultimo_modelo: str | None = None
         self._http = httpx.AsyncClient(
             base_url=base_url,
@@ -52,6 +54,7 @@ class ClienteLLM:
                 "messages": mensagens,
                 "temperature": 0,
                 "max_tokens": max_tokens,
+                **self._extras,
             }
             if formato_json:
                 corpo["response_format"] = {"type": "json_object"}
@@ -78,6 +81,7 @@ class ClienteLLM:
                 "messages": mensagens,
                 "temperature": 0.1,
                 "max_tokens": max_tokens,
+                **self._extras,
                 "stream": True,
             }
             entregou = False
