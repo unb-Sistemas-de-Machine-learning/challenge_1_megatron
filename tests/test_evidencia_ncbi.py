@@ -1,17 +1,4 @@
-"""Boas práticas do NCBI E-utilities em produção: identificação e ritmo.
-
-Sem `api_key` o NCBI aceita 3 requisições/s por IP; com chave, 10. Um app
-público com vários usuários estoura isso fácil, e o erro viraria um falso
-"não há literatura" para o usuário.
-"""
-
 from verdade_ou_fake import evidencia
-from verdade_ou_fake.tipos import Alegacao
-
-ALEGACAO = Alegacao(
-    medicamento_pt="ivermectina", medicamento_en="Ivermectin",
-    condicao_pt="covid-19", condicao_en="COVID-19",
-)
 
 
 class _Resposta:
@@ -31,11 +18,14 @@ def _capturar_chamadas(monkeypatch):
 
     def get_falso(url, params=None, **kwargs):
         chamadas.append(params)
-        if url.endswith("esearch.fcgi"):
-            return _Resposta(json_={"esearchresult": {"idlist": ["1"]}})
+        return _Resposta(json_={"esearchresult": {"idlist": ["1"]}})
+
+    def post_falso(url, data=None, **kwargs):
+        chamadas.append(data)
         return _Resposta(text="<PubmedArticleSet/>")
 
     monkeypatch.setattr(evidencia.requests, "get", get_falso)
+    monkeypatch.setattr(evidencia.requests, "post", post_falso)
     monkeypatch.setattr(evidencia, "_aguardar_vez", lambda: None)
     return chamadas
 
@@ -45,7 +35,7 @@ def test_sem_variaveis_de_ambiente_identifica_so_a_ferramenta(monkeypatch):
     monkeypatch.delenv("NCBI_EMAIL", raising=False)
     chamadas = _capturar_chamadas(monkeypatch)
 
-    evidencia.buscar_evidencia(ALEGACAO)
+    evidencia.baixar_artigos(evidencia.buscar_pmids("ivermectin"))
 
     assert len(chamadas) == 2
     for params in chamadas:
@@ -59,7 +49,7 @@ def test_repassa_api_key_e_email_do_ambiente(monkeypatch):
     monkeypatch.setenv("NCBI_EMAIL", "equipe@exemplo.com")
     chamadas = _capturar_chamadas(monkeypatch)
 
-    evidencia.buscar_evidencia(ALEGACAO)
+    evidencia.baixar_artigos(evidencia.buscar_pmids("ivermectin"))
 
     for params in chamadas:
         assert params["api_key"] == "chave-secreta"

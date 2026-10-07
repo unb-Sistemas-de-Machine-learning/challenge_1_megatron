@@ -1,67 +1,75 @@
 # Verdade ou Fake?
-### Detecção de Desinformação em Notícias de Saúde
+### Checagem de alegações de saúde com evidência científica
 
 Documentação técnica do **Challenge 1** da disciplina de Sistemas de Machine
 Learning (UnB/FCTE, 2026/2) — Equipe Megatron.
 
 ## O que é este projeto?
 
-Todo dia circulam notícias sobre medicamentos "milagrosos" ou tratamentos
-alternativos, muitas vezes sem qualquer respaldo científico. Este projeto ataca esse
-problema com uma plataforma web: o usuário **cola o link de uma notícia** e recebe uma
-avaliação da probabilidade de o conteúdo ser desinformação, junto com as evidências
-científicas que sustentam ou contradizem a alegação.
+Todo dia circulam notícias e correntes de WhatsApp sobre medicamentos "milagrosos" ou
+tratamentos alternativos, muitas vezes sem respaldo científico. O usuário **cola um
+link de notícia ou um texto** e recebe um veredito sobre a alegação (tem respaldo, é
+contradita, é exagerada, é inconclusiva), escrito em linguagem simples e com **as fontes
+citadas**: resumos de estudos do PubMed, com link para cada um.
 
-O objetivo não é dar um veredito médico, mas oferecer uma **ferramenta de checagem** —
-algo entre um *fact-checker* e um resumo de literatura científica, acessível para quem
-não tem formação técnica.
+O objetivo não é dar parecer médico, mas oferecer uma ferramenta de checagem.
 
 !!! warning "Este sistema é apenas informativo"
-    Não substitui orientação médica. As respostas são uma síntese de
-    evidências disponíveis publicamente, não uma prescrição.
+    Não substitui orientação médica. As respostas são uma síntese de evidências
+    publicadas, não uma prescrição. O LLM que redige a resposta pode errar mesmo com as
+    guardas do sistema: confira as fontes.
 
-## Fluxo de uso
+## Como funciona, em resumo
 
-1. O usuário insere o **link da notícia** na plataforma.
-2. O sistema extrai o texto limpo da página.
-3. Duas camadas analisam o conteúdo **em paralelo**:
-      - a **Camada 1** classifica o risco a partir de como o texto foi escrito;
-      - a **Camada 2** identifica o par *medicamento + condição clínica*, consulta o PubMed e verifica se a literatura apoia a alegação.
-4. Regras explícitas combinam os dois sinais em um veredito.
-5. O usuário recebe a resposta com nível de confiança, fontes citadas e aviso.
+1. A entrada é um link (o sistema extrai o texto da página) ou um texto colado.
+2. Um LLM identifica a alegação central e a traduz para uma consulta científica.
+3. Uma busca híbrida (vetorial e lexical) encontra os estudos mais próximos numa base
+   de resumos do PubMed. Se a base não cobre a alegação, o sistema amplia a busca no
+   PubMed na hora.
+4. O LLM redige o veredito usando **apenas** esses estudos, com citações `[n]`.
+5. Regras de código conferem a saída: citação inexistente é removida, afirmação sem
+   citação é rebaixada, e a confiança não passa do que o tipo de estudo sustenta.
+6. A resposta chega aos poucos, por streaming, e cada consulta é registrada para
+   monitoramento e feedback.
 
-## As duas camadas
-
-| | Camada 1 | Camada 2 |
-|---|---|---|
-| Pergunta | *Como* a notícia foi escrita? | *O que* ela afirma? |
-| Método | Classificador supervisionado (BERTimbau) | Extração de alegação + busca de evidência |
-| Aprende com | Corpus rotulado de notícias PT-BR | Não é treinada — consulta bases científicas |
-| Limitação | Detecta estilo, não fato | Depende de existir literatura sobre o tema |
-
-A Camada 1 sozinha erra em alegações falsas bem redigidas — justamente o caso mais
-perigoso em saúde. É por isso que a Camada 2 existe.
+Diagramas e decisões em [Arquitetura](arquitetura.md).
 
 ## Por onde começar
 
 <div class="grid cards" markdown>
 
-- 🏗️ **[Arquitetura](arquitetura.md)** — pipeline, stack, fases e frentes de trabalho
-- 📊 **[Fontes de Dados](dados.md)** — datasets, bases científicas, riscos e governança
-- ❓ **[Guiding Questions](guiding-questions.md)** — perguntas norteadoras
-- 🗺️ **[Canvas](canva.md)** — objetivos de negócio e de ML, escopo, cronograma
+- **[Arquitetura](arquitetura.md)** — fluxo, componentes, MLOps, requisitos não funcionais e o que mudou
+- **[Avaliação](avaliacao.md)** — medições do sistema
+- **[API](api.md)** — endpoints e eventos de streaming
+- **[Operação](operacao.md)** — subir, configurar, publicar e monitorar
+- **[Dados](dados.md)** — datasheets da base de conhecimento e do corpus de treino
+- **[ADRs](adr/index.md)** — decisões de arquitetura, uma por arquivo
+- **[Guiding Questions](guiding-questions.md)** — perguntas norteadoras
+- **[Canvas](canva.md)** — objetivos de negócio e de ML, escopo
 
 </div>
 
+## Limitações declaradas
+
+- O LLM pode errar mesmo com as guardas.
+- A base cobre bem só os temas do vocabulário (23 medicamentos e 15 condições); fora
+  dele, o sistema depende da busca ao vivo.
+- Os estudos são resumos em inglês, não textos completos, com o viés de publicação da
+  literatura.
+- O sistema não verifica imagens, vídeos nem áudio.
+- Depende de cota gratuita de terceiros (LLM, PubMed e hospedagem).
+
 ## Base teórica
 
-O projeto usa como referência de processo o artigo **Amershi et al., *Software
-Engineering for Machine Learning: A Case Study*** (ICSE-SEIP 2019), em especial:
+O projeto usa como referência de processo:
 
-- o **fluxo de nove estágios** de ML e seus laços de realimentação (Figura 1);
-- a prioridade de **pipeline end-to-end** antes de otimizar etapas isoladas (Seção V-A);
-- o tratamento de **dados como o desafio nº 1** em qualquer nível de maturidade (Tabela II);
-- o **versionamento e proveniência de dados** como diferença fundamental frente à engenharia de software tradicional (Seção VII-A).
+- Amershi et al., *Software Engineering for Machine Learning: A Case Study* (ICSE-SEIP
+  2019): o fluxo de estágios de ML, a prioridade do pipeline de ponta a ponta e o dado
+  como desafio central.
+- Kreuzberger, Kühl e Hirschl, *Machine Learning Operations (MLOps): Overview,
+  Definition, and Architecture* (IEEE Access, 2023): princípios, componentes e papéis de
+  MLOps, mapeados ao projeto em [Arquitetura](arquitetura.md#mlops).
+- Chip Huyen, *Projetando Sistemas de Machine Learning* (livro-base da disciplina).
 
 ## Equipe
 

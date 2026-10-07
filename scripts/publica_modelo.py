@@ -1,15 +1,3 @@
-"""Publica o BERTimbau treinado num repositório de modelo do Hugging Face Hub.
-
-Os pesos (~420 MB) não cabem no git; o app em produção os baixa do Hub
-(variável VOF_MODELO_RISCO). Antes de subir, confere que os pesos locais são
-exatamente os descritos em `modelos/cards/bertimbau.json` — assim o card
-versionado no git e o artefato no Hub nunca divergem.
-
-Pré-requisito: `hf auth login` (ou HF_TOKEN no ambiente) com permissão de escrita.
-
-Uso: python scripts/publica_modelo.py <usuario>/<repo> [--privado]
-"""
-
 import argparse
 import sys
 from pathlib import Path
@@ -25,7 +13,6 @@ CAMINHO_CARD = RAIZ / "modelos" / "cards" / "bertimbau.json"
 
 
 def conferir_artefato(caminho_modelo: Path, caminho_card: Path) -> dict:
-    """Devolve o card se os pesos locais baterem com ele; senão levanta ValueError."""
     pesos = caminho_modelo / ARQUIVO_PESOS
     if not pesos.exists():
         raise ValueError(f"Pesos não encontrados em {pesos}. Rode scripts/treina_bert.py.")
@@ -42,7 +29,7 @@ def conferir_artefato(caminho_modelo: Path, caminho_card: Path) -> dict:
 
 
 def main() -> int:
-    argumentos = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    argumentos = argparse.ArgumentParser(description="Publica o BERTimbau treinado num repositório de modelo do Hugging Face Hub")
     argumentos.add_argument("repo_id", help="repositório de destino, ex.: equipe/bertimbau-saude")
     argumentos.add_argument("--privado", action="store_true", help="cria o repositório como privado")
     args = argumentos.parse_args()

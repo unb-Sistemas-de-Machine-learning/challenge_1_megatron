@@ -1,244 +1,366 @@
-# Arquitetura do Sistema
+# Arquitetura
 
-Como o sistema transforma **um link de notícia** em um **veredito com evidências**.
+Como o sistema transforma **uma alegação de saúde** (um link de notícia ou um texto
+colado) em **um veredito com fontes citadas**.
 
-## Visão geral
+O sistema é um RAG (*Retrieval-Augmented Generation*): primeiro recupera estudos
+científicos relevantes numa base própria; depois um modelo de linguagem redige a
+resposta **usando apenas esses estudos**, e regras determinísticas conferem o que ele
+escreveu. As decisões estão registradas uma a uma nos [ADRs](adr/index.md).
 
-O usuário cola o link de uma notícia sobre saúde. O sistema extrai o texto, analisa
-esse texto por **duas camadas independentes** e combina os dois resultados por regras
-explícitas.
+## Visão geral: uma consulta
 
 ```mermaid
 flowchart TD
-    L["🔗 Link da notícia (PT-BR)"] --> I
-
-    I["<b>[0] INGESTÃO</b><br/>HTML → texto limpo<br/><i>trafilatura</i>"]
-
-    I --> C1
-    I --> C2
-
-    subgraph C1["<b>[1] CAMADA 1 — Risco textual</b>"]
-        direction TB
-        C1A["BERTimbau<br/><i>(modelo final)</i>"]
-        C1A -.evolui para.-> C1B
-        C1B --> C1C["P(desinformação) ∈ [0,1]"]
-    end
-
-    subgraph C2["<b>[2] CAMADA 2 — Verificação por evidência</b>"]
-        direction TB
-        C2A["<b>2a</b> Extrai medicamento + condição<br/><i>dicionário DeCS + DCB/ANVISA</i>"]
-        C2B["<b>2b</b> Busca literatura<br/><i>PubMed E-utilities</i>"]
-        C2C["<b>2c</b> A evidência apoia, contradiz<br/>ou não cobre?<br/><i>NLI zero-shot</i>"]
-        C2A --> C2B --> C2C
-    end
-
-    C1 --> F
-    C2 --> F
-
-    F["<b>[3] FUSÃO</b><br/>regras explícitas e auditáveis"]
-    F --> R["<b>Resposta</b><br/>veredito + confiança<br/>+ fontes citadas + aviso"]
+    E["Entrada<br/>link ou texto colado"] --> T{"É link?"}
+    T -- sim --> X["Extração da página<br/>(trafilatura, proteção SSRF)<br/>cache em <i>paginas</i>"]
+    T -- não --> C
+    X --> C{"Cache<br/>entrada + versão da base"}
+    C -- acerto --> R["Reenvia os eventos guardados"]
+    C -- falha --> A["Identificação da alegação<br/>LLM rápido devolve JSON<br/>(reserva: vocabulário)"]
+    A -- "não é saúde" --> F["FORA_DO_ESCOPO"]
+    A --> B["Busca híbrida na base<br/>vetorial + BM25 + RRF"]
+    B --> S{"Cobertura<br/>suficiente?"}
+    S -- "menos de 2 fontes" --> V["Busca ampliada no PubMed<br/>os artigos entram na base"]
+    V --> B2["Nova busca híbrida"]
+    S -- sim --> W
+    B2 --> W{"Há fontes?"}
+    W -- não --> N["NAO_VERIFICAVEL"]
+    W -- sim --> L["Redação com citações [n]<br/>LLM em streaming<br/>(fallback entre modelos)"]
+    L --> G["Guardas<br/>citação inválida removida<br/>sem citação: rebaixa<br/>teto de confiança pelo tipo de estudo"]
+    G --> D["Registro em <i>consultas</i><br/>veredito, fontes, latência, modelo"]
+    N --> D
+    F --> D
+    L -. "LLM fora do ar" .-> M["Modo degradado:<br/>só as fontes"]
+    M --> D
+    D --> O["Resposta em SSE<br/>+ feedback do usuário"]
 ```
 
-## As quatro etapas
+O sinal de estilo do BERTimbau (ver [ADR 0009](adr/0009-bertimbau-sinal-secundario.md))
+roda em paralelo à identificação da alegação, quando está disponível, e aparece como
+um indicador à parte. Não entra no veredito.
 
-### [0] Ingestão — do link ao texto
+## Visão geral: dados offline
 
-Baixa a página e extrai título, corpo, data e domínio, descartando menu, banner de
-cookie, "leia também" e rodapé.
+```mermaid
+flowchart LR
+    P["PubMed E-utilities"] --> I["scripts/ingere_pubmed.py<br/>(workflow semanal)"]
+    I --> J["dados/base/pubmed.jsonl<br/>+ manifesto.json (SHA-256)<br/>versionados no git"]
+    J --> K["scripts/constroi_base.py<br/>embeddings + índice FTS5"]
+    K --> Q["SQLite: vof.db"]
+    Q --> M["Imagem Docker<br/>(banco construído no build)"]
+    M --> H["Hugging Face Space"]
+    H -. "consultas, páginas e artigos<br/>da busca ao vivo" .-> Q2["vof.db em execução<br/>(zera no reinício)"]
+```
 
-Usamos **`trafilatura`** em vez de um parser próprio porque portais de notícia
-brasileiros variam muito de estrutura, e extração suja contamina as duas camadas
-seguintes de uma vez. Esta é a etapa cuja dificuldade é mais subestimada, por isso é a
-primeira a ser testada — contra 20 links reais de portais diferentes.
+O JSONL é a fonte da verdade da base. O banco é **derivado** dele e pode ser
+reconstruído a qualquer momento. O hash do manifesto entra na chave de cache e aparece
+em `/api/saude`, então cada resposta é rastreável até a versão da base que a gerou.
 
-### [1] Camada 1 — Risco textual
+## Componentes
 
-Classificador supervisionado treinado em corpus rotulado de notícias em português.
-Recebe o texto e devolve uma probabilidade de o conteúdo ser desinformação.
+### Ingestão da página (`ingestao.py`)
 
-A evolução é deliberada, do simples para o complexo:
+Baixa o link e extrai título e corpo com `trafilatura`. O servidor só baixa URLs
+`http(s)` que resolvem para IPs públicos, inclusive em cada redirecionamento (no máximo
+5), e recusa páginas acima de 5 MB. Isso evita que o serviço sirva de ponte para a rede
+interna (SSRF).
 
-| Etapa | Modelo | Papel |
-|---|---|---|
-| Baseline | TF-IDF + Regressão Logística | Referência mínima. Rápido, interpretável, roda em CPU. Nenhum modelo posterior entra sem superá-lo. |
-| Final | BERTimbau (`neuralmind/bert-base-portuguese-cased`) | Fine-tuning. Entende contexto e semântica, não só frequência de palavra. |
+**Por quê:** o produto aceita links, e links são entrada hostil por natureza. Quando a
+página não abre (login, paywall, bloqueio de robô), o sistema não tenta adivinhar: pede
+que o usuário cole o texto. O texto extraído fica em cache na tabela `paginas`.
 
-#### Como fazer o fine-tuning do BERTimbau
+### Identificação da alegação (`rag.py`, `entender_alegacao`)
 
-Substituir a cabeça de classificação do modelo pré-treinado e ajustar os pesos sobre o recorte de saúde PT-BR gerado na Task 5. A estrutura é `BertForSequenceClassification(num_labels=2)` sobre `neuralmind/bert-base-portuguese-cased`, treinada com a API `Trainer` do `transformers`.
+Um modelo pequeno (`LLM_MODELO_RAPIDO`) recebe o texto e devolve um JSON com: se o
+assunto é saúde, a alegação em português, a mesma alegação em inglês científico e uma
+consulta de PubMed com dois conceitos (intervenção AND condição). Se o LLM não está
+configurado ou falha, entra uma reserva: o casamento por dicionário de `vocabulario.py`
+(23 medicamentos e 15 condições em `dados/vocabulario_seed.csv`).
 
-| Decisão | Recomendação |
+**Por quê:** a versão anterior só funcionava para pares do dicionário. O LLM generaliza
+a extração para qualquer alegação, e o dicionário continua como plano B auditável.
+Texto que não é alegação de saúde recebe `FORA_DO_ESCOPO` sem gastar busca nem redação.
+
+### Banco (`banco.py`)
+
+Um único arquivo SQLite com três papéis: `documentos` (resumos, embeddings e índice
+FTS5), `consultas` (cada análise, com veredito, fontes, latência, modelo, se veio do
+cache ou de busca ao vivo, e o feedback) e `paginas` (cache de links). Decisão em
+[ADR 0002](adr/0002-sqlite-busca-vetorial-exata.md).
+
+### Embeddings (`embeddings.py`)
+
+`paraphrase-multilingual-MiniLM-L12-v2` rodando em CPU por ONNX (`fastembed`), sem
+PyTorch. É multilíngue de propósito: a pergunta chega em português e a literatura está
+em inglês, e os dois idiomas ficam no mesmo espaço vetorial. Decisão em
+[ADR 0003](adr/0003-embeddings-multilingues-onnx.md).
+
+### Recuperação (`recuperacao.py`)
+
+Busca híbrida. A vetorial (cosseno exato em numpy) entende paráfrase e cruza idiomas,
+mas confunde fármacos de nome parecido. A lexical (BM25 do FTS5) acerta o nome exato,
+mas não sabe que "pressão alta" é *hypertension*. As duas listas (30 candidatos cada)
+são fundidas por Reciprocal Rank Fusion (k = 60), que dispensa calibrar escalas de
+score diferentes. A pontuação final recebe um bônus pela hierarquia de evidência:
+x1,20 para revisão sistemática e meta-análise, x1,08 para ensaio randomizado. A busca
+leva cerca de 10 ms na base atual (medido pela equipe).
+
+Depois da busca, `selecionar` filtra os 15 melhores candidatos. Prefere os que contêm
+todos os conceitos da consulta de PubMed e têm similaridade de cosseno de pelo menos
+`VOF_SIMILARIDADE_MINIMA` menos 0,12; se não há nenhum, exige a similaridade mínima
+mais 0,12. Ficam no máximo 5 fontes por resposta.
+
+### Busca ampliada (`evidencia.py`, `base.py`)
+
+Se a seleção devolve menos de 2 fontes e a busca ao vivo está ligada, o sistema consulta
+o PubMed na hora: primeiro só revisões sistemáticas, meta-análises e ensaios
+randomizados (sem estudos só em animais) e, se nada vier, qualquer tipo. Os artigos
+encontrados são indexados na base com origem `ao_vivo`, e a busca é refeita. A base
+cresce com o uso. Falha de rede vira lista vazia: o sistema responde com o que já tinha.
+Decisão em [ADR 0006](adr/0006-base-em-lote-com-busca-ao-vivo.md).
+
+### Cliente de LLM (`llm.py`)
+
+Cliente HTTP mínimo (`httpx`) para qualquer API compatível com a de chat da OpenAI, com
+streaming. Os modelos de `LLM_MODELOS` são tentados em ordem: se um responde 429 (cota
+gratuita esgotada) ou erro de servidor, o próximo assume, desde que nenhum texto tenha
+sido entregue ainda. Blocos `<think>` de modelos de raciocínio são removidos. Decisão em
+[ADR 0004](adr/0004-cliente-openai-compativel-groq.md).
+
+### Redação e guardas (`rag.py`)
+
+O prompt de veredito manda usar **exclusivamente** as fontes numeradas, citar cada frase
+factual no formato `[n]`, tratar falta de estudo como `INCONCLUSIVA` e escrever para
+leigo, sem orientação médica individual. A saída tem um cabeçalho fixo (`VEREDITO`,
+`CONFIANCA`, `RESUMO`), um separador `---` e o texto. As guardas rodam sobre essa saída,
+sem depender do modelo:
+
+- `FiltroDeCitacoes` remove, durante o streaming, citações `[n]` que não existem na
+  lista de fontes.
+- `aplicar_guardas`: veredito afirmativo (`APOIADA`, `CONTESTADA`, `EXAGERADA`) sem
+  nenhuma citação válida vira `INCONCLUSIVA` com confiança baixa.
+- Teto de confiança pelo tipo de estudo citado: se as fontes citadas são todas fracas
+  (nem revisão nem ensaio randomizado), o teto é `baixa`; se a mais forte é um ensaio
+  randomizado, `media`; `alta` exige ao menos uma revisão sistemática ou meta-análise
+  entre as citadas.
+
+Vereditos possíveis (`ROTULOS`): `APOIADA`, `CONTESTADA`, `EXAGERADA`, `INCONCLUSIVA`,
+`NAO_VERIFICAVEL` e `FORA_DO_ESCOPO`. Os dois últimos nunca vêm do LLM: são decididos
+pelo código (sem fontes encontradas, ou assunto fora de saúde). Decisão em
+[ADR 0007](adr/0007-guardas-deterministicas.md).
+
+### Cache e modo degradado (`rag.py`)
+
+A chave de cache é o SHA-256 de `versão da base + entrada normalizada`. Dentro de
+`VOF_CACHE_HORAS` (168 por padrão), a mesma entrada recebe de volta os eventos da
+resposta anterior, sem nova chamada ao LLM. Mudou a base, mudou a chave. Respostas em
+modo degradado não são guardadas no cache.
+
+Sem `LLM_API_KEY`, ou se todos os modelos falham, o sistema mostra as fontes recuperadas
+com veredito `INCONCLUSIVA` e o aviso "Modo degradado".
+
+### API e front (`api.py`, `web/index.html`)
+
+FastAPI com resposta em streaming por Server-Sent Events, limite de requisições por
+cliente e o front estático servido na raiz. O front é um único HTML, sem etapa de
+build. Contrato em [API](api.md); decisão em
+[ADR 0005](adr/0005-fastapi-sse-front-estatico.md).
+
+### Sinal de estilo (`sinal_estilo.py`)
+
+O BERTimbau treinado pelo grupo continua no repositório, com seu model card
+(`modelos/cards/bertimbau.json`) e o gate em `model_card.py`. Só é carregado se
+PyTorch e os pesos estiverem disponíveis. Se carregar, a interface mostra um "sinal de
+estilo do texto". Ele não decide o veredito. Decisão em
+[ADR 0009](adr/0009-bertimbau-sinal-secundario.md).
+
+## Stack
+
+| Função | Tecnologia |
 |---|---|
-| Truncamento | 512 tokens — limite do BERT. Avaliar se título + lead já carregam o sinal antes de usar o texto completo. |
-| Desbalanceamento | Pesos no `CrossEntropyLoss` ou `WeightedRandomSampler` — mesma razão do baseline. |
-| Métrica de parada | F1 macro, nunca acurácia. Usar `load_best_model_at_end=True` com `metric_for_best_model="f1"`. |
-| Avaliação OOD | Medir em portais **não vistos no treino** antes de declarar melhora sobre o baseline — detecta viés de fonte. |
+| Linguagem | Python 3.11 |
+| API | FastAPI + uvicorn, Server-Sent Events |
+| Front | HTML e JavaScript estáticos, sem build |
+| Banco, busca lexical, cache e registro | SQLite com FTS5 |
+| Busca vetorial | numpy (cosseno exato em memória) |
+| Embeddings | `fastembed` (ONNX), `paraphrase-multilingual-MiniLM-L12-v2` |
+| LLM | API compatível com OpenAI via `httpx` (Groq por padrão; Gemini ou Ollama) |
+| Extração de links | `trafilatura` |
+| Literatura | PubMed E-utilities |
+| Classificador opcional | BERTimbau (PyTorch, `transformers`), só para o sinal de estilo |
+| Contêiner e hospedagem | Docker; Hugging Face Space (SDK Docker) |
+| CI/CD | GitHub Actions |
+| Documentação | MkDocs Material + GitHub Pages |
 
-!!! note "O baseline entra antes do BERTimbau"
-    O fine-tuning só se justifica se as métricas do TF-IDF no recorte de saúde já forem conhecidas. Amershi et al. chamam isso de *no model before pipeline* — um modelo melhor num pipeline quebrado é invisível. Se o baseline já atingir F1 ≥ 0,80, avaliar se o custo de fine-tuning vale a margem.
+As dependências ficam separadas em `requirements.txt` (runtime leve),
+`requirements-treino.txt` (PyTorch e afins) e `requirements-dev.txt` (testes).
 
-!!! warning "Limitação fundamental desta camada"
-    Um classificador treinado em corpus de fake news aprende **estilo de escrita**
-    (sensacionalismo, caixa alta, apelo emocional), **não fatos**. Ele erra em
-    alegações falsas bem redigidas — justamente o caso mais perigoso em saúde.
+## O que mudou e por quê
 
-    Esta não é uma falha de implementação, é uma limitação do paradigma. A Camada 2
-    existe exatamente para cobri-la. Amershi et al. descrevem o fenômeno como
-    *mismatch between the real world and evaluation sets* (Seção II-C do artigo-base).
+Esta seção é o registro de processo que o método CBL pede: documentar, refletir,
+compartilhar. A versão anterior não deu certo, e vale dizer como e por quê.
 
-### [2] Camada 2 — Verificação por evidência
+**A versão anterior.** Um app Streamlit. A cada consulta, o sistema baixava a página,
+passava o texto por um BERTimbau (classificador de estilo), procurava um par
+medicamento + condição num dicionário de 38 termos, consultava o PubMed ao vivo (limite
+de 3 requisições por segundo) e rodava um modelo NLI mDeBERTa zero-shot, em CPU, sobre
+até 10 resumos. Regras de fusão combinavam os sinais. Não havia banco nem persistência.
+A demo rodava num túnel temporário do Cloudflare, a partir de um notebook do Colab.
 
-Enquanto a Camada 1 olha *como* a notícia foi escrita, a Camada 2 olha *o que ela
-afirma*.
+**O que falhou.**
 
-**2a — Extração da alegação.** Identifica no texto o par *medicamento + condição
-clínica* por casamento com dicionário controlado, sem treinar um NER próprio:
+- **Lento.** Cada resposta levava dezenas de segundos: busca ao vivo com limite de
+  taxa, mais NLI em CPU sobre vários resumos, tudo no caminho da requisição.
+- **Estreito.** Só funcionava para os 38 termos do dicionário. Qualquer alegação fora
+  dele caía em "não foi possível verificar".
+- **Pouco convincente.** O NLI zero-shot errava em texto biomédico, que era a hipótese
+  D3 da nossa lista de decisões pendentes. E a resposta final era um rótulo de regra,
+  sem texto que um leigo pudesse ler.
+- **Mediu a coisa errada.** O BERTimbau teve F1 macro alto no teste (0,96 no model card
+  atual), mas o produto não servia. O classificador aprende **estilo de portal**, não
+  fato: as falsas vinham quase todas de um único site. Uma alegação falsa bem redigida
+  passa, e uma verdadeira mal escrita é marcada.
+- **Frágil para demonstrar.** Sem persistência, sem registro de uso e com um link que
+  mudava a cada execução do Colab.
 
-- **[DeCS](https://decs.bvsalud.org/)** (Descritores em Ciências da Saúde, BIREME/BVS) — vocabulário trilíngue PT/EN/ES com 35.033 descritores, dos quais 31.110 vêm do MeSH.
-- **[DCB/ANVISA](https://www.gov.br/anvisa/pt-br/assuntos/farmacopeia/dcb)** (Denominações Comuns Brasileiras) — nomenclatura oficial de princípios ativos no Brasil.
+**Armadilhas que isso ilustra** (discutidas em aula):
 
-**A ponte PT↔EN.** A notícia está em português; o PubMed responde em inglês. O DeCS
-resolve isso por ser trilíngue e mapear para MeSH: `"hidroxicloroquina"` →
-`Hydroxychloroquine[MeSH]` vira uma query válida. É o que torna a Camada 2 viável sem
-tradução automática nem custo de API.
+- **Métrica de ML alta não é problema resolvido.** O F1 do BERTimbau era alto e o
+  produto, inútil. A métrica respondia a outra pergunta.
+- **Métrica certa no dataset errado.** O Fake.br cobre 2016 a 2018, quase não trata de
+  saúde (3 notícias com medicamento e condição no recorte, ver [Dados](dados.md)) e não
+  tem COVID-19. F1 alto num corpus que não é o do problema não prova nada sobre o
+  problema.
+- **Otimizar o proxy.** Treinamos e comparamos modelos (TF-IDF, BERTimbau) para subir um
+  número que era proxy do que o usuário precisa: saber se a alegação tem respaldo
+  científico. Quem responde a isso é a evidência, e ela estava na camada menos
+  desenvolvida.
 
-**2b — Busca de evidência.** Consulta a [PubMed E-utilities](https://www.ncbi.nlm.nih.gov/books/NBK25501/)
-(`esearch` + `efetch`), priorizando revisões sistemáticas e meta-análises, que ocupam o
-topo da hierarquia de evidência.
+**O que fizemos.** Trocamos o desenho por um RAG: a evidência virou o centro, a base é
+ingerida em lote e indexada, e a pergunta "isso tem respaldo?" passou a ser respondida
+por um LLM que só pode falar o que as fontes dizem, com guardas conferindo. O BERTimbau
+ficou como sinal secundário opcional. As decisões estão nos [ADRs](adr/index.md).
 
-**2c — Classificação de suporte.** Decide se a literatura recuperada **apoia**, **contradiz** ou **não cobre** a alegação, via NLI (*natural language inference*). A abordagem evolui em fases para não investir em dados antes de saber se são necessários:
-
-| Fase | Abordagem | Entrega |
-|---|---|---|
-| **Fase 1 (PoC)** | Sem NLI — responde só **encontrou** ou **não cobre**, com força pelo tipo de estudo | Valida que o pipeline funciona ponta a ponta |
-| **Fase 2a — zero-shot** | `MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`, sem treino adicional | Gratuito no Colab; mede se zero-shot basta antes de anotar dados |
-| **Fase 2b — fine-tuning** | Fine-tuning do mDeBERTa em pares `(resumo, alegação, rótulo)` anotados | Apenas se o zero-shot for impreciso no domínio biomédico PT |
-
-Para a Fase 2b, cada exemplo segue o formato NLI padrão: **premise** = resumo do artigo do PubMed, **hypothesis** = alegação extraída da notícia, **label** ∈ {entailment, contradiction, neutral}. A fonte de dados mais viável é o [MedNLI](https://physionet.org/content/mednli/1.0.0/) (inferência em linguagem médica) complementado por anotação manual de ~500 pares selecionados do PubMed.
-
-### [3] Fusão — combinando os dois sinais
-
-| Camada 2 (evidência) | Camada 1 (estilo) | Veredito |
-|---|---|---|
-| Contradiz | qualquer | **Sem base científica** — a evidência prevalece |
-| Apoia | risco alto | **Base existe, mas a matéria exagera** |
-| Apoia | risco baixo | **Com base científica** |
-| Não cobre | qualquer | **Não foi possível verificar** (confiança baixa) |
-
-**Por que regras e não um terceiro modelo.** Por duas razões. Primeiro, não existe
-dado rotulado para treinar a fusão — seria um modelo sem supervisão possível. Segundo,
-regras são auditáveis: o usuário consegue ver *por que* recebeu aquele veredito, o que
-responde diretamente às perguntas de transparência levantadas em
-[Guiding Questions](guiding-questions.md).
-
-!!! danger "Ausência de evidência não é evidência de ausência"
-    A última linha da tabela é a mais importante. Quando o PubMed não retorna nada, o
-    sistema responde **"não foi possível verificar"** — nunca **"é falso"**. Um
-    tratamento pode simplesmente não ter sido estudado ainda.
-
-## Stack técnica
-
-| Função | Tecnologia | Custo |
-|---|---|---|
-| Linguagem | Python 3.11 | — |
-| Ingestão de notícias | `trafilatura`, `requests` | grátis |
-| Manipulação de dados | `pandas` | grátis |
-| Baseline e métricas | `scikit-learn` | grátis |
-| Modelo final Camada 1 | `transformers` + PyTorch (BERTimbau) | grátis |
-| Vocabulário médico | DeCS/MeSH + DCB da ANVISA | grátis |
-| Busca de evidência | PubMed E-utilities | grátis, sem chave obrigatória |
-| Inferência de suporte | mDeBERTa-v3 XNLI | grátis |
-| Interface (PoC) | Streamlit | grátis |
-| Interface (fase 2) | FastAPI + front dedicado | grátis |
-| Experimentação | Jupyter / Google Colab | GPU gratuita |
-| Documentação | MkDocs Material + GitHub Pages | grátis |
-| CI | GitHub Actions | grátis |
-
-**Restrição de projeto: orçamento zero.** Nenhum componente depende de API paga. Isso
-não é só economia — força a Camada 2 a ser aprendizado de máquina de verdade em vez de
-uma chamada a um LLM comercial.
-
-**Por que Streamlit na PoC.** É Python puro: a equipe não precisa aprender JavaScript
-para ter tela funcionando. A separação em API (FastAPI) fica para a fase 2, quando o
-pipeline já estiver estável e valer a pena isolá-lo.
+**O que ganhamos e o que perdemos.** Ganhamos cobertura de alegações além do
+dicionário, resposta em streaming, texto legível com citações, um banco com registro de
+uso e uma demo hospedada. Perdemos a independência de serviços externos: agora
+dependemos de um LLM de terceiros e da cota gratuita dele. Os números de qualidade do
+sistema novo são medidos por `scripts/avalia_rag.py`; os resultados ficam em
+[Avaliação](avaliacao.md).
 
 ## MLOps
 
-A partir da revisão contra Kreuzberger, Kühl & Hirschl (*MLOps: Overview,
-Definition, and Architecture*, arXiv:2205.02302), o projeto adota uma versão
-leve dos componentes do artigo, dimensionada para equipe pequena e orçamento
-zero:
+O artigo-base é Kreuzberger, Kühl e Hirschl, *Machine Learning Operations (MLOps):
+Overview, Definition, and Architecture* (IEEE Access, 2023). Ele foi apresentado em aula
+com a recomendação de justificar cada componente adotado. Para uma equipe de quatro
+pessoas, com orçamento zero e um prazo curto, adotamos uma versão leve e dizemos por que
+não adotamos o resto.
 
-| Princípio do artigo | Implementação neste projeto |
-|---|---|
-| P1 — CI/CD automation | `.github/workflows/ci.yml` roda a suíte de testes a cada push/PR; `deploy-app.yml` publica o app no Hugging Face Space a cada push na `main` |
-| P4 — Versioning (modelo) | `modelos/cards/*.json`, versionado no git, com hash de integridade do artefato |
-| P6 — Continuous training | `.github/workflows/treino-gate.yml` retreina e aplica o gate ao baseline TF-IDF (manual ou por mudança relevante); o BERTimbau é retreinado localmente por `scripts/treina_bert.py`, que gera o card para o mesmo gate — fine-tuning em CPU do runner do GitHub seria lento demais |
-| P7 — ML metadata tracking | Métricas, dados de origem e limiares de aprovação registrados no model card |
+### Princípios
 
-**Por que não um model registry remoto.** Decisão deliberada: um arquivo JSON
-versionado no git é legível em diff por qualquer membro da equipe sem rodar
-nada, e não exige hospedar um servidor — coerente com o orçamento zero do
-projeto. Fica como possível evolução futura se a equipe crescer.
-
-**Gate de qualidade com detecção de viés de fonte.** Além do F1 macro
-same-source já existente, o treino mede F1 cross-source (treina numa fonte de
-dados, testa na outra) — a assinatura de um modelo que aprendeu o portal de
-origem em vez de desinformação é F1 alto same-source e baixo cross-source. Um
-modelo só é promovido a `status: producao` se a queda entre os dois não
-exceder o limiar configurado no card. Ver
-`src/verdade_ou_fake/model_card.py:aprovar_gate`.
-
-**O card controla o que vai ao ar.** O classificador servido pelo app é o
-BERTimbau, descrito em `modelos/cards/bertimbau.json` (gerado por
-`scripts/treina_bert.py`). Na inicialização, o app (`src/verdade_ou_fake/modelo_producao.py`)
-só carrega os pesos se o card estiver em `status: producao` e o SHA-256 de
-`model.safetensors` bater com o registrado. Os pesos ficam num repositório de
-modelo do Hugging Face Hub (fora do git) e o app roda num Hugging Face Space
-via Docker — o card no git é o registro; o Hub, só o armazenamento. Passo a
-passo no README, seção *Deploy*.
-
-## Estratégia de construção: fatia vertical fina
-
-A PoC constrói a **fatia mais estreita possível que atravessa as quatro etapas**, com
-cada peça deliberadamente simples, em vez de aperfeiçoar uma etapa por vez.
-
-Isso segue a recomendação central de Amershi et al. (Seção V-A, *end-to-end pipeline
-support*) e tem uma razão prática: os problemas caros aparecem nas **junções** entre
-etapas, não dentro delas. Descobrir na semana 2 que o PubMed responde em inglês é
-barato; descobrir na semana 10 é fatal.
-
-### Fases
-
-| Fase | Entrega | Etapas |
-|---|---|---|
-| **1 — PoC** *(Challenge 1)* | Fatia vertical fina rodando ponta a ponta | Ingestão + baseline TF-IDF + PubMed + Streamlit |
-| **2 — Modelo** | Qualidade preditiva | Dataset ampliado, fine-tuning do BERTimbau, NLI na Camada 2c, FastAPI |
-| **3 — Produção** | Sustentação | Versionamento de dados, monitoramento, reingestão periódica |
-
-### Frentes de trabalho
-
-Quatro frentes paralelas desde o dia 1, uma por integrante:
-
-| Frente | Responsabilidade | Guiding Question |
-|---|---|---|
-| **A — Dados** | Recorte de saúde do corpus PT-BR, coleta complementar, *datasheet* | GQ1, GQ2 |
-| **B — Modelo** | Baseline, métricas, análise de erro, fine-tuning | GQ4 |
-| **C — Evidência** | Dicionário DeCS + DCB, cliente PubMed, classificação de suporte | GQ5 |
-| **D — Produto** | Ingestão de links, regras de fusão, interface, redação dos avisos | GQ3, GQ6, GQ7 |
-
-As frentes se encontram numa **integração semanal**: cada uma entrega sua peça com
-interface definida, e o pipeline completo roda de ponta a ponta toda semana, mesmo
-imperfeito.
-
-## Decisões pendentes de validação
-
-| # | Decisão | Risco | Plano B |
+| Princípio | Adotado | Onde está | Não adotado, e por quê |
 |---|---|---|---|
-| D1 | DeCS acessível para download em massa | Bloqueia a ponte PT↔EN | MeSH direto + dicionário PT manual dos ~50 fármacos mais citados |
-| D2 | Recorte de saúde do corpus PT-BR tem volume suficiente | Modelo fraco por falta de dado | Coleta complementar em agências de checagem |
-| D3 | NLI zero-shot funciona em texto biomédico em português | Camada 2c imprecisa | Heurística por tipo de estudo (revisão sistemática = forte) |
-| D4 | `trafilatura` extrai bem dos portais BR alvo | Contamina as duas camadas | Regras por domínio nos 5 portais mais frequentes |
+| P1 CI/CD | `ci.yml` roda os testes offline (`pytest -m "not rede"`) a cada push; `deploy-app.yml` publica o Space | `.github/workflows/` | Há um único ambiente, sem homologação. |
+| P2 Orquestração de workflow | Agendamento semanal da ingestão pelo GitHub Actions | `ingestao-base.yml` | Sem orquestrador dedicado (Airflow, Kubeflow): são poucos passos lineares, um agendador resolve. |
+| P3 Reprodutibilidade | Versões fixadas nos `requirements*.txt`; banco reconstruído do JSONL com um comando; Dockerfile | `requirements*.txt`, `scripts/constroi_base.py`, `Dockerfile` | O LLM de terceiros não é reprodutível: o provedor pode atualizar o modelo. Mitigação parcial: temperatura baixa e registro do modelo usado em cada consulta. |
+| P4 Versionamento | Código, base de conhecimento (JSONL) e model card no git; manifesto com SHA-256 | `dados/base/`, `modelos/cards/` | Sem DVC: o JSONL é texto e cabe no git. Os pesos do BERTimbau ficam fora do git, no Hub. |
+| P5 Colaboração | Repositório único, branches, ADRs e documentação no repositório | `docs/adr/`, `docs/` | Sem ferramenta de experimentos compartilhada. |
+| P6 Treino e avaliação contínuos | Gate de qualidade do classificador opcional; avaliação do RAG por script | `scripts/verifica_gate.py`, `treino-gate.yml`, `scripts/avalia_rag.py` | O RAG não treina nada, então não há retreino contínuo. O que se atualiza é a base, toda semana. |
+| P7 Metadados de ML | Model card com métricas, hashes dos dados e do artefato; manifesto da base; cada consulta registra modelo e latência | `modelos/cards/`, `dados/base/manifesto.json`, tabela `consultas` | Sem MLflow nem armazenamento de experimentos. |
+| P8 Monitoramento contínuo | `GET /api/metricas` (latência p50 e p95, vereditos, cache, busca ao vivo) e `GET /api/saude` | `api.py`, `banco.py` (`metricas`) | Sem alertas automáticos nem painel externo. Alguém precisa olhar. |
+| P9 Ciclos de feedback | Feedback por resposta, gravado em `consultas.feedback`; consultas com busca ao vivo apontam lacunas da base | `POST /api/feedback`, [Operação](operacao.md) | O ciclo é manual: uma pessoa lê os sinais e decide ampliar o vocabulário ou ajustar prompts. |
 
-Cada uma é validada por uma tarefa curta na primeira semana. São hipóteses, não
-suposições — e é assim que estão sendo tratadas.
+### Componentes
+
+| Componente | Adotado | Onde está | Não adotado, e por quê |
+|---|---|---|---|
+| C1 CI/CD | GitHub Actions | `.github/workflows/` | — |
+| C2 Repositório de código | GitHub | o próprio repositório | — |
+| C3 Orquestração de workflow | Só o agendamento do GitHub Actions | `ingestao-base.yml` | Sem orquestrador dedicado, ver P2. |
+| C4 Feature store | Nenhum | — | Não há features compartilhadas: o RAG consome texto e embeddings calculados na construção do banco. |
+| C5 Infraestrutura de treino | Máquina local ou Colab, só para o classificador opcional | `scripts/treina_bert.py` | Sem cluster nem GPU dedicada. O RAG não treina. |
+| C6 Registro de modelos | Model card em JSON no git; pesos no Hugging Face Hub | `modelos/cards/`, `scripts/publica_modelo.py` | Sem registro remoto (MLflow): um JSON legível em diff basta para um modelo. |
+| C7 Repositório de metadados | Model card, manifesto da base e tabela `consultas` | ver P7 | Sem armazenamento dedicado. |
+| C8 Serviço de modelo | FastAPI em contêiner Docker no Hugging Face Space | `api.py`, `Dockerfile` | Sem Kubernetes: uma réplica de uma imagem, num host gratuito, não justifica. |
+| C9 Monitoramento | Endpoint de métricas sobre o próprio SQLite | `banco.py` (`metricas`) | Sem Prometheus nem Grafana. |
+
+### Papéis
+
+O artigo define sete papéis (R1 a R7). Com quatro pessoas, cada uma acumula vários. O
+mapeamento abaixo é por frente de trabalho, não por nome.
+
+| Papel | Quem exerce |
+|---|---|
+| R1 Interessado de negócio | Os usuários finais e a banca da disciplina; a equipe traduz o problema nas Guiding Questions. |
+| R2 Arquiteto de solução | Decisão coletiva, registrada em ADRs; quem propõe a decisão a escreve. |
+| R3 Cientista de dados | Frente de modelo e avaliação: classificador opcional, conjunto de alegações com gabarito, prompts. |
+| R4 Engenheiro de dados | Frente de dados e evidência: ingestão do PubMed, vocabulário, construção da base, datasheets. |
+| R5 Engenheiro de software | Frente de produto: API, front, extração de links, guardas. |
+| R6 Engenheiro DevOps | Frente de infraestrutura: Docker, workflows, deploy no Space. |
+| R7 Engenheiro de ML (MLOps) | Acumulado entre as frentes de modelo e infraestrutura: gate, model card, monitoramento. |
+
+## Requisitos não funcionais
+
+### Confiabilidade
+
+- **O LLM erra.** As guardas reduzem o dano (citação inexistente removida, afirmação sem
+  citação rebaixada, confiança limitada pelo tipo de estudo), mas não o eliminam: o
+  modelo pode citar uma fonte real e interpretá-la mal. Por isso o texto sempre
+  acompanha as fontes com link, e o usuário pode conferir.
+- **O LLM cai ou estoura a cota.** Primeiro o fallback tenta o próximo modelo da lista.
+  Se todos falham, o sistema entra em modo degradado e mostra as fontes recuperadas
+  com aviso.
+- **A página não abre.** O usuário recebe uma mensagem pedindo que cole o texto. Nada é
+  inventado a partir de uma página que não foi lida.
+- **O PubMed está fora.** A busca ampliada devolve lista vazia e a resposta usa o que a
+  base local tem.
+- **Não há estudo sobre a alegação.** Resposta `NAO_VERIFICAVEL`, com o texto explícito
+  de que ausência de estudo não prova que a alegação é falsa.
+- **Erro inesperado.** A API envia um evento `erro` genérico e registra a exceção no log.
+- **Disco não persistente.** No plano gratuito do Space, o registro de consultas zera a
+  cada reinício. A base de conhecimento é reconstruída na imagem.
+
+### Escalabilidade
+
+O desenho serve para demonstração e uso leve. O que muda de 10 para 10 mil consultas por
+dia:
+
+- **Cota do LLM.** É o primeiro gargalo. Limites do plano gratuito do Groq na data da
+  consulta (07/10/2026), sujeitos a mudança: 30 requisições por minuto; por dia, cerca
+  de 100 mil tokens no `llama-3.3-70b-versatile`, 200 mil no `openai/gpt-oss-120b` e
+  500 mil no `llama-3.1-8b-instant`. A lista de modelos com fallback soma essas cotas.
+  Cada consulta nova usa duas chamadas (identificação da alegação e redação). Com muito
+  mais consultas por dia, é preciso um plano pago ou outro provedor.
+- **Cache.** Consultas repetidas não chamam o LLM. Ajuda quando muita gente cola a mesma
+  corrente de WhatsApp, e nada quando cada entrada é única.
+- **SQLite de processo único.** Uma réplica, uma conexão protegida por trava. A busca
+  vetorial exata compara a consulta com todos os embeddings em memória: funciona bem em
+  milhares de documentos e deixa de fazer sentido em milhões. Várias réplicas
+  exigiriam outro armazenamento.
+- **Limite por cliente.** `VOF_LIMITE_POR_MINUTO` (12 por padrão) protege a cota
+  compartilhada de um único usuário, mas fica em memória e vale por processo.
+- **PubMed.** O cliente espaça as requisições para respeitar 3 por segundo sem chave;
+  com `NCBI_API_KEY` o intervalo cai para respeitar 10 por segundo.
+
+### Manutenibilidade
+
+- Um módulo por responsabilidade, com docstrings que explicam o porquê.
+- O orquestrador (`rag.py`) recebe as dependências por um objeto `Servico`, o que
+  permite testar com LLM, PubMed e extração simulados. A suíte `pytest -m "not rede"`
+  roda offline no CI.
+- Dependências fixadas e separadas por uso (runtime, treino, desenvolvimento).
+- Decisões em ADRs; datasheets da base e do corpus de treino em [Dados](dados.md).
+
+### Adaptabilidade
+
+- **Base nova:** ingestão semanal pelo workflow `ingestao-base.yml`, que commita o JSONL
+  atualizado.
+- **Alegação fora da base:** busca ao vivo no PubMed, cujos artigos passam a fazer parte
+  da base local.
+- **Troca de provedor de LLM:** três variáveis de ambiente, sem tocar no código
+  ([Operação](operacao.md)).
+- **Novos medicamentos e condições:** acrescentar linhas a `dados/vocabulario_seed.csv`
+  e rodar a ingestão.
+- **Limite honesto:** o vocabulário define o que a ingestão em lote cobre. Fora dele, a
+  qualidade depende da busca ao vivo.

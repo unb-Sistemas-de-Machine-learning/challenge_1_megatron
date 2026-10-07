@@ -1,0 +1,22 @@
+[
+  {"alegacao": "Ivermectina cura covid-19", "esperado": ["CONTESTADA", "INCONCLUSIVA"]},
+  {"alegacao": "Hidroxicloroquina previne e trata a covid-19", "esperado": ["CONTESTADA"]},
+  {"alegacao": "Azitromicina é eficaz contra a covid-19", "esperado": ["CONTESTADA"]},
+  {"alegacao": "Vitamina C cura o resfriado comum", "esperado": ["CONTESTADA", "EXAGERADA"]},
+  {"alegacao": "Zinco em altas doses cura a covid-19", "esperado": ["CONTESTADA", "INCONCLUSIVA", "EXAGERADA"]},
+  {"alegacao": "Vitamina D cura a depressão", "esperado": ["CONTESTADA", "EXAGERADA", "INCONCLUSIVA"]},
+  {"alegacao": "Metformina ajuda a controlar a glicose no diabetes tipo 2", "esperado": ["APOIADA"]},
+  {"alegacao": "Canabidiol reduz crises em formas graves de epilepsia", "esperado": ["APOIADA"]},
+  {"alegacao": "Semaglutida ajuda a perder peso em pessoas com obesidade", "esperado": ["APOIADA"]},
+  {"alegacao": "Dexametasona reduz a mortalidade em casos graves de covid-19", "esperado": ["APOIADA"]},
+  {"alegacao": "Sinvastatina reduz o colesterol e o risco cardiovascular", "esperado": ["APOIADA"]},
+  {"alegacao": "Fluoxetina é eficaz no tratamento da depressão", "esperado": ["APOIADA", "EXAGERADA"]},
+  {"alegacao": "Losartana reduz a pressão arterial em hipertensos", "esperado": ["APOIADA"]},
+  {"alegacao": "Melatonina cura a ansiedade", "esperado": ["EXAGERADA", "INCONCLUSIVA", "CONTESTADA"]},
+  {"alegacao": "Metformina cura o câncer", "esperado": ["EXAGERADA", "INCONCLUSIVA", "CONTESTADA"]},
+  {"alegacao": "Canabidiol cura o autismo", "esperado": ["EXAGERADA", "INCONCLUSIVA", "CONTESTADA"]},
+  {"alegacao": "Paracetamol na gravidez causa autismo", "esperado": ["INCONCLUSIVA", "EXAGERADA", "CONTESTADA", "NAO_VERIFICAVEL"]},
+  {"alegacao": "Chá de boldo cura câncer de pâncreas", "esperado": ["NAO_VERIFICAVEL", "INCONCLUSIVA"]},
+  {"alegacao": "Água com limão em jejum cura o diabetes", "esperado": ["NAO_VERIFICAVEL", "INCONCLUSIVA", "CONTESTADA"]},
+  {"alegacao": "O governo anunciou hoje o novo ministro da economia", "esperado": ["FORA_DO_ESCOPO"]}
+]

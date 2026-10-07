@@ -1,8 +1,131 @@
-# Datasheet — Recorte de saúde PT-BR
+# Dados do projeto
+
+Dois conjuntos, com papéis diferentes:
+
+| Conjunto | Papel hoje | Seção |
+|---|---|---|
+| Base de conhecimento do RAG (resumos do PubMed) | O sistema a **consulta** em cada resposta | [Datasheet da base](#datasheet--base-de-conhecimento-do-rag-resumos-do-pubmed) |
+| Recorte de saúde PT-BR (Fake.br, FakeRecogna) | **Treino do classificador opcional** (BERTimbau, sinal de estilo) | [Datasheet do recorte](#datasheet--recorte-de-saúde-pt-br) |
+
+Estrutura:
+
+```
+dados/
+├── base/pubmed.jsonl         # base do RAG, versionada
+├── base/manifesto.json       # data, volume e SHA-256 da base
+├── vocabulario_seed.csv      # 23 medicamentos e 15 condições
+├── raw/, processed/          # gerados pelos scripts de preparo (processed/saude_fakerecogna.csv é versionado)
+└── vof.db                    # banco SQLite derivado (não vai para o git)
+```
+
+## Datasheet — Base de conhecimento do RAG (resumos do PubMed)
+
+Esta é a base que o sistema consulta em cada resposta.
+
+**Versão atual:** gerada em 2026-10-07 · **Script:** `scripts/ingere_pubmed.py` ·
+**Arquivos:** `dados/base/pubmed.jsonl` (versionado no git) e `dados/base/manifesto.json`
+
+| Campo do manifesto | Valor na versão atual |
+|---|---|
+| `fonte` | PubMed E-utilities |
+| `gerado_em` | 2026-10-07 |
+| `consultas` | 345 |
+| `falhas` | 0 |
+| `artigos` | 1069 |
+| `sha256` | `73e8a4836cde39bc5959bbbb0230e0bf107715040da57c276fe2c135150ac7ee` |
+
+O `sha256` é o hash do arquivo `pubmed.jsonl`. Ele entra na chave de cache e aparece em
+`GET /api/saude`. A ingestão semanal reescreve o arquivo e o manifesto, então esta
+tabela descreve a versão no momento da escrita; o manifesto é a fonte da verdade.
+
+### Origem e coleta
+
+- **Origem:** PubMed, pela API E-utilities do NCBI (`esearch` para os identificadores,
+  `efetch` para os resumos). Gratuita; a chave `NCBI_API_KEY` é opcional e sobe o limite
+  de requisições.
+- **O que se busca:** uma consulta por medicamento do vocabulário e uma por par
+  medicamento × condição. O vocabulário (`dados/vocabulario_seed.csv`) tem 23
+  medicamentos e 15 condições (14 termos distintos em inglês, porque "covid" e
+  "covid-19" apontam para o mesmo). São 23 + 23 × 14 = 345 consultas.
+- **Quantos por consulta:** até 12 artigos por medicamento e até 6 por par.
+
+### Critério de inclusão
+
+- Tipo de publicação: revisão sistemática, meta-análise ou ensaio clínico randomizado
+  (`systematic review[pt] OR meta-analysis[pt] OR randomized controlled trial[pt]`).
+- Exclusão de estudos só em animais (`NOT (animals[mh] NOT humans[mh])`).
+- Termos buscados em título ou resumo.
+- Mantidos só artigos com PMID e resumo de pelo menos 200 caracteres. Duplicatas por PMID
+  são removidas.
+- Os artigos que chegam pela busca ao vivo durante o uso (origem `ao_vivo`) **não** passam
+  por esses filtros de lote: aceitam qualquer tipo de estudo quando não há estudo forte.
+  Eles ficam só no banco em execução, não neste arquivo.
+
+### Conteúdo
+
+Um artigo por linha, com `pmid`, `titulo`, `resumo`, `tipos_estudo` (tipos de publicação
+do PubMed) e `ano`. Na versão atual os anos vão de 1976 a 2026. Entre os tipos de
+publicação: 530 ensaios randomizados, 477 revisões sistemáticas e 297 meta-análises (um
+artigo pode ter mais de um tipo).
+
+### Idioma
+
+Resumos principalmente em inglês, a língua da literatura biomédica indexada. A busca não
+filtra por idioma. A alegação do usuário chega em português, e a ponte é o modelo de
+embeddings multilíngue ([ADR 0003](../docs/adr/0003-embeddings-multilingues-onnx.md)).
+
+### Licença e termos de uso
+
+Os metadados do PubMed são mantidos pela National Library of Medicine (NLM). Os resumos
+podem ter direitos autorais dos editores e dos autores. Usamos a base para pesquisa e
+ensino. A interface mostra apenas o título, o tipo de estudo e o link para o PubMed,
+mas o arquivo `dados/base/pubmed.jsonl`, versionado neste repositório público, contém o
+texto dos resumos, e trechos deles são enviados ao provedor de LLM a cada consulta. Esse
+uso precisa ser revisto antes de qualquer aplicação fora do contexto acadêmico. Os
+termos vigentes estão nas políticas do NCBI
+(<https://www.ncbi.nlm.nih.gov/home/about/policies/>) e nos termos de uso dos dados da
+NLM (<https://www.nlm.nih.gov/databases/download/terms_and_conditions.html>). Quem for
+reutilizar o arquivo deve conferir esses termos.
+
+### Vieses e limitações conhecidos
+
+- **Literatura em inglês.** Estudos publicados em outros idiomas e a prática clínica
+  brasileira ficam sub-representados.
+- **Viés de publicação.** Estudos com resultado positivo são mais publicados do que os
+  negativos, então a base pode exagerar a eficácia dos tratamentos.
+- **Cobertura restrita ao vocabulário.** Só medicamentos e condições do vocabulário (23 e
+  15) são ingeridos em lote. O que mais entrar vem da busca ao vivo, que cobre pior e
+  não é persistida no plano gratuito de hospedagem.
+- **Resumos, não texto completo.** O resumo pode omitir limitações, subgrupos e conflitos
+  de interesse que mudariam a leitura do estudo.
+- **Seleção por relevância do PubMed.** O corte de 12 e 6 artigos por consulta, ordenados
+  por relevância, pode deixar estudos importantes de fora.
+- **Sem avaliação de qualidade individual.** O tipo de publicação é um proxy do nível de
+  evidência. Uma revisão sistemática ruim conta como forte, e um ensaio pequeno também.
+- **Sem tratamento de retratações.** O filtro de ingestão não remove publicações
+  retratadas.
+- **Vocabulário tem viés de seleção.** Foi escolhido pela equipe, não por frequência de
+  uso ou de desinformação medida.
+
+### Como regenerar
+
+```bash
+python scripts/ingere_pubmed.py              # ingestão completa
+python scripts/ingere_pubmed.py --limite 5   # teste rápido, só 5 consultas
+python scripts/constroi_base.py              # (re)constrói o banco SQLite a partir do JSONL
+```
+
+O workflow `ingestao-base.yml` roda a ingestão toda semana e commita a base atualizada.
+
+---
+
+## Datasheet — Recorte de saúde PT-BR
+
+> **Papel atual:** dado de treino do classificador opcional (BERTimbau). Não alimenta o veredito do RAG.
 
 **Versão:** 1.0 · **Gerado em:** 2026-09-24 · **Script:** `scripts/prepara_dataset.py`
 
-## Como gerar
+### Como gerar
 
 ```bash
 python scripts/prepara_dataset.py            # baixa o corpus em dados/raw/fakebr
@@ -12,7 +135,7 @@ python scripts/prepara_dataset.py --corpus PASTA   # usa uma cópia local já ex
 Saída: `dados/processed/saude_ptbr.csv`. As pastas `dados/raw/` e `dados/processed/`
 não vão para o git; o script as recria do zero.
 
-## Origem
+### Origem
 
 Fake.br Corpus, repositório oficial
 [roneysco/Fake.br-Corpus](https://github.com/roneysco/Fake.br-Corpus), **fixado no
@@ -31,7 +154,7 @@ conteúdo dos 14.400 arquivos usados e compara com
 conferir, o script para. O hash é do conteúdo, não do `.zip`, porque o GitHub pode
 mudar a compressão dos pacotes sem aviso.
 
-## Colunas
+### Colunas
 
 | Coluna | Descrição |
 |---|---|
@@ -40,7 +163,7 @@ mudar a compressão dos pacotes sem aviso.
 | `rotulo` | **1 = desinformação (fake), 0 = legítima (true).** É a convenção do projeto. No script do Hugging Face o `ClassLabel` era o inverso: fake = 0. |
 | `categoria` | Categoria do metadado original (`politica`, `tv_celebridades`, ...). |
 
-## Decisões de preparação
+### Decisões de preparação
 
 - **Textos normalizados por tamanho.** Nos `full_texts`, a mediana é de 918 palavras
   nas verdadeiras e 157 nas falsas. Um classificador aprenderia "texto longo =
@@ -54,7 +177,7 @@ mudar a compressão dos pacotes sem aviso.
 - **Filtro.** Ao menos um termo de `dados/vocabulario_seed.csv` (medicamento ou
   condição), casado por fronteira de palavra e ignorando acento e caixa.
 
-## Volume
+### Volume
 
 - Corpus completo: 7200 notícias (3600 falsas, 3600 verdadeiras)
 - Notícias que mencionam termo de saúde: 198 (117 falsas, 81 verdadeiras)
@@ -65,7 +188,7 @@ mudar a compressão dos pacotes sem aviso.
   ansiedade 12, hipertensão 8, diabetes 8
 - Notícias com o par medicamento + condição (`extrair_alegacao`): **3**
 
-## Limitações conhecidas
+### Limitações conhecidas
 
 - **A decisão D2 falhou na prática.** O recorte passa de 300 notícias, mas quase não
   trata de saúde. O Fake.br não tem categoria de saúde, e os termos mais frequentes
@@ -88,7 +211,7 @@ mudar a compressão dos pacotes sem aviso.
   O modelo pode aprender o estilo editorial de cada site em vez de sinais de
   desinformação. Por isso é essencial testar em notícias de outras fontes.
 
-## Segunda fonte: FakeRecogna (Onda 2)
+### Segunda fonte: FakeRecogna (Onda 2)
 
 **Origem:** [recogna-nlp/FakeRecogna](https://huggingface.co/datasets/recogna-nlp/FakeRecogna)
 (Hugging Face, licença MIT), categoria "saúde" (4.456 notícias na fonte original).

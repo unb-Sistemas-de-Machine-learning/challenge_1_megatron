@@ -1,48 +1,33 @@
-"""Publica o app num Hugging Face Space (SDK Docker).
-
-O Space recebe só o necessário para servir o app: código, vocabulário, model
-cards, Dockerfile e requirements. Os pesos do BERTimbau vêm do Hub em tempo de
-execução (VOF_MODELO_RISCO, configurada nos secrets/variáveis do Space).
-
-Recusa publicar se o card do BERTimbau não estiver em `producao`: o app
-subiria só para exibir erro.
-
-Pré-requisito: `hf auth login` (ou HF_TOKEN no ambiente) com permissão de escrita.
-
-Uso: python scripts/publica_space.py <usuario>/<space>
-"""
-
 import argparse
+import hashlib
+import json
 import shutil
 import sys
 import tempfile
 from pathlib import Path
 
 RAIZ = Path(__file__).parent.parent
-sys.path.insert(0, str(RAIZ / "src"))
-
-from verdade_ou_fake.model_card import carregar_card
-
-CAMINHO_CARD = RAIZ / "modelos" / "cards" / "bertimbau.json"
 
 ARQUIVOS_DO_SPACE = [
     "Dockerfile",
     ".dockerignore",
     "requirements.txt",
-    "app.py",
-    "src/verdade_ou_fake",
+    "src",
+    "web",
+    "scripts/__init__.py",
+    "scripts/constroi_base.py",
+    "dados/base",
     "dados/vocabulario_seed.csv",
     "modelos/cards",
 ]
 
-# Metadados que o Hugging Face lê do README.md do Space.
 README_SPACE = """---
 title: Verdade ou Fake?
 emoji: 🔍
 colorFrom: green
 colorTo: gray
 sdk: docker
-app_port: 8501
+app_port: 7860
 pinned: false
 short_description: Checagem de notícias sobre medicamentos e tratamentos
 ---
@@ -59,7 +44,6 @@ Código-fonte e documentação: https://github.com/unb-Sistemas-de-Machine-learn
 
 
 def montar_pasta_space(raiz: Path, destino: Path) -> None:
-    """Copia para `destino` os arquivos do Space e escreve o README com metadados."""
     for relativo in ARQUIVOS_DO_SPACE:
         origem = raiz / relativo
         alvo = destino / relativo
@@ -71,25 +55,27 @@ def montar_pasta_space(raiz: Path, destino: Path) -> None:
     (destino / "README.md").write_text(README_SPACE, encoding="utf-8")
 
 
-def conferir_card_de_producao(caminho_card: Path) -> None:
-    """Levanta ValueError se o card não autorizar o modelo a ir ao ar."""
-    if not caminho_card.exists():
-        raise ValueError(f"Model card não encontrado em {caminho_card}.")
-    status = carregar_card(caminho_card)["status"]
-    if status != "producao":
+def conferir_base(raiz: Path) -> None:
+    jsonl = raiz / "dados" / "base" / "pubmed.jsonl"
+    manifesto = raiz / "dados" / "base" / "manifesto.json"
+    for caminho in (jsonl, manifesto):
+        if not caminho.exists():
+            raise ValueError(f"Base de conhecimento incompleta: {caminho} não encontrado.")
+    esperado = json.loads(manifesto.read_text(encoding="utf-8")).get("sha256")
+    obtido = hashlib.sha256(jsonl.read_bytes()).hexdigest()
+    if obtido != esperado:
         raise ValueError(
-            f"O model card do BERTimbau está em '{status}'. Revise as métricas e promova-o "
-            "manualmente a 'producao' antes de publicar o app."
+            f"O SHA-256 de pubmed.jsonl ({obtido}) não bate com o do manifesto ({esperado})."
         )
 
 
 def main() -> int:
-    argumentos = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    argumentos = argparse.ArgumentParser(description="Publica o app num Hugging Face Space (SDK Docker)")
     argumentos.add_argument("space_id", help="Space de destino, ex.: equipe/verdade-ou-fake")
     args = argumentos.parse_args()
 
     try:
-        conferir_card_de_producao(CAMINHO_CARD)
+        conferir_base(RAIZ)
     except ValueError as erro:
         print(f"Erro: {erro}")
         return 1

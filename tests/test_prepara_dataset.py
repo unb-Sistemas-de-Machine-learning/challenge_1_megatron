@@ -85,14 +85,12 @@ def test_ler_fakebr_traz_a_categoria_dos_metadados():
 
 
 def test_ler_fakebr_le_categoria_quando_o_autor_esta_em_branco():
-    # Nos metadados, a 1ª linha é o autor e às vezes vem só com espaço.
     corpus = ler_fakebr(FAKEBR_MINI)
     verdadeira = corpus[(corpus["id_par"] == "2") & (corpus["rotulo"] == 0)].iloc[0]
     assert verdadeira["categoria"] == "politica"
 
 
 def test_ler_fakebr_aceita_noticia_sem_metadados():
-    # No Fake.br real, os pares 697 e 1468 não têm arquivo de metadados.
     corpus = ler_fakebr(FAKEBR_MINI)
     sem_meta = corpus[corpus["id_par"] == "3"]
     assert len(sem_meta) == 2

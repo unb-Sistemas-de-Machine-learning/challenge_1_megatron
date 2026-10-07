@@ -1,0 +1,769 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verdade ou Fake?</title>
+<meta name="description" content="Cheque notícias sobre medicamentos e tratamentos com base em estudos científicos.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230f766e'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f5f7f8; --surface:#ffffff; --surface-2:#eef2f4; --text:#14202b; --muted:#4b5b69;
+  --border:#d5dde3; --accent:#0f766e; --accent-hover:#0b5e57; --accent-fg:#ffffff;
+  --focus:#1d4ed8; --shadow:0 1px 2px rgba(16,32,48,.06),0 4px 16px rgba(16,32,48,.06);
+  --ok-bg:#e6f4ea; --ok-fg:#14532d; --ok-bd:#8fcba3;
+  --no-bg:#fde8e8; --no-fg:#7f1d1d; --no-bd:#f0a4a4;
+  --ex-bg:#ffedd5; --ex-fg:#7c2d12; --ex-bd:#f5b47a;
+  --in-bg:#fef9c3; --in-fg:#713f12; --in-bd:#e8d44f;
+  --nv-bg:#eceff3; --nv-fg:#2f3a46; --nv-bd:#b9c3cd;
+  --link:#0b5cad;
+  --radius:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0e1419; --surface:#161e25; --surface-2:#1e2831; --text:#e7edf2; --muted:#a3b2bf;
+    --border:#2b3945; --accent:#2dd4bf; --accent-hover:#5eead4; --accent-fg:#06201d;
+    --focus:#93c5fd; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 16px rgba(0,0,0,.3);
+    --ok-bg:#12301c; --ok-fg:#bbf7d0; --ok-bd:#2f6b44;
+    --no-bg:#3b1414; --no-fg:#fecaca; --no-bd:#7f2d2d;
+    --ex-bg:#3d200b; --ex-fg:#fed7aa; --ex-bd:#86481c;
+    --in-bg:#38300a; --in-fg:#fef08a; --in-bd:#7c6a14;
+    --nv-bg:#262d35; --nv-fg:#d3dbe3; --nv-bd:#46525e;
+    --link:#7cc0ff;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+.wrap{width:100%;max-width:760px;margin:0 auto;padding:0 16px}
+a{color:var(--link)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:6px}
+button{font:inherit;color:inherit}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.i{width:1.15em;height:1.15em;flex:none;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.2em}
+
+header.top{padding:36px 0 20px;text-align:center}
+.brand{display:inline-flex;align-items:center;gap:10px;margin:0}
+.logo{width:40px;height:40px;border-radius:11px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center}
+.logo svg{width:24px;height:24px;stroke-width:3}
+h1{font-size:clamp(1.7rem,5vw,2.2rem);line-height:1.15;margin:0;letter-spacing:-.02em}
+.sub{margin:10px auto 0;color:var(--muted);max-width:34em;font-size:1.04rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+form.busca{padding:14px}
+.campo{display:flex;flex-direction:column;gap:10px}
+textarea{width:100%;resize:none;min-height:3.4em;max-height:14em;border:1px solid var(--border);border-radius:10px;background:var(--bg);color:var(--text);padding:12px 14px;font:inherit;font-size:1.05rem;line-height:1.45;overflow-y:auto}
+textarea::placeholder{color:var(--muted);opacity:1}
+textarea:focus-visible{outline-offset:0}
+.acoes{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.dica{color:var(--muted);font-size:.84rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:11px 22px;font-weight:600;font-size:1rem;cursor:pointer;background:var(--accent);color:var(--accent-fg);min-height:44px}
+.btn:hover{background:var(--accent-hover)}
+.btn.cancel{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}
+.btn.cancel:hover{background:var(--border)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+.chip{border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:.92rem;min-height:36px}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.aviso-medico{display:flex;gap:8px;align-items:flex-start;margin:14px 2px 0;color:var(--muted);font-size:.88rem}
+.aviso-medico svg{margin-top:.2em}
+
+.hist{margin-top:18px}
+.hist h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px;display:flex;justify-content:space-between;align-items:center}
+.hist button.limpar{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.8rem;text-transform:none;letter-spacing:0}
+.hist ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.hist li button{width:100%;text-align:left;background:none;border:1px solid transparent;border-radius:8px;padding:7px 8px;cursor:pointer;display:flex;gap:10px;align-items:center;font-size:.92rem}
+.hist li button:hover{background:var(--surface-2)}
+.hist .dot{width:10px;height:10px;border-radius:50%;flex:none;background:var(--vfg)}
+.hist .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;min-width:0}
+.hist .cod{font-size:.78rem;color:var(--muted);flex:none}
+
+#resultado{margin-top:22px}
+#resultado[hidden]{display:none}
+.etapas{list-style:none;margin:0 0 14px;padding:0;font-size:.92rem;color:var(--muted)}
+.etapas li{display:flex;align-items:center;gap:8px;padding:2px 0}
+.etapas li.feita svg{color:var(--accent)}
+.etapas li.atual{color:var(--text);font-weight:500}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--border);border-top-color:var(--accent);animation:giro .8s linear infinite;flex:none;margin:0 1px}
+@keyframes giro{to{transform:rotate(360deg)}}
+.alegacao{padding:14px 16px;margin-bottom:14px}
+.rotulo{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+.alegacao p{margin:2px 0 0}
+.alegacao .alg{font-size:1.1rem;font-weight:600}
+.alegacao .tit{font-size:.88rem;color:var(--muted)}
+
+.veredito{display:flex;gap:16px;align-items:flex-start;padding:18px;border-radius:var(--radius);border:1.5px solid var(--vbd);background:var(--vbg);color:var(--vfg);margin-bottom:14px}
+.veredito .ico{width:44px;height:44px;flex:none}
+.veredito .ico svg{width:44px;height:44px;stroke-width:1.8}
+.veredito h2{margin:0;font-size:1.35rem;line-height:1.25}
+.veredito p{margin:6px 0 0;font-size:1.02rem}
+.pilula{display:inline-block;margin-top:10px;border:1px solid currentColor;border-radius:999px;padding:2px 11px;font-size:.82rem;font-weight:600}
+.v-APOIADA{--vbg:var(--ok-bg);--vfg:var(--ok-fg);--vbd:var(--ok-bd)}
+.v-CONTESTADA{--vbg:var(--no-bg);--vfg:var(--no-fg);--vbd:var(--no-bd)}
+.v-EXAGERADA{--vbg:var(--ex-bg);--vfg:var(--ex-fg);--vbd:var(--ex-bd)}
+.v-INCONCLUSIVA{--vbg:var(--in-bg);--vfg:var(--in-fg);--vbd:var(--in-bd)}
+.v-NAO_VERIFICAVEL,.v-FORA_DO_ESCOPO{--vbg:var(--nv-bg);--vfg:var(--nv-fg);--vbd:var(--nv-bd)}
+.veredito.troca{animation:entra .35s ease}
+@keyframes entra{from{opacity:.4;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.sk{padding:18px;display:flex;gap:16px;margin-bottom:14px}
+.sk .bar{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--surface-2) 25%,var(--border) 50%,var(--surface-2) 75%);background-size:200% 100%;animation:brilho 1.3s linear infinite}
+.sk .circ{width:44px;height:44px;border-radius:50%;flex:none}
+.sk .col{flex:1;display:flex;flex-direction:column;gap:10px;padding-top:4px}
+@keyframes brilho{to{background-position:-200% 0}}
+
+.estilo{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.84rem;color:var(--muted);margin:0 0 14px}
+.medidor{width:90px;height:6px;border-radius:3px;background:var(--surface-2);border:1px solid var(--border);overflow:hidden}
+.medidor i{display:block;height:100%;background:var(--muted)}
+.estilo button.q{width:22px;height:22px;border-radius:50%;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-size:.75rem;font-weight:700;color:var(--muted);line-height:1;padding:0}
+.estilo .tip{flex-basis:100%;margin:0;font-size:.82rem}
+.estilo .tip[hidden]{display:none}
+
+section.bloco{margin-bottom:20px}
+section.bloco h2{font-size:1.05rem;margin:0 0 8px}
+.prose{font-size:1.04rem}
+.prose p{margin:0 0 .85em}
+.prose ul{margin:0 0 .85em;padding-left:1.3em}
+.cursor{display:inline-block;width:.55em;height:1.05em;background:var(--accent);vertical-align:-.15em;margin-left:2px;border-radius:1px;animation:pisca 1s steps(1) infinite}
+@keyframes pisca{50%{opacity:0}}
+a.cit{display:inline-block;min-width:1.45em;padding:0 .35em;margin:0 1px;border-radius:999px;background:var(--surface-2);border:1px solid var(--border);color:var(--link);font-size:.78em;font-weight:600;text-align:center;text-decoration:none;line-height:1.5;vertical-align:.12em}
+a.cit:hover{background:var(--link);color:var(--surface);border-color:var(--link)}
+
+ol.fontes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+ol.fontes li{display:flex;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;transition:background .4s,border-color .4s}
+ol.fontes li.citada{border-left:4px solid var(--accent)}
+ol.fontes li.flash{background:var(--in-bg);border-color:var(--in-bd)}
+.num{flex:none;width:26px;height:26px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-size:.8rem;font-weight:700;color:var(--muted)}
+.fonte-corpo{min-width:0}
+.fonte-corpo a.t{font-weight:600;overflow-wrap:anywhere}
+.fonte-meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:5px;font-size:.84rem;color:var(--muted)}
+.tag{border-radius:6px;padding:1px 8px;font-weight:600;font-size:.78rem;border:1px solid var(--nv-bd);background:var(--nv-bg);color:var(--nv-fg)}
+.tag.forte{background:var(--ok-bg);color:var(--ok-fg);border-color:var(--ok-bd)}
+.tag.moderada{background:var(--in-bg);color:var(--in-fg);border-color:var(--in-bd)}
+.tag.citada-tag{background:transparent;color:var(--accent);border-color:var(--accent)}
+.vazio{color:var(--muted);font-size:.95rem;margin:0}
+.vazio[hidden]{display:none}
+
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:.84rem;margin:0 0 12px}
+.meta span{display:inline-flex;gap:5px;align-items:center}
+.aviso-srv{display:flex;gap:8px;padding:10px 12px;border-radius:10px;background:var(--in-bg);color:var(--in-fg);border:1px solid var(--in-bd);font-size:.9rem;margin-bottom:14px}
+.aviso-srv[hidden],.erro[hidden],.meta[hidden],.feedback[hidden],.estilo[hidden],.alegacao[hidden]{display:none}
+.erro{display:flex;gap:10px;padding:14px 16px;border-radius:12px;background:var(--no-bg);color:var(--no-fg);border:1px solid var(--no-bd);margin-bottom:14px}
+.erro strong{display:block}
+.feedback{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;margin-bottom:14px}
+.feedback .pergunta{font-weight:500}
+.fb{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:var(--surface);border-radius:999px;padding:6px 14px;cursor:pointer;min-height:38px}
+.fb:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.fb:disabled{opacity:.55;cursor:default}
+.fb[hidden]{display:none}
+
+details.como{margin-top:26px;padding:0}
+details.como summary{cursor:pointer;padding:14px 16px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.como summary::-webkit-details-marker{display:none}
+details.como summary::after{content:"";width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s;margin-right:4px}
+details.como[open] summary::after{transform:rotate(-135deg)}
+details.como .corpo{padding:0 16px 16px;color:var(--muted)}
+details.como ol{margin:0;padding-left:1.3em}
+details.como li{margin-bottom:.5em}
+details.como li strong{color:var(--text)}
+
+footer{margin-top:auto;padding:28px 0 24px;color:var(--muted);font-size:.84rem;text-align:center}
+footer p{margin:4px 0}
+footer p[hidden]{display:none}
+.sem-llm{display:inline-block;margin-top:6px;padding:4px 10px;border-radius:8px;background:var(--in-bg);color:var(--in-fg);border:1px solid var(--in-bd)}
+
+@media (max-width:480px){
+  header.top{padding-top:24px}
+  .veredito{padding:14px;gap:12px}
+  .veredito .ico,.veredito .ico svg{width:36px;height:36px}
+  .acoes .btn{width:100%}
+  .dica{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .spin{animation:none;border-top-color:var(--border);border-right-color:var(--accent)}
+  .cursor{animation:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1 class="brand"><span class="logo" aria-hidden="true"><svg class="i" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7"/></svg></span>Verdade ou Fake?</h1>
+    <p class="sub">Confira notícias e boatos sobre medicamentos e tratamentos com base em estudos científicos.</p>
+  </header>
+
+  <main>
+    <form class="card busca" id="form" autocomplete="off">
+      <div class="campo">
+        <label for="entrada" class="sr-only">Link da notícia, texto colado ou alegação</label>
+        <textarea id="entrada" rows="2" maxlength="20000" placeholder="Cole o link de uma notícia, o texto de uma mensagem (como uma corrente de WhatsApp) ou escreva uma alegação, por exemplo: “Ivermectina cura covid-19”."></textarea>
+        <div class="acoes">
+          <span class="dica">Enter envia · Shift+Enter quebra a linha</span>
+          <button type="submit" class="btn" id="botao">Checar</button>
+        </div>
+      </div>
+      <p class="aviso-medico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><span>Este sistema é informativo e não substitui orientação médica.</span></p>
+    </form>
+
+    <ul class="chips" aria-label="Exemplos para testar" id="chips"></ul>
+
+    <section class="hist" id="hist" hidden aria-label="Consultas recentes">
+      <h2><span>Consultas recentes</span><button type="button" class="limpar" id="limpar">limpar</button></h2>
+      <ul id="histLista"></ul>
+    </section>
+
+    <section id="resultado" aria-live="polite" aria-busy="false" hidden>
+      <ol class="etapas" id="etapas"></ol>
+      <div class="card alegacao" id="alegacao" hidden>
+        <span class="rotulo">Alegação identificada</span>
+        <p class="alg" id="alegacaoTexto"></p>
+        <p class="tit" id="tituloNoticia" hidden></p>
+      </div>
+      <div id="vereditoBox"></div>
+      <div class="estilo" id="estilo" hidden>
+        <span>Sinal de estilo do texto</span>
+        <span class="medidor" role="meter" aria-valuemin="0" aria-valuemax="100" aria-label="Sinal de estilo do texto" id="medidor"><i id="medidorBarra"></i></span>
+        <span id="estiloPct"></span>
+        <button type="button" class="q" id="estiloQ" aria-expanded="false" aria-controls="estiloTip" aria-label="O que é o sinal de estilo?">?</button>
+        <p class="tip" id="estiloTip" hidden>Este sinal mede como o texto foi escrito (tom alarmista, exageros, apelos emocionais), não se a informação é verdadeira. A verificação vem dos estudos listados abaixo.</p>
+      </div>
+      <div class="aviso-srv" id="avisoSrv" hidden></div>
+      <section class="bloco" id="explicacao" hidden>
+        <h2>Explicação</h2>
+        <div class="prose" id="texto"></div>
+      </section>
+      <section class="bloco" id="fontesSec" hidden>
+        <h2>Fontes científicas</h2>
+        <ol class="fontes" id="fontes"></ol>
+        <p class="vazio" id="fontesVazio" hidden>Nenhum estudo relevante foi encontrado na base para esta alegação.</p>
+      </section>
+      <div class="meta" id="meta" hidden></div>
+      <div class="card feedback" id="feedback" hidden>
+        <span class="pergunta" id="fbPergunta">Esta resposta foi útil?</span>
+        <button type="button" class="fb" id="fbSim"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 11v9H4v-9zM7 11l4-7a2 2 0 0 1 2 2v4h5.5a2 2 0 0 1 2 2.3l-1 6a2 2 0 0 1-2 1.7H7"/></svg>Útil</button>
+        <button type="button" class="fb" id="fbNao"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 13V4h3v9zM17 13l-4 7a2 2 0 0 1-2-2v-4H5.5a2 2 0 0 1-2-2.3l1-6A2 2 0 0 1 6.5 4H17"/></svg>Não foi útil</button>
+      </div>
+      <div class="erro" id="erroBox" role="alert" hidden>
+        <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <div><strong id="erroTitulo">Não foi possível concluir a checagem</strong><span id="erroMsg"></span></div>
+      </div>
+    </section>
+
+    <details class="card como">
+      <summary>Como funciona</summary>
+      <div class="corpo">
+        <ol>
+          <li><strong>Identificamos a alegação.</strong> Lemos o link ou o texto e extraímos a afirmação central sobre o medicamento ou tratamento.</li>
+          <li><strong>Buscamos estudos.</strong> Procuramos a afirmação numa base de resumos científicos do PubMed.</li>
+          <li><strong>Redigimos a resposta.</strong> Um modelo de linguagem escreve a explicação usando somente esses estudos, e cada afirmação precisa trazer a citação da fonte.</li>
+          <li><strong>Sem estudo, sem veredito.</strong> Quando não encontramos evidência, dizemos que não foi possível verificar, nunca que a informação é falsa.</li>
+        </ol>
+      </div>
+    </details>
+  </main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p id="base"></p>
+    <p id="semLlm" hidden><span class="sem-llm">Serviço em modo sem LLM: listamos apenas as fontes encontradas, sem explicação redigida.</span></p>
+    <p>Este sistema é informativo e não substitui orientação médica.</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+var $ = function(id){ return document.getElementById(id); };
+var EXEMPLOS = ["Ivermectina cura covid-19","Vitamina D previne gripe","Canabidiol trata epilepsia","Metformina ajuda a controlar o diabetes"];
+var CHAVE_HISTORICO = "vof_historico_v1";
+var MOVIMENTO_REDUZIDO = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+var ICONES = {
+  APOIADA: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>',
+  CONTESTADA: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg>',
+  EXAGERADA: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>',
+  INCONCLUSIVA: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.6 2.6 0 1 1 3.7 2.3c-.7.4-1.2 1-1.2 1.8M12 17h.01"/></svg>',
+  NAO_VERIFICAVEL: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21M8 10.5h5"/></svg>',
+  FORA_DO_ESCOPO: '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/></svg>'
+};
+var NOMES = {APOIADA:"Apoiada",CONTESTADA:"Contestada",EXAGERADA:"Exagerada",INCONCLUSIVA:"Inconclusiva",NAO_VERIFICAVEL:"Não verificável",FORA_DO_ESCOPO:"Fora do escopo"};
+var ICONE_CHECK = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+var ICONE_RELOGIO = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
+var ICONE_ALERTA = '<svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.5h.01"/></svg>';
+var TIPOS_ESTUDO = [
+  ["Meta-Analysis","Meta-análise"],["Systematic Review","Revisão sistemática"],
+  ["Randomized Controlled Trial","Ensaio clínico randomizado"],["Clinical Trial","Ensaio clínico"],
+  ["Observational Study","Estudo observacional"],["Review","Revisão"],["Journal Article","Artigo científico"]
+];
+
+var execucao = null;
+var controlador = null;
+var carregando = false;
+
+function escapar(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+  });
+}
+function urlSegura(u){
+  try {
+    var p = new URL(u, location.href);
+    return (p.protocol === "http:" || p.protocol === "https:") ? p.href : null;
+  } catch(e){ return null; }
+}
+function codigoValido(c){ return Object.prototype.hasOwnProperty.call(ICONES, c) ? c : "NAO_VERIFICAVEL"; }
+
+(function montarChips(){
+  var ul = $("chips");
+  EXEMPLOS.forEach(function(t){
+    var li = document.createElement("li");
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = t;
+    b.addEventListener("click", function(){ enviar(t); });
+    li.appendChild(b); ul.appendChild(li);
+  });
+})();
+
+var campo = $("entrada");
+function ajustarAltura(){
+  campo.style.height = "auto";
+  campo.style.height = Math.min(campo.scrollHeight + 2, 14 * 16) + "px";
+}
+campo.addEventListener("input", ajustarAltura);
+campo.addEventListener("keydown", function(e){
+  if (e.key === "Enter" && !e.shiftKey && !e.isComposing && e.keyCode !== 229){
+    e.preventDefault();
+    if (!carregando) enviar();
+  }
+});
+$("form").addEventListener("submit", function(e){
+  e.preventDefault();
+  if (carregando){ cancelar(); return; }
+  enviar();
+});
+
+function lerHistorico(){
+  try {
+    var v = JSON.parse(localStorage.getItem(CHAVE_HISTORICO) || "[]");
+    return Array.isArray(v) ? v.filter(function(x){ return x && typeof x.t === "string"; }).slice(0,5) : [];
+  } catch(e){ return []; }
+}
+function gravarHistorico(texto, codigo){
+  try {
+    var lista = lerHistorico().filter(function(x){ return x.t !== texto; });
+    lista.unshift({t: texto, c: codigo});
+    localStorage.setItem(CHAVE_HISTORICO, JSON.stringify(lista.slice(0,5)));
+  } catch(e){}
+  desenharHistorico();
+}
+function desenharHistorico(){
+  var lista = lerHistorico(), caixa = $("hist"), ul = $("histLista");
+  ul.textContent = "";
+  caixa.hidden = lista.length === 0;
+  lista.forEach(function(item){
+    var cod = codigoValido(item.c);
+    var li = document.createElement("li");
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "v-" + cod;
+    b.title = item.t;
+    b.innerHTML = '<span class="dot"></span><span class="txt"></span><span class="cod"></span>';
+    b.querySelector(".txt").textContent = item.t.replace(/\s+/g," ");
+    b.querySelector(".cod").textContent = NOMES[cod];
+    b.addEventListener("click", function(){ enviar(item.t); });
+    li.appendChild(b); ul.appendChild(li);
+  });
+}
+$("limpar").addEventListener("click", function(){
+  try { localStorage.removeItem(CHAVE_HISTORICO); } catch(e){}
+  desenharHistorico();
+});
+
+function formatarInline(texto, fontes){
+  var s = escapar(texto);
+  s = s.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");
+  s = s.replace(/\[(\d+(?:\s*,\s*\d+)*)\]/g, function(_, numeros){
+    return numeros.split(",").map(function(n){
+      n = n.trim();
+      var f = fontes[n];
+      var titulo = f ? ' title="' + escapar(f.titulo) + '"' : "";
+      return '<a class="cit" href="#fonte-' + n + '" data-n="' + n + '"' + titulo + ' aria-label="Fonte ' + n + '">' + n + '</a>';
+    }).join("");
+  });
+  return s;
+}
+function renderizarMarkdown(texto, fontes, comCursor){
+  var blocos = texto.replace(/\r/g,"").split(/\n{2,}/).filter(function(b){ return b.trim(); });
+  var itens = blocos.map(function(bloco){
+    var linhas = bloco.split("\n");
+    var ehLista = linhas.every(function(l){ return /^\s*[-*]\s+/.test(l); });
+    if (ehLista){
+      return ["ul", linhas.map(function(l){ return "<li>" + formatarInline(l.replace(/^\s*[-*]\s+/,""), fontes) + "</li>"; }).join("")];
+    }
+    return ["p", linhas.map(function(l){ return formatarInline(l, fontes); }).join("<br>")];
+  });
+  if (comCursor){
+    var cursor = '<span class="cursor" aria-hidden="true"></span>';
+    if (!itens.length) itens.push(["p", ""]);
+    var ultimo = itens[itens.length - 1];
+    if (ultimo[0] === "ul") ultimo[1] = ultimo[1].replace(/<\/li>$/, cursor + "</li>");
+    else ultimo[1] += cursor;
+  }
+  return itens.map(function(i){ return "<" + i[0] + ">" + i[1] + "</" + i[0] + ">"; }).join("");
+}
+
+function limparResultado(){
+  $("etapas").textContent = "";
+  ["alegacao","estilo","avisoSrv","explicacao","fontesSec","meta","feedback","erroBox","tituloNoticia","fontesVazio","estiloTip"].forEach(function(id){ $(id).hidden = true; });
+  $("texto").textContent = ""; $("fontes").textContent = ""; $("meta").textContent = ""; $("vereditoBox").textContent = "";
+  $("estiloQ").setAttribute("aria-expanded","false");
+  $("fbPergunta").textContent = "Esta resposta foi útil?";
+  $("fbSim").disabled = false; $("fbNao").disabled = false;
+  $("fbSim").hidden = false; $("fbNao").hidden = false;
+}
+function mostrarEsqueleto(){
+  $("vereditoBox").innerHTML = '<div class="card sk" aria-hidden="true"><div class="bar circ"></div><div class="col"><div class="bar" style="width:55%"></div><div class="bar" style="width:90%"></div><div class="bar" style="width:30%"></div></div></div>';
+}
+function definirCarregando(ligado){
+  carregando = ligado;
+  $("resultado").setAttribute("aria-busy", ligado ? "true" : "false");
+  var botao = $("botao");
+  botao.textContent = ligado ? "Cancelar" : "Checar";
+  botao.classList.toggle("cancel", ligado);
+}
+function marcarEtapaConcluida(li){
+  li.className = "feita";
+  li.innerHTML = ICONE_CHECK + "<span></span>";
+  li.lastChild.textContent = li.dataset.t;
+}
+function adicionarEtapa(texto){
+  var ol = $("etapas");
+  Array.prototype.forEach.call(ol.children, marcarEtapaConcluida);
+  var li = document.createElement("li");
+  li.className = "atual"; li.dataset.t = texto;
+  li.innerHTML = '<span class="spin" aria-hidden="true"></span><span></span>';
+  li.lastChild.textContent = texto;
+  ol.appendChild(li);
+}
+function concluirEtapas(){
+  Array.prototype.forEach.call($("etapas").children, marcarEtapaConcluida);
+}
+function mostrarErro(mensagem, titulo){
+  $("erroTitulo").textContent = titulo || "Não foi possível concluir a checagem";
+  $("erroMsg").textContent = mensagem || "";
+  $("erroBox").hidden = false;
+  if (!$("vereditoBox").querySelector(".veredito")) $("vereditoBox").textContent = "";
+}
+function desenharVeredito(ev){
+  var cod = codigoValido(ev.codigo);
+  var confianca = {alta:"alta", media:"média", baixa:"baixa"}[ev.confianca];
+  var caixa = $("vereditoBox");
+  var substituindo = !!caixa.querySelector(".veredito");
+  var cartao = document.createElement("div");
+  cartao.className = "veredito v-" + cod + (substituindo ? " troca" : "");
+  cartao.innerHTML = '<div class="ico"></div><div><h2></h2><p></p><span class="pilula" hidden></span></div>';
+  cartao.querySelector(".ico").innerHTML = ICONES[cod];
+  cartao.querySelector("h2").textContent = ev.rotulo || NOMES[cod];
+  var resumo = cartao.querySelector("p");
+  if (ev.resumo) resumo.textContent = ev.resumo; else resumo.hidden = true;
+  if (confianca){
+    var pilula = cartao.querySelector(".pilula");
+    pilula.textContent = "Confiança " + confianca;
+    pilula.hidden = false;
+  }
+  caixa.textContent = "";
+  caixa.appendChild(cartao);
+  execucao.codigo = cod;
+}
+function traduzirTipoEstudo(tipos){
+  if (!tipos || !tipos.length) return "Estudo";
+  for (var i = 0; i < TIPOS_ESTUDO.length; i++){
+    if (tipos.indexOf(TIPOS_ESTUDO[i][0]) !== -1) return TIPOS_ESTUDO[i][1];
+  }
+  return String(tipos[0]);
+}
+function desenharFontes(lista){
+  var ol = $("fontes");
+  ol.textContent = "";
+  execucao.fontes = {};
+  $("fontesSec").hidden = false;
+  $("fontesVazio").hidden = lista.length > 0;
+  lista.forEach(function(f){
+    execucao.fontes[String(f.n)] = f;
+    var li = document.createElement("li");
+    li.id = "fonte-" + f.n; li.tabIndex = -1; li.dataset.n = f.n;
+    li.innerHTML = '<span class="num"></span><div class="fonte-corpo"><div class="tl"></div><div class="fonte-meta"></div></div>';
+    li.querySelector(".num").textContent = f.n;
+    var linha = li.querySelector(".tl");
+    var href = urlSegura(f.url);
+    if (href){
+      var a = document.createElement("a");
+      a.className = "t"; a.href = href; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.textContent = f.titulo || href;
+      linha.appendChild(a);
+    } else {
+      linha.textContent = f.titulo || "Fonte sem título";
+      linha.style.fontWeight = "600";
+    }
+    var meta = li.querySelector(".fonte-meta");
+    var adicionar = function(t){ var s = document.createElement("span"); s.textContent = t; meta.appendChild(s); };
+    if (f.ano) adicionar(String(f.ano));
+    adicionar(traduzirTipoEstudo(f.tipos));
+    if (f.origem) adicionar(f.origem);
+    var rotuloForca = {forte:"Evidência forte", moderada:"Evidência moderada", fraca:"Evidência fraca"}[f.forca];
+    if (rotuloForca){
+      var tag = document.createElement("span");
+      tag.className = "tag " + f.forca;
+      tag.textContent = rotuloForca;
+      meta.appendChild(tag);
+    }
+    ol.appendChild(li);
+  });
+  renderizarTexto();
+}
+function renderizarTexto(final){
+  if (!execucao || !execucao.texto) return;
+  $("explicacao").hidden = false;
+  $("texto").innerHTML = renderizarMarkdown(execucao.texto, execucao.fontes || {}, !final && carregando);
+}
+$("texto").addEventListener("click", function(e){
+  var link = e.target.closest && e.target.closest("a.cit");
+  if (!link) return;
+  e.preventDefault();
+  var alvo = document.getElementById("fonte-" + link.dataset.n);
+  if (!alvo) return;
+  alvo.scrollIntoView({behavior: MOVIMENTO_REDUZIDO ? "auto" : "smooth", block: "center"});
+  try { alvo.focus({preventScroll:true}); } catch(_){}
+  alvo.classList.add("flash");
+  setTimeout(function(){ alvo.classList.remove("flash"); }, 1800);
+});
+$("estiloQ").addEventListener("click", function(){
+  var dica = $("estiloTip");
+  dica.hidden = !dica.hidden;
+  this.setAttribute("aria-expanded", String(!dica.hidden));
+});
+function formatarTempo(ms){
+  if (typeof ms !== "number") return null;
+  if (ms < 1000) return Math.round(ms) + " ms";
+  return (ms / 1000).toLocaleString("pt-BR", {minimumFractionDigits:1, maximumFractionDigits:1}) + " s";
+}
+function finalizar(ev){
+  concluirEtapas();
+  var citadas = Array.isArray(ev.citadas) ? ev.citadas.map(Number) : [];
+  Array.prototype.forEach.call($("fontes").children, function(li){
+    if (citadas.indexOf(Number(li.dataset.n)) !== -1 && !li.classList.contains("citada")){
+      li.classList.add("citada");
+      var tag = document.createElement("span");
+      tag.className = "tag citada-tag";
+      tag.textContent = "Citada na resposta";
+      li.querySelector(".fonte-meta").appendChild(tag);
+    }
+  });
+  var meta = $("meta");
+  meta.textContent = "";
+  var adicionar = function(icone, texto){
+    var s = document.createElement("span");
+    s.innerHTML = icone;
+    s.appendChild(document.createTextNode(texto));
+    meta.appendChild(s);
+  };
+  var tempo = formatarTempo(ev.latencia_ms);
+  if (tempo) adicionar(ICONE_RELOGIO, "Respondido em " + tempo);
+  if (ev.do_cache) adicionar(ICONE_CHECK, "Resposta em cache");
+  meta.hidden = !meta.children.length;
+  if (ev.aviso){
+    var aviso = $("avisoSrv");
+    aviso.innerHTML = ICONE_ALERTA + "<span></span>";
+    aviso.lastChild.textContent = ev.aviso;
+    aviso.hidden = false;
+  }
+  if (ev.consulta_id != null){
+    execucao.consulta = ev.consulta_id;
+    $("feedback").hidden = false;
+  }
+  execucao.terminou = true;
+}
+
+function tratarEvento(ev){
+  if (!ev || typeof ev !== "object") return;
+  switch (ev.tipo){
+    case "etapa":
+      if (ev.texto) adicionarEtapa(ev.texto);
+      break;
+    case "alegacao":
+      $("alegacaoTexto").textContent = ev.texto || "";
+      $("alegacao").hidden = !ev.texto;
+      if (ev.titulo_noticia){
+        $("tituloNoticia").textContent = "Notícia: " + ev.titulo_noticia;
+        $("tituloNoticia").hidden = false;
+      }
+      break;
+    case "estilo":
+      if (typeof ev.risco === "number"){
+        var pct = Math.max(0, Math.min(100, Math.round(ev.risco * 100)));
+        $("medidorBarra").style.width = pct + "%";
+        $("medidor").setAttribute("aria-valuenow", String(pct));
+        $("estiloPct").textContent = pct + "%";
+        $("estilo").hidden = false;
+      }
+      break;
+    case "fontes":
+      desenharFontes(Array.isArray(ev.fontes) ? ev.fontes : []);
+      break;
+    case "veredito":
+      desenharVeredito(ev);
+      break;
+    case "texto":
+      execucao.texto += ev.texto || "";
+      renderizarTexto();
+      break;
+    case "fim":
+      finalizar(ev);
+      break;
+    case "erro":
+      concluirEtapas();
+      mostrarErro(ev.mensagem);
+      execucao.terminou = true;
+      break;
+  }
+}
+function processarBloco(bloco){
+  var dados = [];
+  bloco.split(/\r?\n/).forEach(function(linha){
+    if (linha.indexOf("data:") === 0) dados.push(linha.slice(5).replace(/^ /,""));
+  });
+  if (!dados.length) return;
+  var ev;
+  try { ev = JSON.parse(dados.join("\n")); } catch(e){ return; }
+  tratarEvento(ev);
+}
+
+async function mensagemDeErroHttp(resposta){
+  var mensagem = null;
+  try {
+    var corpo = await resposta.json();
+    if (typeof corpo.detail === "string") mensagem = corpo.detail;
+    else if (Array.isArray(corpo.detail)) mensagem = corpo.detail.map(function(d){ return d && d.msg ? d.msg : ""; }).filter(Boolean).join("; ");
+  } catch(e){}
+  if (mensagem) return mensagem;
+  if (resposta.status === 429) return "Muitas requisições. Aguarde um instante e tente novamente.";
+  if (resposta.status === 422) return "Entrada inválida. Cole um link ou um texto sobre um medicamento ou tratamento.";
+  return "O serviço respondeu com erro (" + resposta.status + "). Tente novamente.";
+}
+
+async function enviar(textoPronto){
+  if (typeof textoPronto === "string"){
+    campo.value = textoPronto;
+    ajustarAltura();
+  }
+  var entrada = campo.value.trim();
+  if (!entrada){ campo.focus(); return; }
+  if (controlador) controlador.abort();
+  var ctrl = new AbortController();
+  controlador = ctrl;
+  var atual = {texto:"", fontes:{}, codigo:null, terminou:false, consulta:null};
+  execucao = atual;
+  limparResultado();
+  $("resultado").hidden = false;
+  definirCarregando(true);
+  adicionarEtapa("Enviando…");
+  mostrarEsqueleto();
+  $("resultado").scrollIntoView({behavior: MOVIMENTO_REDUZIDO ? "auto" : "smooth", block: "nearest"});
+  try {
+    var resposta = await fetch("/api/analisar", {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "Accept":"text/event-stream"},
+      body: JSON.stringify({entrada: entrada}),
+      signal: ctrl.signal
+    });
+    if (resposta.status !== 200) throw {http: await mensagemDeErroHttp(resposta)};
+    if (!resposta.body || !resposta.body.getReader) throw {http: "Seu navegador não suporta respostas em streaming."};
+    var leitor = resposta.body.getReader();
+    var decodificador = new TextDecoder("utf-8");
+    var acumulado = "";
+    for (;;){
+      var parte = await leitor.read();
+      if (execucao !== atual) return;
+      if (parte.done) break;
+      acumulado += decodificador.decode(parte.value, {stream:true});
+      var blocos = acumulado.split(/\r?\n\r?\n/);
+      acumulado = blocos.pop();
+      blocos.forEach(processarBloco);
+    }
+    acumulado += decodificador.decode();
+    if (acumulado.trim()) processarBloco(acumulado);
+    if (!atual.terminou){
+      concluirEtapas();
+      if (!atual.codigo && !atual.texto) mostrarErro("A conexão foi encerrada antes do fim da análise. Tente novamente.");
+    }
+  } catch(erro){
+    if (execucao !== atual) return;
+    concluirEtapas();
+    if (erro && erro.name === "AbortError"){
+      mostrarErro("", "Análise cancelada");
+    } else {
+      mostrarErro(erro && erro.http ? erro.http : "Não foi possível falar com o servidor. Verifique sua conexão e tente novamente.");
+    }
+  } finally {
+    if (execucao === atual){
+      definirCarregando(false);
+      controlador = null;
+      renderizarTexto(true);
+      if (atual.codigo) gravarHistorico(entrada, atual.codigo);
+    }
+  }
+}
+function cancelar(){ if (controlador) controlador.abort(); }
+
+async function enviarFeedback(valor){
+  if (!execucao || execucao.consulta == null) return;
+  $("fbSim").disabled = true; $("fbNao").disabled = true;
+  try {
+    var r = await fetch("/api/feedback", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({consulta_id: execucao.consulta, valor: valor})
+    });
+    var corpo = await r.json();
+    if (!r.ok || !corpo.ok) throw new Error("feedback");
+    $("fbPergunta").textContent = "Obrigado pelo seu retorno!";
+    $("fbSim").hidden = true; $("fbNao").hidden = true;
+  } catch(e){
+    $("fbPergunta").textContent = "Não foi possível enviar agora. Tente novamente.";
+    $("fbSim").disabled = false; $("fbNao").disabled = false;
+  }
+}
+$("fbSim").addEventListener("click", function(){ enviarFeedback(1); });
+$("fbNao").addEventListener("click", function(){ enviarFeedback(-1); });
+
+(function checarPelaUrl(){
+  try {
+    var q = new URLSearchParams(location.search).get("q");
+    if (q && q.trim().length >= 8) enviar(q.trim().slice(0, 20000));
+  } catch (e) {}
+})();
+
+(async function carregarSaude(){
+  try {
+    var r = await fetch("/api/saude");
+    if (!r.ok) throw new Error("saude");
+    var s = await r.json();
+    var n = s.documentos != null ? s.documentos : (s.base && s.base.artigos);
+    var texto = "";
+    if (n != null) texto = "Base: " + Number(n).toLocaleString("pt-BR") + " estudos do PubMed";
+    var data = s.base && /^(\d{4})-(\d{2})-(\d{2})/.exec(s.base.gerado_em || "");
+    if (data) texto += (texto ? " · " : "") + "atualizada em " + data[3] + "/" + data[2] + "/" + data[1];
+    $("base").textContent = texto;
+    if (s.llm === false) $("semLlm").hidden = false;
+  } catch(e){}
+})();
+
+desenharHistorico();
+ajustarAltura();
+})();
+</script>
+</body>
+</html>

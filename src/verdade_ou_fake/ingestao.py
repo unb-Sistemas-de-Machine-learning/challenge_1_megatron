@@ -1,15 +1,3 @@
-"""Etapa [0] — transforma o link de uma notícia em texto limpo.
-
-A extração é dividida em duas funções: `extrair_de_html` é pura e testável,
-`extrair_noticia` acrescenta o download. Essa separação é o que permite testar
-sem internet.
-
-Como o app roda num servidor público e baixa qualquer link colado pelo
-usuário, `extrair_noticia` só aceita URLs http/https que resolvem para IPs
-públicos — inclusive em cada redirecionamento — para que ninguém use o
-servidor como ponte para a rede interna (SSRF).
-"""
-
 import ipaddress
 import socket
 from urllib.parse import urljoin, urlparse
@@ -27,16 +15,10 @@ ESQUEMAS_PERMITIDOS = {"http", "https"}
 
 
 class UrlNaoPermitida(ValueError):
-    """A URL não pode ser baixada pelo servidor (esquema ou destino proibido)."""
+    pass
 
 
 def validar_url(url: str, resolver=socket.getaddrinfo) -> None:
-    """Levanta `UrlNaoPermitida` se a URL não for http/https para um IP público.
-
-    Todos os endereços para os quais o host resolve precisam ser globais:
-    basta um apontar para loopback, rede privada ou link-local (onde ficam
-    os endpoints de metadados da nuvem) para a URL ser recusada.
-    """
     partes = urlparse(url)
     if partes.scheme not in ESQUEMAS_PERMITIDOS or not partes.hostname:
         raise UrlNaoPermitida("Só aceitamos links http:// ou https://.")
@@ -55,11 +37,6 @@ def validar_url(url: str, resolver=socket.getaddrinfo) -> None:
 
 
 def extrair_de_html(html: str, url: str) -> Noticia | None:
-    """Extrai o conteúdo principal de uma página já baixada.
-
-    Devolve None quando não há corpo de texto aproveitável — página vazia,
-    paywall ou layout que o trafilatura não reconhece.
-    """
     texto = trafilatura.extract(html, include_comments=False, include_tables=False)
     if not texto or len(texto) < TAMANHO_MINIMO:
         return None
@@ -76,7 +53,6 @@ def extrair_de_html(html: str, url: str) -> Noticia | None:
 
 
 def _baixar_limitado(resposta) -> str | None:
-    """Lê o corpo até `TAMANHO_MAXIMO_BYTES`; devolve None se passar disso."""
     conteudo = bytearray()
     for bloco in resposta.iter_content(chunk_size=64 * 1024):
         conteudo.extend(bloco)
@@ -84,17 +60,11 @@ def _baixar_limitado(resposta) -> str | None:
             return None
     try:
         return conteudo.decode(resposta.encoding or "utf-8", errors="replace")
-    except LookupError:  # charset declarado pela página que o Python não conhece
+    except LookupError:
         return conteudo.decode("utf-8", errors="replace")
 
 
 def extrair_noticia(url: str) -> Noticia | None:
-    """Baixa a página e extrai o conteúdo.
-
-    Devolve None se a URL não for permitida, se o download falhar ou se a
-    página for grande demais. Os redirecionamentos são seguidos manualmente
-    para que cada destino passe de novo por `validar_url`.
-    """
     atual = url
     try:
         for _ in range(MAX_REDIRECIONAMENTOS + 1):

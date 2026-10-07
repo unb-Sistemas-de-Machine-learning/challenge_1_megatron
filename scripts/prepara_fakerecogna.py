@@ -1,16 +1,3 @@
-"""Gera o recorte de saúde do FakeRecogna, reextraindo o texto original.
-
-O FakeRecogna (recogna-nlp/FakeRecogna, Hugging Face, MIT) traz o texto da
-notícia já lematizado pelos autores originais — inutilizável para treino
-junto com o Fake.br (texto natural), porque o modelo aprenderia a diferença
-de registro textual entre os dois datasets em vez de desinformação. Por
-isso este script usa a tabela só como índice (URL + rótulo) e reextrai o
-texto real via `ingestao.extrair_noticia`, a mesma função que já serve a
-etapa [0] do pipeline.
-
-Uso: python scripts/prepara_fakerecogna.py
-"""
-
 import hashlib
 import sys
 from collections.abc import Callable
@@ -34,7 +21,6 @@ CAMINHO_SAIDA = RAIZ / "dados" / "processed" / "saude_fakerecogna.csv"
 
 
 def ler_fakerecogna(caminho_parquet) -> pd.DataFrame:
-    """Lê o parquet do FakeRecogna, mantendo só as colunas usadas pelo recorte."""
     df = pd.read_parquet(caminho_parquet)
     colunas_esperadas = ["Titulo", "Noticia", "Categoria", "URL", "Classe"]
     try:
@@ -47,23 +33,10 @@ def ler_fakerecogna(caminho_parquet) -> pd.DataFrame:
 
 
 def filtrar_categoria_saude(df: pd.DataFrame) -> pd.DataFrame:
-    """Mantém só as linhas de categoria 'saúde'."""
     return df[df["Categoria"] == CATEGORIA_SAUDE].copy()
 
 
 def reextrair_textos(df: pd.DataFrame, extrair: ExtratorDeNoticia) -> pd.DataFrame:
-    """Reextrai o texto original de cada URL, descartando as que falharem.
-
-    O campo `Noticia` do FakeRecogna vem lematizado pelos autores originais
-    e não é usado — só a URL e a Classe (rótulo) servem de índice. Isso evita
-    que o modelo aprenda a diferença de registro textual entre o Fake.br
-    (texto natural) e o FakeRecogna, em vez de sinal de desinformação.
-
-    Mapeamento de rótulo: no FakeRecogna, `Classe == 0.0` significa "fake" e
-    `Classe == 1.0` significa "real" — invertido em relação à convenção do
-    projeto (`rotulo == 1` é desinformação, `rotulo == 0` é legítima). Por
-    isso `rotulo = 1 - int(Classe)`.
-    """
     linhas = []
     for _, linha in df.iterrows():
         noticia = extrair(linha["URL"])
@@ -82,14 +55,12 @@ def reextrair_textos(df: pd.DataFrame, extrair: ExtratorDeNoticia) -> pd.DataFra
 
 
 def taxa_de_extracao(total: int, sucesso: int) -> float:
-    """Percentual de URLs que renderam texto aproveitável."""
     if total == 0:
         return 0.0
     return sucesso / total
 
 
 def impressao_digital_parquet(caminho: Path) -> str:
-    """SHA-256 do conteúdo do parquet, para registrar no model card."""
     return hashlib.sha256(Path(caminho).read_bytes()).hexdigest()
 
 

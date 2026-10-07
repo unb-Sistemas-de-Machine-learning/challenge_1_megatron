@@ -1,8 +1,6 @@
 from verdade_ou_fake.tipos import Noticia
 from verdade_ou_fake.tipos import Alegacao
 from verdade_ou_fake.tipos import Artigo
-from verdade_ou_fake.tipos import Evidencia
-from verdade_ou_fake.tipos import Veredito
 
 def test_noticia_guarda_os_campos_extraidos():
     noticia = Noticia(
@@ -25,12 +23,6 @@ def test_alegacao_guarda_os_termos_nos_dois_idiomas():
     assert alegacao.medicamento_en == "Ivermectin"
 
 
-def test_evidencia_sem_artigos_significa_nao_coberta():
-    evidencia = Evidencia(cobertura="nao_cobre", forca="nenhuma", artigos=[])
-    assert evidencia.artigos == []
-    assert evidencia.cobertura == "nao_cobre"
-
-
 def test_artigo_guarda_o_tipo_de_estudo():
     artigo = Artigo(
         pmid="12345",
@@ -40,15 +32,3 @@ def test_artigo_guarda_o_tipo_de_estudo():
         ano=2021,
     )
     assert "Randomized Controlled Trial" in artigo.tipos_estudo
-
-
-def test_veredito_carrega_a_explicacao_para_o_usuario():
-    veredito = Veredito(
-        rotulo="Não foi possível verificar",
-        confianca="baixa",
-        risco_textual=0.8,
-        alegacao=None,
-        evidencia=None,
-        explicacao="Não identificamos medicamento e condição no texto.",
-    )
-    assert veredito.confianca == "baixa"

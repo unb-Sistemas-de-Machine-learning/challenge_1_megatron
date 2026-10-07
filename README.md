@@ -1,136 +1,205 @@
-# Verdade ou Fake? — Detecção de Desinformação em Notícias de Saúde
+# Verdade ou Fake? — Checagem de Alegações de Saúde com Evidência Científica
 **Challenge 1** - Equipe Megatron - Sistemas de Machine Learning 2026/02
 
 📖 **[Documentação completa](https://unb-sistemas-de-machine-learning.github.io/challenge_1_megatron/)**
 
-🚀 **[Demo ao vivo](https://routing-retired-telephone-distances.trycloudflare.com/)** — app rodando no Google Colab
-(`notebooks/app_colab.ipynb`). O link é um túnel temporário do Cloudflare: só funciona enquanto a
-sessão do Colab estiver aberta e muda a cada nova execução.
+🚀 **Demo:** <URL do Space, preencher após o deploy>
 
-## Tema
-Plataforma web onde o usuário **cola o link de uma notícia** sobre saúde e recebe uma
-avaliação da probabilidade de o conteúdo ser falso ou enganoso, acompanhada das
-evidências científicas que sustentam ou contradizem a alegação.
+## O que é
 
-O escopo é restrito a **medicamentos, tratamentos e terapias** — não cobre saúde em
-geral, diagnóstico individual nem recomendação personalizada.
+Plataforma web onde o usuário **cola o link de uma notícia ou um texto** (uma corrente
+de WhatsApp, uma alegação curta) sobre medicamentos e tratamentos e recebe um veredito
+em linguagem simples, com **as fontes científicas citadas**: resumos de estudos do
+PubMed, com link para cada um.
+
+Vereditos possíveis: *tem respaldo científico*, *a ciência contradiz*, *há base, mas a
+alegação exagera*, *evidência insuficiente ou conflitante*, *não foi possível verificar*
+e *fora do escopo*. Cada resposta traz um nível de confiança.
+
+O escopo é restrito a **medicamentos, tratamentos e terapias**. Não cobre diagnóstico
+individual nem recomendação personalizada.
 
 ## Como funciona
 
+O sistema é um RAG (*Retrieval-Augmented Generation*) servido por FastAPI, com a resposta
+chegando aos poucos (streaming).
+
+```mermaid
+flowchart LR
+    E["Link ou texto"] --> A["Identifica a alegação<br/>(LLM)"]
+    A --> B["Busca híbrida na base<br/>de resumos do PubMed"]
+    B -- "base não cobre" --> V["Busca ampliada<br/>no PubMed"]
+    V --> B
+    B --> L["Redige o veredito<br/>com citações (LLM)"]
+    L --> G["Guardas<br/>de código"]
+    G --> R["Resposta em streaming<br/>+ registro e feedback"]
 ```
-🔗 link → [0] extrai texto → ┬→ [1] Camada 1: risco textual (ML) ──┐
-                            │                                     ├→ [3] fusão → veredito
-                            └→ [2] Camada 2: evidência científica ─┘   + confiança
-                                                                      + fontes
-```
 
-Duas camadas independentes analisam a notícia, e regras explícitas combinam os
-resultados:
+1. Se a entrada é um link, o sistema extrai o texto da página (com proteção contra SSRF).
+2. Um LLM identifica a alegação e a traduz para uma consulta científica em inglês.
+3. A busca híbrida (vetorial exata + BM25, fundidas por Reciprocal Rank Fusion, com bônus
+   para revisões sistemáticas, meta-análises e ensaios randomizados) acha os estudos
+   mais próximos na base.
+4. Se a base local não cobre a alegação, o sistema consulta o PubMed na hora. Os
+   artigos achados entram na base.
+5. O LLM redige o veredito **usando só essas fontes**, com citações `[n]`.
+6. Guardas em código conferem a saída: citação inexistente é removida, veredito
+   afirmativo sem citação é rebaixado, e a confiança não passa do que o tipo de estudo
+   citado sustenta.
+7. A consulta é registrada (veredito, fontes, latência, modelo) e o usuário pode dar
+   feedback.
 
-- **Camada 1 — Risco textual.** Classificador supervisionado treinado em corpus rotulado de notícias em português. Detecta padrões de escrita típicos de desinformação.
-- **Camada 2 — Verificação por evidência.** Extrai o par *medicamento + condição clínica* do texto, consulta o PubMed e classifica se a literatura apoia, contradiz ou não cobre a alegação.
+Sem chave de LLM, ou com o provedor fora do ar, o sistema roda em modo degradado: mostra
+as fontes recuperadas, sem redigir o veredito.
 
-**Por que duas camadas.** A Camada 1 sozinha aprende *estilo*, não *fato* — ela erra em
-alegações falsas bem escritas, justamente o caso mais perigoso em saúde. A Camada 2
-existe para cobrir essa lacuna. Detalhes em [Arquitetura](docs/arquitetura.md).
+O BERTimbau treinado pelo grupo continua no repositório como **sinal secundário
+opcional** ("sinal de estilo do texto"), carregado só se PyTorch e os pesos estiverem
+disponíveis. Ele não decide o veredito. Detalhes, decisões e a história da versão
+anterior em [Arquitetura](docs/arquitetura.md).
 
 ## Stack
 
-Python 3.11 · scikit-learn · Hugging Face Transformers (BERTimbau) · trafilatura ·
-PubMed E-utilities · Streamlit · Docker · Hugging Face Spaces · MkDocs
-
-**Orçamento zero:** nenhum componente do sistema depende de API paga.
+Python 3.11 · FastAPI + SSE · SQLite (FTS5) + numpy · fastembed (ONNX,
+`paraphrase-multilingual-MiniLM-L12-v2`) · LLM por API compatível com OpenAI (Groq por
+padrão; Gemini ou Ollama) · trafilatura · PubMed E-utilities · Docker · Hugging Face
+Spaces · GitHub Actions · MkDocs
 
 ## Como rodar
 
+### Local
+
 ```bash
 python3.11 -m venv venv && source venv/bin/activate
-pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
-
-python scripts/prepara_dataset.py       # gera o recorte de saúde (Fake.br)
-python scripts/prepara_fakerecogna.py   # opcional: 2ª fonte (FakeRecogna) — demorado, milhares de requisições
-python scripts/treina_modelo.py         # baseline TF-IDF (referência de comparação) + modelos/cards/baseline.json
-python scripts/treina_bert.py           # BERTimbau (classificador em produção) + modelos/cards/bertimbau.json
-python scripts/verifica_gate.py modelos/cards/bertimbau.json   # confere o gate de qualidade
-
-streamlit run app.py                    # abre a interface
-
-pytest                                  # roda os testes
-pytest -m "not rede"                    # roda os testes sem tocar a rede (CI offline)
+pip install -r requirements.txt
+cp .env.example .env        # e preencha LLM_API_KEY (chave gratuita em console.groq.com)
+python scripts/constroi_base.py
+PYTHONPATH=src uvicorn verdade_ou_fake.api:app --port 7860
 ```
 
-O app serve o **BERTimbau** (F1 macro 0,96 contra 0,80 do baseline TF-IDF) e só
-o carrega se o model card `modelos/cards/bertimbau.json` estiver em
-`"status": "producao"` **e** o hash dos pesos bater com o registrado no card.
-`treina_bert.py` sempre gera o card em `staging`: depois de revisar as métricas,
-mude o status para `producao` à mão — a promoção é uma decisão humana
-deliberada, não automática. Para regenerar o card de um modelo já treinado sem
-retreinar: `python scripts/treina_bert.py --somente-avaliar`.
+Abra <http://localhost:7860>. `scripts/constroi_base.py` indexa `dados/base/pubmed.jsonl`
+no banco SQLite (cerca de 70 s em CPU para a base atual).
 
-A Camada 2c usa o modelo de NLI **zero-shot**
-(`MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7`), baixado do Hub.
-O fine-tuning experimental (`scripts/treina_suporte.py` → `modelos/suporte_finetuned/`)
-não é usado em produção: foi treinado com só 79 pares anotados e não tem
-avaliação que justifique substituir o zero-shot.
+### Docker
+
+```bash
+docker compose up --build
+```
+
+O Dockerfile constrói o banco no build e sobe o uvicorn na porta 7860. O perfil
+opcional `local-llm` do `docker-compose.yml` sobe também um Ollama.
+
+### Testes
+
+```bash
+pip install -r requirements-dev.txt --extra-index-url https://download.pytorch.org/whl/cpu
+pytest -m "not rede"
+```
+
+### Dependências
+
+| Arquivo | Conteúdo |
+|---|---|
+| `requirements.txt` | Só o runtime leve do serviço |
+| `requirements-treino.txt` | PyTorch e afins, para treinar o classificador opcional |
+| `requirements-dev.txt` | Testes |
+
+## Configuração do LLM
+
+O LLM é qualquer servidor compatível com a API de chat da OpenAI. Trocar de provedor é
+trocar variáveis de ambiente (no `.env`), sem mexer no código. Troque também
+`LLM_MODELOS` e `LLM_MODELO_RAPIDO`, que trazem nomes de modelos do Groq por padrão.
+
+| Provedor | `LLM_BASE_URL` | `LLM_API_KEY` |
+|---|---|---|
+| Groq (padrão) | `https://api.groq.com/openai/v1` | chave de console.groq.com |
+| Gemini | `https://generativelanguage.googleapis.com/v1beta/openai` | chave do AI Studio |
+| Ollama (local) | `http://localhost:11434/v1` | `ollama` |
+
+`LLM_MODELOS` é uma lista separada por vírgulas, tentada em ordem: se um modelo estoura
+a cota (HTTP 429), o próximo assume. Limites dos planos gratuitos **na data da consulta
+(07/10/2026), sujeitos a mudança**: Groq, 30 requisições por minuto e, por dia, cerca de
+100 mil tokens no `llama-3.3-70b-versatile`, 200 mil no `openai/gpt-oss-120b` e 500 mil
+no `llama-3.1-8b-instant` (por isso a lista soma as cotas). Gemini: modelos Flash no
+plano gratuito, com limites por projeto exibidos no AI Studio.
+
+Todas as variáveis de ambiente estão na tabela de [Operação](docs/operacao.md).
 
 ## Deploy
 
-O app é publicado num **Hugging Face Space** (SDK Docker, CPU gratuito — o
-Streamlit Community Cloud não comporta os ~1,5 GB de RAM dos dois modelos). Os
-pesos do BERTimbau não vão para o git; ficam num repositório de modelo do Hub
-e são baixados na inicialização.
+O app é publicado num **Hugging Face Space** (SDK Docker, CPU gratuito: 2 vCPU, 16 GB de
+RAM) por `scripts/publica_space.py`, chamado pelo workflow `deploy-app.yml` a cada push
+na `main`. Configure `LLM_API_KEY` como *secret* do Space, e `HF_SPACE` (variável) e
+`HF_TOKEN` (secret) no GitHub. Passo a passo em [Operação](docs/operacao.md).
 
-1. **Publicar o modelo** (uma vez por retreino), após `hf auth login`:
-   ```bash
-   python scripts/publica_modelo.py <usuario>/bertimbau-saude [--privado]
-   ```
-   O script confere que os pesos batem com o card e imprime o commit publicado.
-2. **Promover o card** `modelos/cards/bertimbau.json` a `"status": "producao"`
-   e fazer commit.
-3. **Configurar o Space** (Settings → Variables and secrets):
+Dois limites do plano gratuito:
 
-   | Nome | Tipo | Valor |
-   |---|---|---|
-   | `VOF_MODELO_RISCO` | variável | `<usuario>/bertimbau-saude` |
-   | `VOF_MODELO_RISCO_REVISAO` | variável | commit impresso no passo 1 (fixa a versão) |
-   | `HF_TOKEN` | secret | token de leitura — só se o repo do modelo for privado |
-   | `NCBI_API_KEY` | secret | chave gratuita do NCBI (sobe o limite do PubMed de 3 para 10 req/s) |
-   | `NCBI_EMAIL` | variável | e-mail de contato da equipe, pedido pelo NCBI |
+- O Space hiberna após inatividade e acorda no próximo acesso.
+- O disco não é persistente: o registro de consultas zera a cada reinício. A base de
+  conhecimento é reconstruída na imagem.
 
-4. **Publicar o app**: automático a cada push na `main` pelo workflow
-   `deploy-app.yml` (configure a variável `HF_SPACE` e o secret `HF_TOKEN` com
-   escrita no GitHub), ou manualmente com
-   `python scripts/publica_space.py <usuario>/verdade-ou-fake`. Os dois caminhos
-   se recusam a publicar se o card não estiver em `producao`.
+## Como a base se atualiza
 
-Para rodar a mesma imagem localmente:
+`scripts/ingere_pubmed.py` busca no PubMed, para cada medicamento e cada par
+medicamento × condição do vocabulário, revisões sistemáticas, meta-análises e ensaios
+randomizados (sem estudos só em animais). O resultado é `dados/base/pubmed.jsonl`
+(1.069 resumos na versão atual), versionado no git, com `dados/base/manifesto.json`
+(data, volume, SHA-256). O workflow `ingestao-base.yml` repete a ingestão toda semana e
+commita a base atualizada. `scripts/constroi_base.py` deriva do JSONL o banco SQLite com
+os embeddings. Quando uma alegação não é coberta, a busca ao vivo no PubMed traz estudos
+novos para a base.
 
-```bash
-docker build -t verdade-ou-fake .
-docker run -p 8501:8501 -e VOF_MODELO_RISCO=<usuario>/bertimbau-saude verdade-ou-fake
-```
+## Endpoints
 
-**Segurança.** O servidor só baixa links `http(s)` que resolvem para IPs
-públicos — inclusive em cada redirecionamento — e recusa páginas acima de
-5 MB, para não servir de ponte para a rede interna (SSRF).
-
-## Fontes de dados
-
-| Finalidade | Fontes |
+| Método e caminho | Função |
 |---|---|
-| Treino da Camada 1 | Fake.br Corpus, FakeRecogna (recorte de saúde) + coleta em agências de checagem BR |
-| Consulta da Camada 2 | PubMed, DeCS/MeSH, DCB/ANVISA, Cochrane, ClinicalTrials.gov |
+| `POST /api/analisar` | Analisa uma alegação; resposta em Server-Sent Events |
+| `POST /api/feedback` | Registra o feedback do usuário sobre uma resposta |
+| `GET /api/saude` | Estado do serviço e versão da base |
+| `GET /api/metricas` | Latência, vereditos, cache, busca ao vivo e feedback |
 
-Levantamento completo e limitações em [Fontes de Dados](docs/dados.md).
+Contrato dos eventos e exemplos de `curl` em [API](docs/api.md).
+
+## Limitações
+
+- O LLM pode errar mesmo com as guardas: elas impedem citação inexistente e afirmação
+  sem fonte, mas não garantem que a fonte sustente a frase. Confira os links.
+- A base cobre bem só os temas do vocabulário (23 medicamentos e 15 condições). Fora
+  dele, a qualidade depende da busca ao vivo.
+- A base é de resumos em inglês, não de textos completos, e herda o viés de publicação.
+- O sistema não verifica imagens, vídeos nem áudio.
+- Depende de cota gratuita de terceiros (LLM, PubMed, hospedagem).
+- Quando não há estudo sobre a alegação, responde "não foi possível verificar", nunca
+  "é falso": ausência de evidência não é evidência de ausência.
+- Os números de qualidade do sistema (latência, acurácia do veredito) são medidos por
+  `scripts/avalia_rag.py`; os resultados ficam em [Avaliação](docs/avaliacao.md).
 
 ## Documentação
 
 | Documento | Conteúdo |
 |---|---|
-| [Arquitetura](docs/arquitetura.md) | Pipeline, stack, fases e frentes de trabalho |
-| [Fontes de Dados](docs/dados.md) | Datasets, bases científicas, riscos e governança |
+| [Arquitetura](docs/arquitetura.md) | Fluxo, componentes, MLOps, requisitos não funcionais, o que mudou |
+| [Avaliação](docs/avaliacao.md) | Medições do sistema |
+| [API](docs/api.md) | Endpoints e eventos de streaming |
+| [Operação](docs/operacao.md) | Variáveis, deploy, atualização da base, monitoramento |
+| [Dados](docs/dados.md) | Datasheets da base de conhecimento e do corpus de treino |
+| [ADRs](docs/adr/index.md) | Decisões de arquitetura |
 | [Guiding Questions](docs/guiding-questions.md) | Perguntas norteadoras do projeto |
-| [Canvas](docs/canva.md) | Objetivos de negócio e de ML, escopo, cronograma |
+| [Canvas](docs/canva.md) | Objetivos de negócio e de ML, escopo |
+
+## Classificador opcional (BERTimbau)
+
+Só é necessário para o sinal de estilo. Use `requirements-treino.txt`.
+
+```bash
+python scripts/prepara_dataset.py       # recorte de saúde do Fake.br
+python scripts/treina_modelo.py         # baseline TF-IDF + modelos/cards/baseline.json
+python scripts/treina_bert.py           # BERTimbau + modelos/cards/bertimbau.json
+python scripts/verifica_gate.py modelos/cards/bertimbau.json   # gate de qualidade
+python scripts/publica_modelo.py <usuario>/bertimbau-saude     # pesos para o Hub
+```
+
+O modelo só é carregado se o model card estiver em `"status": "producao"` e o hash dos
+pesos bater com o registrado. A promoção a `producao` é manual.
 
 ## Aviso
 Este sistema é apenas informativo e **não substitui orientação médica**. As respostas
