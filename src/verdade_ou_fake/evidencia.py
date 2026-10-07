@@ -45,21 +45,25 @@ def montar_query(alegacao: Alegacao) -> str:
 
 def _texto_do_resumo(citacao: ET.Element) -> str:
     """Junta as seções do resumo, que no PubMed vêm divididas em vários nós."""
+    # itertext() porque resumos trazem marcação interna (<i>, <sup>) que
+    # faria `.text` cortar a frase no primeiro elemento filho.
     partes = [
-        (no.text or "").strip()
+        "".join(no.itertext()).strip()
         for no in citacao.iter("AbstractText")
     ]
     return " ".join(parte for parte in partes if parte)
 
 
 def _ano_de_publicacao(citacao: ET.Element) -> int | None:
-    no_ano = citacao.find(".//DateCompleted/Year")
-    if no_ano is None or not no_ano.text:
-        return None
-    try:
-        return int(no_ano.text)
-    except ValueError:
-        return None
+    # DateCompleted falta em artigos recentes; a data do periódico cobre o resto.
+    for caminho in (".//DateCompleted/Year", ".//PubDate/Year", ".//ArticleDate/Year"):
+        no_ano = citacao.find(caminho)
+        if no_ano is not None and no_ano.text:
+            try:
+                return int(no_ano.text)
+            except ValueError:
+                continue
+    return None
 
 
 def parsear_artigos(xml: str) -> list[Artigo]:
@@ -78,7 +82,7 @@ def parsear_artigos(xml: str) -> list[Artigo]:
         artigos.append(
             Artigo(
                 pmid=no_pmid.text if no_pmid is not None and no_pmid.text else "",
-                titulo=no_titulo.text if no_titulo is not None and no_titulo.text else "",
+                titulo="".join(no_titulo.itertext()).strip() if no_titulo is not None else "",
                 resumo=_texto_do_resumo(citacao),
                 tipos_estudo=tipos,
                 ano=_ano_de_publicacao(citacao),
@@ -139,6 +143,63 @@ def _aguardar_vez() -> None:
         if espera > 0:
             time.sleep(espera)
         _ultima_requisicao = time.monotonic()
+
+
+FILTRO_ESTUDOS_FORTES = (
+    "(systematic review[pt] OR meta-analysis[pt] OR randomized controlled trial[pt])"
+    # Filtro padrão para excluir estudos só em animais sem perder artigos
+    # recentes, que ainda não receberam indexação MeSH.
+    " NOT (animals[mh] NOT humans[mh])"
+)
+
+
+def buscar_pmids(termo: str, retmax: int = MAX_ARTIGOS) -> list[str]:
+    """Roda o esearch e devolve os PMIDs, ordenados por relevância."""
+    _aguardar_vez()
+    resposta = requests.get(
+        f"{BASE_EUTILS}/esearch.fcgi",
+        params={
+            "db": "pubmed",
+            "term": termo,
+            "retmode": "json",
+            "retmax": retmax,
+            "sort": "relevance",
+            **_parametros_ncbi(),
+        },
+        timeout=TIMEOUT_SEGUNDOS,
+    )
+    resposta.raise_for_status()
+    return resposta.json()["esearchresult"]["idlist"]
+
+
+def baixar_artigos(pmids: list[str]) -> list[Artigo]:
+    """Roda o efetch para uma lista de PMIDs (use lotes de até ~150)."""
+    if not pmids:
+        return []
+    _aguardar_vez()
+    resposta = requests.post(
+        f"{BASE_EUTILS}/efetch.fcgi",
+        data={"db": "pubmed", "id": ",".join(pmids), "retmode": "xml", **_parametros_ncbi()},
+        timeout=TIMEOUT_SEGUNDOS * 2,
+    )
+    resposta.raise_for_status()
+    return parsear_artigos(resposta.text)
+
+
+def buscar_artigos_ao_vivo(termo: str, retmax: int = 8) -> list[Artigo]:
+    """Busca ampliada usada pelo RAG quando a base local não cobre a alegação.
+
+    Tenta primeiro só estudos fortes (revisões, meta-análises, ensaios
+    randomizados); se não houver nenhum, aceita qualquer tipo. Nunca levanta:
+    falha de rede vira lista vazia, e o RAG responde com o que já tinha.
+    """
+    try:
+        pmids = buscar_pmids(f"({termo}) AND {FILTRO_ESTUDOS_FORTES}", retmax)
+        if not pmids:
+            pmids = buscar_pmids(termo, retmax)
+        return [a for a in baixar_artigos(pmids) if a.resumo]
+    except (requests.RequestException, KeyError, ValueError, ET.ParseError):
+        return []
 
 
 def buscar_evidencia(alegacao: Alegacao) -> Evidencia:
