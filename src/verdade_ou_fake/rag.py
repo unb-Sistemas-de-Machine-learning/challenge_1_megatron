@@ -32,6 +32,7 @@ SEPARADOR = "---"
 TAMANHO_MINIMO = 12
 FOLGA_SIMILARIDADE = 0.12
 CANDIDATOS = 15
+TERMOS_GENERICOS = {"human", "humans", "disease", "diseases", "treatment", "therapy", "drug"}
 LIMITE_CABECALHO = 700
 SEM_DETALHE = "O modelo não detalhou a análise. Consulte os estudos listados abaixo."
 
@@ -250,7 +251,11 @@ def _conceitos(pubmed: str | None) -> list[list[str]]:
         return []
     conceitos = []
     for parte in re.split(r"\s+AND\s+", pubmed, flags=re.IGNORECASE):
-        palavras = [p for p in re.findall(r"[\w-]+", parte.lower()) if len(p) >= 4 and p != "or"]
+        palavras = [
+            p
+            for p in re.findall(r"[\w-]+", parte.lower())
+            if len(p) >= 4 and p not in TERMOS_GENERICOS
+        ]
         if palavras:
             conceitos.append(palavras)
     return conceitos

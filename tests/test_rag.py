@@ -237,3 +237,7 @@ def test_cabecalho_longo_sem_separador_nao_vaza_para_o_corpo():
     cabecalho, corpo = rag.separar_cabecalho("**VEREDITO:** APOIADA\nCONFIANÇA: media\nRESUMO: ok\nTexto [2].")
     assert corpo == "Texto [2]."
     assert "RESUMO" in cabecalho
+
+
+def test_conceitos_ignoram_termos_genericos_do_vocabulario():
+    assert rag._conceitos("Vitamin D AND Influenza, Human") == [["vitamin"], ["influenza"]]
