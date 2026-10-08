@@ -89,8 +89,8 @@ reutilizar o arquivo deve conferir esses termos.
 - **Viés de publicação.** Estudos com resultado positivo são mais publicados do que os
   negativos, então a base pode exagerar a eficácia dos tratamentos.
 - **Cobertura restrita ao vocabulário.** Só medicamentos e condições do vocabulário (23 e
-  15) são ingeridos em lote. O que mais entrar vem da busca ao vivo, que cobre pior e
-  não é persistida no plano gratuito de hospedagem.
+  15) são ingeridos em lote. O que mais entrar vem da busca ao vivo, que cobre pior.
+  Esses artigos ficam no banco do serviço, mas não no JSONL versionado.
 - **Resumos, não texto completo.** O resumo pode omitir limitações, subgrupos e conflitos
   de interesse que mudariam a leitura do estudo.
 - **Seleção por relevância do PubMed.** O corte de 12 e 6 artigos por consulta, ordenados

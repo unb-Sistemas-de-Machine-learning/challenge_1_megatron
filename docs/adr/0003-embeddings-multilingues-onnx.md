@@ -3,7 +3,7 @@
 ## Contexto
 
 A alegação chega em português e a literatura está em inglês. A recuperação precisa
-aproximar os dois idiomas. A hospedagem é uma CPU gratuita, e a imagem precisa ser
+aproximar os dois idiomas. A hospedagem é uma máquina pequena, sem GPU, e a imagem precisa ser
 pequena e subir rápido.
 
 ## Decisão

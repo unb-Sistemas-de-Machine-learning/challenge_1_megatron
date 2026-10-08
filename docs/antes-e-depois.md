@@ -84,7 +84,7 @@ segundos, porque o banco já vem construído.
 botão de feedback e uma demo com endereço fixo, HTTPS e dados persistentes. Trocar de provedor de LLM é trocar
 variáveis de ambiente.
 
-**Testes.** A suíte offline tem 317 testes e roda em cerca de 10 segundos, sem rede e
+**Testes.** A suíte offline tem 326 testes e roda em cerca de 10 segundos, sem rede e
 sem carregar modelo. O fluxo inteiro é testado com um LLM simulado.
 
 ### O que a mudança custou

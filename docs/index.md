@@ -14,6 +14,8 @@ citadas**: resumos de estudos do PubMed, com link para cada um.
 
 O objetivo não é dar parecer médico, mas oferecer uma ferramenta de checagem.
 
+Demo: <https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com>
+
 !!! warning "Este sistema é apenas informativo"
     Não substitui orientação médica. As respostas são uma síntese de evidências
     publicadas, não uma prescrição. O LLM que redige a resposta pode errar mesmo com as
@@ -32,6 +34,9 @@ O objetivo não é dar parecer médico, mas oferecer uma ferramenta de checagem.
 6. A resposta chega aos poucos, por streaming, e cada consulta é registrada para
    monitoramento e feedback.
 
+A página inicial também mostra os temas de saúde em alta na semana, já checados, vindos
+de uma planilha da equipe e das manchetes do Google Notícias.
+
 Diagramas e decisões em [Arquitetura](arquitetura.md).
 
 ## Por onde começar
@@ -39,6 +44,7 @@ Diagramas e decisões em [Arquitetura](arquitetura.md).
 <div class="grid cards" markdown>
 
 - **[Arquitetura](arquitetura.md)** — fluxo, componentes, MLOps, requisitos não funcionais e o que mudou
+- **[Antes e depois](antes-e-depois.md)** — o que mudou da primeira versão para a atual
 - **[Avaliação](avaliacao.md)** — medições do sistema
 - **[API](api.md)** — endpoints e eventos de streaming
 - **[Operação](operacao.md)** — subir, configurar, publicar e monitorar
@@ -57,7 +63,8 @@ Diagramas e decisões em [Arquitetura](arquitetura.md).
 - Os estudos são resumos em inglês, não textos completos, com o viés de publicação da
   literatura.
 - O sistema não verifica imagens, vídeos nem áudio.
-- Depende de cota gratuita de terceiros (LLM, PubMed e hospedagem).
+- Depende de cota gratuita de terceiros (LLM e PubMed) e do crédito de estudante que
+  paga a hospedagem.
 
 ## Base teórica
 

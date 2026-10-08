@@ -84,9 +84,10 @@ Texto que não é alegação de saúde recebe `FORA_DO_ESCOPO` sem gastar busca 
 
 ### Banco (`banco.py`)
 
-Um único arquivo SQLite com três papéis: `documentos` (resumos, embeddings e índice
+Um único arquivo SQLite com quatro papéis: `documentos` (resumos, embeddings e índice
 FTS5), `consultas` (cada análise, com veredito, fontes, latência, modelo, se veio do
-cache ou de busca ao vivo, e o feedback) e `paginas` (cache de links). Decisão em
+cache ou de busca ao vivo, e o feedback), `paginas` (cache de links) e `destaques` (os
+temas em alta da rodada mais recente). Decisão em
 [ADR 0002](adr/0002-sqlite-busca-vetorial-exata.md).
 
 ### Embeddings (`embeddings.py`)
@@ -124,16 +125,20 @@ Decisão em [ADR 0006](adr/0006-base-em-lote-com-busca-ao-vivo.md).
 
 Cliente HTTP mínimo (`httpx`) para qualquer API compatível com a de chat da OpenAI, com
 streaming. Os modelos de `LLM_MODELOS` são tentados em ordem: se um responde 429 (cota
-gratuita esgotada) ou erro de servidor, o próximo assume, desde que nenhum texto tenha
-sido entregue ainda. Blocos `<think>` de modelos de raciocínio são removidos. Decisão em
+gratuita esgotada), 400 (por exemplo, JSON inválido) ou erro de servidor, o próximo
+assume, desde que nenhum texto tenha sido entregue ainda. Os modelos atuais do Groq são
+de raciocínio: o cliente envia `reasoning_effort` (`LLM_ESFORCO_RACIOCINIO`, `low` por
+padrão) e remove blocos `<think>`. Decisão em
 [ADR 0004](adr/0004-cliente-openai-compativel-groq.md).
 
 ### Redação e guardas (`rag.py`)
 
 O prompt de veredito manda usar **exclusivamente** as fontes numeradas, citar cada frase
 factual no formato `[n]`, tratar falta de estudo como `INCONCLUSIVA` e escrever para
-leigo, sem orientação médica individual. A saída tem um cabeçalho fixo (`VEREDITO`,
-`CONFIANCA`, `RESUMO`), um separador `---` e o texto. As guardas rodam sobre essa saída,
+leigo, sem orientação médica individual. De cada resumo o modelo recebe o início e o
+fim, porque as conclusões ficam no fim. A saída tem um cabeçalho fixo (`VEREDITO`,
+`CONFIANCA`, `RESUMO`), um separador `---` e o texto; se o modelo omite o separador, o
+código separa o cabeçalho pelas linhas reconhecidas. As guardas rodam sobre essa saída,
 sem depender do modelo:
 
 - `FiltroDeCitacoes` remove, durante o streaming, citações `[n]` que não existem na
@@ -179,9 +184,10 @@ com veredito afirmativo de confiança alta ([ADR 0010](adr/0010-temas-em-alta.md
 ### Sinal de estilo (`sinal_estilo.py`)
 
 O BERTimbau treinado pelo grupo continua no repositório, com seu model card
-(`modelos/cards/bertimbau.json`) e o gate em `model_card.py`. Só é carregado se
-PyTorch e os pesos estiverem disponíveis. Se carregar, a interface mostra um "sinal de
-estilo do texto". Ele não decide o veredito. Decisão em
+(`modelos/cards/bertimbau.json`) e o gate em `model_card.py`. Fica **desligado por
+padrão**: só é carregado com `VOF_SINAL_ESTILO=1`, e se PyTorch e os pesos estiverem
+disponíveis. Ligado, a interface mostra um "sinal de estilo do texto". Ele não decide o
+veredito. Decisão em
 [ADR 0009](adr/0009-bertimbau-sinal-secundario.md).
 
 ## Stack
@@ -266,15 +272,16 @@ sistema novo são medidos por `scripts/avalia_rag.py`; os resultados ficam em
 O artigo-base é Kreuzberger, Kühl e Hirschl, *Machine Learning Operations (MLOps):
 Overview, Definition, and Architecture* (IEEE Access, 2023). Ele foi apresentado em aula
 com a recomendação de justificar cada componente adotado. Para uma equipe de quatro
-pessoas, com orçamento zero e um prazo curto, adotamos uma versão leve e dizemos por que
+pessoas, sem orçamento próprio (só cotas gratuitas e o crédito de estudante do Azure) e
+com prazo curto, adotamos uma versão leve e dizemos por que
 não adotamos o resto.
 
 ### Princípios
 
 | Princípio | Adotado | Onde está | Não adotado, e por quê |
 |---|---|---|---|
-| P1 CI/CD | `ci.yml` roda os testes offline (`pytest -m "not rede"`) a cada push e confere que o serviço importa só com o runtime leve. A entrega é um comando, `scripts/publica_azure.sh`, que constrói a imagem e publica na VM; não é automática a cada push |
-| P2 Orquestração de workflow | Agendamento semanal da ingestão pelo GitHub Actions | `ingestao-base.yml` | Sem orquestrador dedicado (Airflow, Kubeflow): são poucos passos lineares, um agendador resolve. |
+| P1 CI/CD | `ci.yml` roda os testes offline (`pytest -m "not rede"`) a cada push e confere que o serviço importa só com o runtime leve. A entrega é um comando que constrói a imagem e publica na VM | `.github/workflows/ci.yml`, `scripts/publica_azure.sh` | A entrega não é automática a cada push: exige a CLI do Azure autenticada na máquina de quem publica. |
+| P2 Orquestração de workflow | Agendamento semanal da ingestão pelo GitHub Actions; rotina periódica dos temas em alta dentro do serviço | `ingestao-base.yml`, `api.py` (`_manter_destaques`) | Sem orquestrador dedicado (Airflow, Kubeflow): são poucos passos lineares, um agendador resolve. |
 | P3 Reprodutibilidade | Versões fixadas nos `requirements*.txt`; banco reconstruído do JSONL com um comando; Dockerfile | `requirements*.txt`, `scripts/constroi_base.py`, `Dockerfile` | O LLM de terceiros não é reprodutível: o provedor pode atualizar o modelo. Mitigação parcial: temperatura baixa e registro do modelo usado em cada consulta. |
 | P4 Versionamento | Código, base de conhecimento (JSONL) e model card no git; manifesto com SHA-256 | `dados/base/`, `modelos/cards/` | Sem DVC: o JSONL é texto e cabe no git. Os pesos do BERTimbau ficam fora do git, no Hub. |
 | P5 Colaboração | Repositório único, branches, ADRs e documentação no repositório | `docs/adr/`, `docs/` | Sem ferramenta de experimentos compartilhada. |
@@ -294,7 +301,7 @@ não adotamos o resto.
 | C5 Infraestrutura de treino | Máquina local ou Colab, só para o classificador opcional | `scripts/treina_bert.py` | Sem cluster nem GPU dedicada. O RAG não treina. |
 | C6 Registro de modelos | Model card em JSON no git; pesos no Hugging Face Hub | `modelos/cards/`, `scripts/publica_modelo.py` | Sem registro remoto (MLflow): um JSON legível em diff basta para um modelo. |
 | C7 Repositório de metadados | Model card, manifesto da base e tabela `consultas` | ver P7 | Sem armazenamento dedicado. |
-| C8 Serviço de modelo | FastAPI em contêiner Docker numa VM do Azure, atrás de um proxy Caddy | `api.py`, `Dockerfile` | Sem Kubernetes: uma réplica de uma imagem, num host gratuito, não justifica. |
+| C8 Serviço de modelo | FastAPI em contêiner Docker numa VM do Azure, atrás de um proxy Caddy | `api.py`, `Dockerfile` | Sem Kubernetes: uma réplica de uma imagem, numa VM pequena, não justifica. |
 | C9 Monitoramento | Endpoint de métricas sobre o próprio SQLite | `banco.py` (`metricas`) | Sem Prometheus nem Grafana. |
 
 ### Papéis
@@ -356,7 +363,8 @@ dia:
 
 ### Manutenibilidade
 
-- Um módulo por responsabilidade, com docstrings que explicam o porquê.
+- Um módulo por responsabilidade, com nomes que dizem o que cada parte faz. O código
+  não leva comentários; o porquê das decisões fica nos ADRs e nesta página.
 - O orquestrador (`rag.py`) recebe as dependências por um objeto `Servico`, o que
   permite testar com LLM, PubMed e extração simulados. A suíte `pytest -m "not rede"`
   roda offline no CI.

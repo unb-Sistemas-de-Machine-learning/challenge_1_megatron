@@ -239,5 +239,6 @@ terceiros, não regenerável a cada execução do CI).
 real — invertido em relação à convenção do projeto (`rotulo=1` é desinformação).
 O script já faz essa conversão.
 
-**Volume e taxa de extração:** _preencher após rodar `scripts/prepara_fakerecogna.py`
-pela primeira vez — não prometer números antes de medir._
+**Volume e taxa de extração:** não medidos. `scripts/prepara_fakerecogna.py` não foi
+rodado até o fim, e `dados/processed/saude_fakerecogna.csv` não existe no repositório.
+O classificador em uso foi treinado só com o recorte do Fake.br.

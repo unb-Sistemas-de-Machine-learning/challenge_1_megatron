@@ -12,7 +12,8 @@ o leitor.
 ## Decisão
 
 Manter o modelo como **sinal de estilo do texto**, exibido à parte e rotulado como tal.
-`sinal_estilo.py` só o carrega se PyTorch e os pesos estiverem disponíveis;
+`sinal_estilo.py` só o carrega se PyTorch e os pesos estiverem disponíveis (e, desde a
+revisão abaixo, só com `VOF_SINAL_ESTILO=1`);
 `modelo_producao.py` continua exigindo o card em `producao` e o hash dos pesos
 conferindo. O sinal roda em paralelo à identificação da alegação, com prazo de 4
 segundos: se não chega, a resposta segue sem ele. Ele não participa do veredito nem da

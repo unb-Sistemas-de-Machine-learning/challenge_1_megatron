@@ -186,6 +186,7 @@ novos para a base.
 | `POST /api/analisar` | Analisa uma alegação; resposta em Server-Sent Events |
 | `POST /api/feedback` | Registra o feedback do usuário sobre uma resposta |
 | `GET /api/saude` | Estado do serviço e versão da base |
+| `GET /api/destaques` | Temas em alta da semana, já checados |
 | `GET /api/metricas` | Latência, vereditos, cache, busca ao vivo e feedback |
 
 Contrato dos eventos e exemplos de `curl` em [API](docs/api.md).
@@ -198,7 +199,8 @@ Contrato dos eventos e exemplos de `curl` em [API](docs/api.md).
   dele, a qualidade depende da busca ao vivo.
 - A base é de resumos em inglês, não de textos completos, e herda o viés de publicação.
 - O sistema não verifica imagens, vídeos nem áudio.
-- Depende de cota gratuita de terceiros (LLM, PubMed, hospedagem).
+- Depende de cota gratuita de terceiros (LLM e PubMed) e do crédito de estudante que
+  paga a hospedagem.
 - Quando não há estudo sobre a alegação, responde "não foi possível verificar", nunca
   "é falso": ausência de evidência não é evidência de ausência.
 - Os números de qualidade do sistema (latência, acurácia do veredito) são medidos por

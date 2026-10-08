@@ -8,9 +8,9 @@ de páginas e servir busca lexical.
 
 ## Decisão
 
-Um único arquivo SQLite (`banco.py`) com três papéis: base de conhecimento (tabela
-`documentos` e índice FTS5 para BM25), registro de consultas com feedback (`consultas`)
-e cache de páginas (`paginas`). Os embeddings ficam num BLOB por documento. Na primeira
+Um único arquivo SQLite (`banco.py`) com quatro papéis: base de conhecimento (tabela
+`documentos` e índice FTS5 para BM25), registro de consultas com feedback (`consultas`),
+cache de páginas (`paginas`) e temas em alta (`destaques`, acrescentada depois). Os embeddings ficam num BLOB por documento. Na primeira
 busca, o `Recuperador` carrega todos numa matriz numpy e calcula o cosseno exato contra
 a consulta. A matriz é recarregada quando o total de documentos muda.
 

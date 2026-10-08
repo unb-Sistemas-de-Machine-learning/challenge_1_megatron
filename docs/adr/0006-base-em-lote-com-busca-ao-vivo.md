@@ -27,7 +27,7 @@ alegação, o sistema consulta o PubMed na hora, indexa os artigos achados (orig
 - **Só em lote.** Rápido, mas cobre apenas o vocabulário. Uma alegação fora dele
   terminaria em "não foi possível verificar" mesmo havendo literatura.
 - **Corpus muito maior, sem vocabulário.** Volume e custo de embeddings incompatíveis
-  com uma CPU gratuita e com a escala do projeto.
+  com uma máquina pequena, sem GPU, e com a escala do projeto.
 
 ## Consequências
 

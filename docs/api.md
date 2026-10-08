@@ -39,7 +39,7 @@ curl -N -X POST http://localhost:7860/api/analisar \
 |---|---|---|
 | `etapa` | `texto` | Progresso: "Lendo a notícia" (só links), "Identificando a alegação", "Buscando estudos na base científica", "Ampliando a busca no PubMed" (só se a base local não cobre), "Redigindo a análise" |
 | `alegacao` | `texto`, `titulo_noticia` | Alegação identificada. `titulo_noticia` é o título da página, ou `null` se a entrada era texto |
-| `estilo` | `risco` | Sinal de estilo do BERTimbau: probabilidade, de 0 a 1 (3 casas), de o texto ser desinformação segundo o classificador. Só aparece se o modelo está carregado e respondeu em até 4 s |
+| `estilo` | `risco` | Sinal de estilo do BERTimbau: probabilidade, de 0 a 1 (3 casas), de o texto ser desinformação segundo o classificador. Desligado por padrão (`VOF_SINAL_ESTILO=1` para ligar). Só aparece se o modelo está carregado e respondeu em até 4 s |
 | `fontes` | `fontes` | Lista de fontes (abaixo). Pode ser vazia. Não é enviado quando o veredito é `FORA_DO_ESCOPO` |
 | `veredito` | `codigo`, `rotulo`, `confianca`, `resumo` | Veredito. Pode chegar uma segunda vez, se as guardas mudaram o veredito ou a confiança: vale o último |
 | `texto` | `texto` | Pedaço do texto da análise, em ordem. Concatene os pedaços |
