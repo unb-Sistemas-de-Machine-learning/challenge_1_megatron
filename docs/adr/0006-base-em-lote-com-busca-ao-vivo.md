@@ -34,8 +34,9 @@ alegação, o sistema consulta o PubMed na hora, indexa os artigos achados (orig
 - Perguntas dentro do vocabulário não esperam pelo PubMed.
 - A base é versionada: cada resposta se liga à versão que a gerou pelo hash do
   manifesto, que também entra na chave de cache.
-- Alegações novas enriquecem a base enquanto o processo vive. Como o disco do Space
-  gratuito não persiste, esses artigos se perdem no reinício e só ficam de forma
-  permanente se a ingestão semanal os alcançar (por ampliação do vocabulário).
+- Alegações novas enriquecem a base. No deploy atual o banco fica num volume persistente,
+  então esses artigos permanecem entre reinícios. Eles não entram no JSONL versionado:
+  só passam a fazer parte da base reproduzível se a ingestão semanal os alcançar (por
+  ampliação do vocabulário).
 - A cobertura em lote é restrita ao vocabulário (23 medicamentos e 15 condições).
 - O JSONL cresce no git a cada atualização. Nesta escala é aceitável.

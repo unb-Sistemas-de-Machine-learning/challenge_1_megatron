@@ -3,7 +3,7 @@
 
 📖 **[Documentação completa](https://unb-sistemas-de-machine-learning.github.io/challenge_1_megatron/)**
 
-🚀 **Demo:** ainda sem endereço público; veja [Deploy](#deploy).
+🚀 **Demo:** <https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com>
 
 ## O que é
 
@@ -67,7 +67,7 @@ anterior em [Arquitetura](docs/arquitetura.md).
 | Decisão | NLI zero-shot + regras | LLM restrito às fontes + guardas em código |
 | Resposta | Rótulo e lista de artigos, só no fim | Veredito e explicação com citações, em streaming |
 | Banco de dados | Nenhum | SQLite com base, consultas, feedback e cache |
-| Hospedagem | Túnel temporário a partir do Colab | Imagem Docker enxuta, pronta para qualquer host de contêiner |
+| Hospedagem | Túnel temporário a partir do Colab | VM no Azure com endereço fixo, HTTPS e disco persistente |
 
 Com o Groq, a resposta completa leva cerca de 1,5 s na mediana, e o conjunto de 20
 alegações com gabarito teve 20 acertos (detalhes e ressalvas em
@@ -79,8 +79,8 @@ da mudança e o comportamento em cada situação em
 
 Python 3.11 · FastAPI + SSE · SQLite (FTS5) + numpy · fastembed (ONNX,
 `paraphrase-multilingual-MiniLM-L12-v2`) · LLM por API compatível com OpenAI (Groq por
-padrão; Gemini ou Ollama) · trafilatura · PubMed E-utilities · Docker · Hugging Face
-Spaces · GitHub Actions · MkDocs
+padrão; Gemini ou Ollama) · trafilatura · PubMed E-utilities · Docker · Caddy · Azure
+(VM) · GitHub Actions · MkDocs
 
 ## Como rodar
 
@@ -142,18 +142,22 @@ Todas as variáveis de ambiente estão na tabela de [Operação](docs/operacao.m
 
 ## Deploy
 
-> **Atenção:** Em 07/10/2026 a criação do Space foi recusada pelo Hugging Face: Spaces com Docker no hardware `cpu-basic` passaram a exigir assinatura PRO (9 dólares por mês na data da consulta). O caminho abaixo só vale com essa assinatura. Sem ela, a imagem roda em qualquer host de contêiner com pelo menos 1 GB de RAM: o `Dockerfile` lê a porta de `PORT` e o serviço só precisa de `LLM_API_KEY`.
+O app roda numa máquina virtual do Azure, paga com o crédito do **Azure for Students**:
+<https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com>
 
-O app é publicado num **Hugging Face Space** (SDK Docker, CPU gratuito: 2 vCPU, 16 GB de
-RAM) por `scripts/publica_space.py`, chamado pelo workflow `deploy-app.yml` a cada push
-na `main`. Configure `LLM_API_KEY` como *secret* do Space, e `HF_SPACE` (variável) e
-`HF_TOKEN` (secret) no GitHub. Passo a passo em [Operação](docs/operacao.md).
+```bash
+az login --use-device-code
+ROTULO=verdade-ou-fake-megatron LOCAL=chilecentral TAMANHO=Standard_B2ats_v2 scripts/publica_azure.sh
+```
 
-Dois limites do plano gratuito:
+O script cria a máquina se ela não existir, constrói a imagem, envia para a VM e sobe
+dois contêineres: o serviço e um proxy Caddy, que emite o certificado HTTPS. Rodar de
+novo publica uma versão nova sem perder os dados: o banco fica num volume no disco da
+VM, então consultas, feedback e artigos da busca ampliada sobrevivem a reinícios.
 
-- O Space hiberna após inatividade e acorda no próximo acesso.
-- O disco não é persistente: o registro de consultas zera a cada reinício. A base de
-  conhecimento é reconstruída na imagem.
+A hospedagem gratuita no Hugging Face Spaces, planejada no início, deixou de existir
+para contêineres Docker. Passo a passo e custos em [Operação](docs/operacao.md); a
+decisão está no [ADR 0008](docs/adr/0008-hospedagem.md).
 
 ## Como a base se atualiza
 

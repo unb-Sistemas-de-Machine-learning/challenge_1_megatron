@@ -36,5 +36,5 @@ a consulta. A matriz é recarregada quando o total de documentos muda.
 - A matriz inteira fica na memória. Serve para milhares de documentos e passa a pesar
   bem antes de milhões. Nesse ponto, migrar para pgvector é a saída natural, e o
   `Recuperador` é a parte a trocar.
-- No Space gratuito o disco não é persistente (ver [ADR 0008](0008-hugging-face-spaces.md)):
-  a base é reconstruída na imagem e o registro de consultas zera a cada reinício.
+- O arquivo SQLite fica num volume no disco da VM (ver [ADR 0008](0008-hospedagem.md)):
+  persiste entre reinícios, mas não tem cópia de segurança automática.

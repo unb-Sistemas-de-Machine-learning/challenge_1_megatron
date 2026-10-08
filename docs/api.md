@@ -163,7 +163,7 @@ curl http://localhost:7860/api/metricas
 | `vereditos` | Contagem por código de veredito |
 | `documentos_por_origem` | Documentos na base por origem (`lote`, `ao_vivo`) |
 
-Como o disco do plano gratuito do Space não persiste, esses números valem para o período
-desde o último reinício. O uso desses sinais está em [Operação](operacao.md).
+No deploy atual o banco fica num volume persistente, então os números acumulam desde a
+primeira publicação. O uso desses sinais está em [Operação](operacao.md).
 
 Os endpoints `/api/saude` e `/api/metricas` não têm autenticação.

@@ -84,32 +84,52 @@ Limites dos planos gratuitos, **na data da consulta (07/10/2026), sujeitos a mud
 Confira `GET /api/saude` depois de trocar: `llm` deve ser `true` e `modelos` deve listar
 os novos.
 
-## Publicar no Hugging Face Space
+## Publicar no Azure
 
-!!! warning "Exige plano pago"
-    Em 07/10/2026 a criação do Space foi recusada pelo Hugging Face: Spaces com Docker no hardware `cpu-basic` passaram a exigir assinatura PRO (9 dólares por mês na data da consulta). O caminho abaixo só vale com essa assinatura. Sem ela, a imagem roda em qualquer host de contêiner com pelo menos 1 GB de RAM: o `Dockerfile` lê a porta de `PORT` e o serviço só precisa de `LLM_API_KEY`.
+O app roda numa máquina virtual do Azure, com o crédito do Azure for Students
+([ADR 0008](adr/0008-hospedagem.md)). Endereço atual: <https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com>
 
-O app roda num Space com SDK Docker, no plano gratuito de CPU (2 vCPU, 16 GB de RAM). O
-Space hiberna após inatividade e acorda no próximo acesso. O disco não é persistente: o
-registro de consultas zera a cada reinício, e a base de conhecimento é reconstruída na
-imagem ([ADR 0008](adr/0008-hugging-face-spaces.md)).
+1. **Conta.** Ative o Azure for Students com o e-mail institucional em
+   <https://azure.microsoft.com/free/students>. Não pede cartão.
+2. **CLI.** Instale a CLI do Azure e rode `az login --use-device-code`.
+3. **Chave do LLM.** Tenha o `.env` na raiz, com `LLM_API_KEY`. O script copia esse
+   arquivo para a VM, sem comentários e com permissão restrita.
+4. **Publicar.**
 
-1. **Criar o Space.** Em huggingface.co, *New Space*, SDK **Docker**, hardware CPU
-   gratuito. Anote o id, no formato `usuario/nome-do-space`.
-2. **Configurar o segredo do LLM.** No Space, *Settings, Variables and secrets*: crie o
-   **secret** `LLM_API_KEY` com a chave do provedor. Se quiser, crie também `NCBI_API_KEY`
-   (secret) e `NCBI_EMAIL` (variável). Outras variáveis da tabela acima entram como
-   variáveis do Space.
-3. **Configurar o GitHub.** No repositório, *Settings, Secrets and variables, Actions*:
-   - variável `HF_SPACE` com o id do Space;
-   - secret `HF_TOKEN` com um token do Hugging Face com permissão de escrita.
-4. **Publicar.** O workflow `deploy-app.yml` roda a cada push na `main` (e sob demanda,
-   pelo *Run workflow*): executa os testes offline e chama `scripts/publica_space.py`.
-   Enquanto `HF_SPACE` não existe, o job é pulado.
-   Para publicar à mão: `python scripts/publica_space.py usuario/nome-do-space`, depois de
-   `hf auth login` ou com `HF_TOKEN` no ambiente.
-5. **Conferir.** Quando o build do Space terminar, abra a URL e consulte
-   `/api/saude`: `documentos` deve ser o total da base e `llm` deve ser `true`.
+   ```bash
+   ROTULO=verdade-ou-fake-megatron LOCAL=chilecentral TAMANHO=Standard_B2ats_v2 scripts/publica_azure.sh
+   ```
+
+   O script cria o grupo de recursos e a VM (Ubuntu 22.04, Docker instalado por
+   `deploy/cloud-init.yml`, 2 GB de swap), abre as portas 80 e 443, constrói a imagem
+   localmente, envia por SSH e sobe `deploy/docker-compose.yml`. Ele gera a chave
+   `~/.ssh/vof_azure` na primeira vez. Rodar de novo publica uma versão nova na mesma VM.
+5. **Conferir.** Abra o endereço e consulte `/api/saude`: `documentos` deve ser o total
+   da base e `llm` deve ser `true`.
+
+| Variável do script | Padrão | Observação |
+|---|---|---|
+| `ROTULO` | obrigatória | Prefixo do endereço: `<ROTULO>.<LOCAL>.cloudapp.azure.com` |
+| `LOCAL` | `brazilsouth` | A assinatura de estudante da UnB só aceitou `chilecentral`, `mexicocentral`, `eastus`, `canadacentral` e `northcentralus` |
+| `TAMANHO` | `Standard_B1s` | Em `chilecentral` os tamanhos pequenos disponíveis eram `Standard_B2ats_v2` e `Standard_B2ts_v2` |
+| `GRUPO`, `VM` | `verdade-ou-fake`, `vof` | Nomes do grupo de recursos e da máquina |
+
+**O que persiste.** O banco fica no volume `banco`, no disco da VM. Consultas, feedback,
+cache e artigos da busca ampliada sobrevivem a reinícios e a novas publicações. Uma
+publicação com base nova não substitui o banco do volume: os documentos novos entram na
+próxima ingestão ou busca; para reconstruir do zero, apague o volume na VM.
+
+**Custo.** A VM `Standard_B2ats_v2` (2 vCPU, 1 GB de RAM) custava 0,0132 dólar por hora
+em `chilecentral` em 07/10/2026, cerca de 9,60 dólares por mês, mais disco e IP público.
+O crédito de estudante é de 100 dólares por ano. Para parar de gastar:
+`az vm deallocate -g verdade-ou-fake -n vof`; para apagar tudo:
+`az group delete -n verdade-ou-fake`.
+
+**Memória.** O serviço usa cerca de 380 MB logo após subir numa máquina de 1 GB, com
+parte do sistema em swap. Funciona, mas sem folga.
+
+**Acesso à VM.** `ssh -i ~/.ssh/vof_azure vof@<endereço>`; os contêineres ficam em
+`~/servico` (`docker compose logs -f app`).
 
 ## Atualizar a base
 
@@ -136,8 +156,8 @@ antigas não são reaproveitadas.
 
 ## O que olhar em `/api/metricas`
 
-Formato do retorno em [API](api.md#get-apimetricas). Como o banco do Space zera a cada
-reinício, os números valem para o período desde a última subida.
+Formato do retorno em [API](api.md#get-apimetricas). O banco fica num volume
+persistente da VM, então os números acumulam entre reinícios e publicações.
 
 | Sinal | O que indica | O que fazer |
 |---|---|---|
@@ -162,7 +182,7 @@ métricas. Esse ciclo é manual.
 
 ## Plano B para a demo
 
-Se o provedor de LLM cair, estourar a cota ou o Space estiver indisponível, rode tudo
+Se o provedor de LLM cair, estourar a cota ou a VM estiver indisponível, rode tudo
 numa máquina local com Ollama:
 
 ```bash
@@ -178,5 +198,5 @@ baixado. Os valores exatos para o `docker compose` estão em `.env.example` e
 Um modelo local em CPU é mais lento do que o Groq. Teste antes. E mesmo sem nenhum LLM, o
 sistema continua mostrando as fontes recuperadas em modo degradado.
 
-Preparação para a apresentação: acorde o Space e faça uma consulta de teste pouco antes,
-porque o primeiro acesso depois de hibernar é lento; confira `/api/saude`.
+Preparação para a apresentação: faça uma consulta de teste pouco antes e confira
+`/api/saude`. A VM não hiberna.

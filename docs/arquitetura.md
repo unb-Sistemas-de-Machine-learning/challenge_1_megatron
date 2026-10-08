@@ -49,8 +49,8 @@ flowchart LR
     J --> K["scripts/constroi_base.py<br/>embeddings + índice FTS5"]
     K --> Q["SQLite: vof.db"]
     Q --> M["Imagem Docker<br/>(banco construído no build)"]
-    M --> H["Hugging Face Space"]
-    H -. "consultas, páginas e artigos<br/>da busca ao vivo" .-> Q2["vof.db em execução<br/>(zera no reinício)"]
+    M --> H["VM no Azure<br/>(scripts/publica_azure.sh)"]
+    H -. "consultas, páginas e artigos<br/>da busca ao vivo" .-> Q2["vof.db em volume<br/>persistente"]
 ```
 
 O JSONL é a fonte da verdade da base. O banco é **derivado** dele e pode ser
@@ -189,7 +189,7 @@ estilo do texto". Ele não decide o veredito. Decisão em
 | Extração de links | `trafilatura` |
 | Literatura | PubMed E-utilities |
 | Classificador opcional | BERTimbau (PyTorch, `transformers`), só para o sinal de estilo |
-| Contêiner e hospedagem | Docker; Hugging Face Space (SDK Docker) |
+| Contêiner e hospedagem | Docker e Caddy numa VM do Azure (Azure for Students) |
 | CI/CD | GitHub Actions |
 | Documentação | MkDocs Material + GitHub Pages |
 
@@ -264,7 +264,7 @@ não adotamos o resto.
 
 | Princípio | Adotado | Onde está | Não adotado, e por quê |
 |---|---|---|---|
-| P1 CI/CD | `ci.yml` roda os testes offline (`pytest -m "not rede"`) a cada push; `deploy-app.yml` publica o Space | `.github/workflows/` | Há um único ambiente, sem homologação. |
+| P1 CI/CD | `ci.yml` roda os testes offline (`pytest -m "not rede"`) a cada push e confere que o serviço importa só com o runtime leve. A entrega é um comando, `scripts/publica_azure.sh`, que constrói a imagem e publica na VM; não é automática a cada push |
 | P2 Orquestração de workflow | Agendamento semanal da ingestão pelo GitHub Actions | `ingestao-base.yml` | Sem orquestrador dedicado (Airflow, Kubeflow): são poucos passos lineares, um agendador resolve. |
 | P3 Reprodutibilidade | Versões fixadas nos `requirements*.txt`; banco reconstruído do JSONL com um comando; Dockerfile | `requirements*.txt`, `scripts/constroi_base.py`, `Dockerfile` | O LLM de terceiros não é reprodutível: o provedor pode atualizar o modelo. Mitigação parcial: temperatura baixa e registro do modelo usado em cada consulta. |
 | P4 Versionamento | Código, base de conhecimento (JSONL) e model card no git; manifesto com SHA-256 | `dados/base/`, `modelos/cards/` | Sem DVC: o JSONL é texto e cabe no git. Os pesos do BERTimbau ficam fora do git, no Hub. |
@@ -285,7 +285,7 @@ não adotamos o resto.
 | C5 Infraestrutura de treino | Máquina local ou Colab, só para o classificador opcional | `scripts/treina_bert.py` | Sem cluster nem GPU dedicada. O RAG não treina. |
 | C6 Registro de modelos | Model card em JSON no git; pesos no Hugging Face Hub | `modelos/cards/`, `scripts/publica_modelo.py` | Sem registro remoto (MLflow): um JSON legível em diff basta para um modelo. |
 | C7 Repositório de metadados | Model card, manifesto da base e tabela `consultas` | ver P7 | Sem armazenamento dedicado. |
-| C8 Serviço de modelo | FastAPI em contêiner Docker no Hugging Face Space | `api.py`, `Dockerfile` | Sem Kubernetes: uma réplica de uma imagem, num host gratuito, não justifica. |
+| C8 Serviço de modelo | FastAPI em contêiner Docker numa VM do Azure, atrás de um proxy Caddy | `api.py`, `Dockerfile` | Sem Kubernetes: uma réplica de uma imagem, num host gratuito, não justifica. |
 | C9 Monitoramento | Endpoint de métricas sobre o próprio SQLite | `banco.py` (`metricas`) | Sem Prometheus nem Grafana. |
 
 ### Papéis
@@ -300,7 +300,7 @@ mapeamento abaixo é por frente de trabalho, não por nome.
 | R3 Cientista de dados | Frente de modelo e avaliação: classificador opcional, conjunto de alegações com gabarito, prompts. |
 | R4 Engenheiro de dados | Frente de dados e evidência: ingestão do PubMed, vocabulário, construção da base, datasheets. |
 | R5 Engenheiro de software | Frente de produto: API, front, extração de links, guardas. |
-| R6 Engenheiro DevOps | Frente de infraestrutura: Docker, workflows, deploy no Space. |
+| R6 Engenheiro DevOps | Frente de infraestrutura: Docker, workflows, deploy na VM do Azure. |
 | R7 Engenheiro de ML (MLOps) | Acumulado entre as frentes de modelo e infraestrutura: gate, model card, monitoramento. |
 
 ## Requisitos não funcionais
@@ -321,8 +321,9 @@ mapeamento abaixo é por frente de trabalho, não por nome.
 - **Não há estudo sobre a alegação.** Resposta `NAO_VERIFICAVEL`, com o texto explícito
   de que ausência de estudo não prova que a alegação é falsa.
 - **Erro inesperado.** A API envia um evento `erro` genérico e registra a exceção no log.
-- **Disco não persistente.** No plano gratuito do Space, o registro de consultas zera a
-  cada reinício. A base de conhecimento é reconstruída na imagem.
+- **Máquina única.** O serviço roda numa VM só, sem réplica. Se ela cair, a demo cai.
+  O banco fica num volume no disco da VM e sobrevive a reinícios, mas não há cópia de
+  segurança automática.
 
 ### Escalabilidade
 

@@ -33,7 +33,7 @@ nav:
       - "0005 FastAPI, SSE e front estático": adr/0005-fastapi-sse-front-estatico.md
       - "0006 Base em lote e busca ao vivo": adr/0006-base-em-lote-com-busca-ao-vivo.md
       - "0007 Guardas determinísticas": adr/0007-guardas-deterministicas.md
-      - "0008 Hugging Face Spaces": adr/0008-hugging-face-spaces.md
+      - "0008 Hospedagem": adr/0008-hospedagem.md
       - "0009 BERTimbau como sinal secundário": adr/0009-bertimbau-sinal-secundario.md
   - Guiding Questions: guiding-questions.md
   - Canvas: canva.md

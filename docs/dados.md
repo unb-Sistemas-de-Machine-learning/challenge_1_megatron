@@ -151,7 +151,7 @@ Estudos conflitantes sobre o mesmo par medicamento/doença devem resultar em ver
 - **Versionamento.** A base é um JSONL no git, com manifesto e SHA-256. O hash entra na
   chave de cache, então atualizar a base invalida as respostas guardadas.
 - **Privacidade.** `consultas` guarda a alegação extraída, as fontes, a resposta gerada e uma chave de hash
-  da entrada (não o texto bruto digitado); `paginas` guarda o texto extraído de links. No plano gratuito do Space, esse registro zera a cada reinício.
+  da entrada (não o texto bruto digitado); `paginas` guarda o texto extraído de links. No deploy atual esse registro fica num volume persistente da VM, sem prazo de retenção definido.
 
 ## Riscos conhecidos
 

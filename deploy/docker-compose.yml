@@ -1,0 +1,27 @@
+services:
+  app:
+    image: verdade-ou-fake:rag
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - banco:/home/app/banco
+    expose:
+      - "7860"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMINIO: ${DOMINIO}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_dados:/data
+    depends_on:
+      - app
+
+volumes:
+  banco:
+  caddy_dados:
