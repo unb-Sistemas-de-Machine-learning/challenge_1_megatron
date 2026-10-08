@@ -1,0 +1,1496 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../api/">
+      
+      
+        <link rel="next" href="../dados/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Operação - Challenge 1 - Megatron</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#operacao" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Challenge 1 - Megatron" class="md-header__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Challenge 1 - Megatron
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Operação
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Challenge 1 - Megatron" class="md-nav__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Challenge 1 - Megatron
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../antes-e-depois/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antes e depois
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avaliacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#subir-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subir localmente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de ambiente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trocar-de-provedor-de-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trocar de provedor de LLM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publicar-no-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publicar no Azure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temas-em-alta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temas em alta
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#atualizar-a-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atualizar a base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-olhar-em-apimetricas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que olhar em /api/metricas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plano-b-para-a-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plano B para a demo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de arquitetura (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0001-rag-com-llm-de-terceiros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 RAG com LLM de terceiros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0002-sqlite-busca-vetorial-exata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 SQLite e busca vetorial exata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0003-embeddings-multilingues-onnx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Embeddings multilíngues em ONNX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0004-cliente-openai-compativel-groq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Cliente OpenAI-compatível e Groq
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0005-fastapi-sse-front-estatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 FastAPI, SSE e front estático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0006-base-em-lote-com-busca-ao-vivo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Base em lote e busca ao vivo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0007-guardas-deterministicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Guardas determinísticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0008-hospedagem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Hospedagem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0009-bertimbau-sinal-secundario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 BERTimbau como sinal secundário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0010-temas-em-alta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Temas em alta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guiding-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guiding Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#subir-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Subir localmente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de ambiente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trocar-de-provedor-de-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trocar de provedor de LLM
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publicar-no-azure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Publicar no Azure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#temas-em-alta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temas em alta
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#atualizar-a-base" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Atualizar a base
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-olhar-em-apimetricas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que olhar em /api/metricas
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#plano-b-para-a-demo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Plano B para a demo
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="operacao">Operação</h1>
+<p>Como subir, configurar, publicar, atualizar e acompanhar o sistema.</p>
+<h2 id="subir-localmente">Subir localmente</h2>
+<p>Com Python 3.11:</p>
+<div class="highlight"><pre><span></span><code>python3.11<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>venv<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">source</span><span class="w"> </span>venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env<span class="w">        </span><span class="c1"># e preencha LLM_API_KEY (chave gratuita em console.groq.com)</span>
+python<span class="w"> </span>scripts/constroi_base.py
+<span class="nv">PYTHONPATH</span><span class="o">=</span>src<span class="w"> </span>uvicorn<span class="w"> </span>verdade_ou_fake.api:app<span class="w"> </span>--port<span class="w"> </span><span class="m">7860</span>
+</code></pre></div>
+<p><code>scripts/constroi_base.py</code> lê <code>dados/base/pubmed.jsonl</code>, calcula os embeddings e grava o
+banco em <code>dados/vof.db</code> (cerca de 70 s em CPU para a base atual). Se você pular esse
+passo, o serviço indexa a base sozinho na subida, quando o banco está vazio, em segundo
+plano. Abra <a href="http://localhost:7860">http://localhost:7860</a>.</p>
+<p>Com Docker:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>--build
+</code></pre></div>
+<p>O Dockerfile constrói o banco na etapa de build e sobe o uvicorn na porta 7860.</p>
+<p>Testes:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-dev.txt<span class="w"> </span>--extra-index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+pytest<span class="w"> </span>-m<span class="w"> </span><span class="s2">"not rede"</span>
+</code></pre></div>
+<p><code>-m "not rede"</code> exclui os testes que tocam a rede. É o que o <code>ci.yml</code> roda.</p>
+<h2 id="variaveis-de-ambiente">Variáveis de ambiente</h2>
+<p>A fonte da verdade é <code>src/verdade_ou_fake/config.py</code>. Sem <code>LLM_API_KEY</code> o serviço sobe em
+modo degradado: recupera e mostra as fontes, mas não redige o veredito.</p>
+<table>
+<thead>
+<tr>
+<th>Variável</th>
+<th>Padrão</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LLM_BASE_URL</code></td>
+<td><code>https://api.groq.com/openai/v1</code></td>
+<td>Endereço da API de chat compatível com OpenAI</td>
+</tr>
+<tr>
+<td><code>LLM_API_KEY</code></td>
+<td>vazio</td>
+<td>Chave do provedor. Se vazia, usa <code>GROQ_API_KEY</code>; se ambas vazias, modo degradado</td>
+</tr>
+<tr>
+<td><code>LLM_MODELOS</code></td>
+<td><code>openai/gpt-oss-120b,qwen/qwen3.8-27b,openai/gpt-oss-20b</code></td>
+<td>Lista separada por vírgulas, tentada em ordem (fallback em erro de cota ou de servidor)</td>
+</tr>
+<tr>
+<td><code>LLM_MODELO_RAPIDO</code></td>
+<td><code>openai/gpt-oss-20b</code></td>
+<td>Modelo pequeno que identifica a alegação</td>
+</tr>
+<tr>
+<td><code>LLM_ESFORCO_RACIOCINIO</code></td>
+<td><code>low</code></td>
+<td>Enviado como <code>reasoning_effort</code>; deixe vazio para provedores que não aceitam o parâmetro</td>
+</tr>
+<tr>
+<td><code>LLM_TIMEOUT</code></td>
+<td><code>45</code></td>
+<td>Segundos de espera pela resposta do LLM antes de tentar o próximo modelo</td>
+</tr>
+<tr>
+<td><code>VOF_BANCO</code></td>
+<td><code>dados/vof.db</code></td>
+<td>Caminho do arquivo SQLite</td>
+</tr>
+<tr>
+<td><code>VOF_MODELO_EMBEDDING</code></td>
+<td><code>sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2</code></td>
+<td>Modelo de embeddings (trocar exige reconstruir o banco)</td>
+</tr>
+<tr>
+<td><code>VOF_SIMILARIDADE_MINIMA</code></td>
+<td><code>0.45</code></td>
+<td>Cosseno mínimo para uma fonte contar como relevante; abaixo disso a base local é considerada sem cobertura</td>
+</tr>
+<tr>
+<td><code>VOF_CACHE_HORAS</code></td>
+<td><code>168</code></td>
+<td>Validade do cache de respostas</td>
+</tr>
+<tr>
+<td><code>VOF_LIMITE_POR_MINUTO</code></td>
+<td><code>12</code></td>
+<td>Requisições por minuto por cliente em <code>/api/analisar</code></td>
+</tr>
+<tr>
+<td><code>VOF_BUSCA_AO_VIVO</code></td>
+<td><code>1</code></td>
+<td><code>0</code> desliga a busca ampliada no PubMed</td>
+</tr>
+<tr>
+<td><code>VOF_PLANILHA_CSV</code></td>
+<td>vazio</td>
+<td>Link CSV da planilha de temas em alta, publicada na web</td>
+</tr>
+<tr>
+<td><code>VOF_DESTAQUES_AUTOMATICOS</code></td>
+<td><code>1</code></td>
+<td><code>0</code> desliga os temas tirados do Google Notícias</td>
+</tr>
+<tr>
+<td><code>VOF_DESTAQUES_MAXIMO</code></td>
+<td><code>6</code></td>
+<td>Temas por rodada</td>
+</tr>
+<tr>
+<td><code>VOF_DESTAQUES_HORAS</code></td>
+<td><code>6</code></td>
+<td>Intervalo entre rodadas</td>
+</tr>
+<tr>
+<td><code>VOF_DESTAQUES_PAUSA</code></td>
+<td><code>25</code></td>
+<td>Segundos entre um tema e outro, para caber no limite do LLM</td>
+</tr>
+<tr>
+<td><code>VOF_SINAL_ESTILO</code></td>
+<td><code>0</code></td>
+<td><code>1</code> liga o sinal de estilo do BERTimbau; desligado por padrão porque marca texto legítimo como arriscado</td>
+</tr>
+<tr>
+<td><code>VOF_MODELO_RISCO</code></td>
+<td><code>modelos/bertimbau</code> (se existir)</td>
+<td>Pasta ou id no Hub dos pesos do BERTimbau (sinal de estilo, opcional)</td>
+</tr>
+<tr>
+<td><code>VOF_MODELO_RISCO_REVISAO</code></td>
+<td>vazio</td>
+<td>Commit do repositório do modelo no Hub, para fixar a versão</td>
+</tr>
+<tr>
+<td><code>NCBI_API_KEY</code></td>
+<td>vazio</td>
+<td>Chave gratuita do NCBI: sobe o limite do PubMed de 3 para 10 requisições por segundo</td>
+</tr>
+<tr>
+<td><code>NCBI_EMAIL</code></td>
+<td>vazio</td>
+<td>E-mail de contato, pedido pelo NCBI</td>
+</tr>
+</tbody>
+</table>
+<p>Constantes que não são variáveis: 5 fontes por resposta (<code>fontes_por_resposta</code>) e 15
+candidatos por busca.</p>
+<h2 id="trocar-de-provedor-de-llm">Trocar de provedor de LLM</h2>
+<p>Trocar o provedor é mudar variáveis, sem tocar no código. Mude <strong>também</strong> os nomes de
+modelo: <code>LLM_MODELOS</code> e <code>LLM_MODELO_RAPIDO</code> trazem nomes do Groq por padrão e outro
+provedor não os reconhece.</p>
+<table>
+<thead>
+<tr>
+<th>Provedor</th>
+<th><code>LLM_BASE_URL</code></th>
+<th><code>LLM_API_KEY</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Groq (padrão)</td>
+<td><code>https://api.groq.com/openai/v1</code></td>
+<td>chave de console.groq.com</td>
+</tr>
+<tr>
+<td>Gemini</td>
+<td><code>https://generativelanguage.googleapis.com/v1beta/openai</code></td>
+<td>chave do AI Studio</td>
+</tr>
+<tr>
+<td>Ollama (local)</td>
+<td><code>http://localhost:11434/v1</code></td>
+<td><code>ollama</code> (qualquer valor não vazio)</td>
+</tr>
+</tbody>
+</table>
+<p>Limites dos planos gratuitos, <strong>na data da consulta (07/10/2026), sujeitos a mudança</strong>:</p>
+<ul>
+<li>Groq: os três modelos de chat disponíveis (<code>openai/gpt-oss-120b</code>, <code>qwen/qwen3.8-27b</code> e <code>openai/gpt-oss-20b</code>) têm, cada um, 8.000 tokens por minuto e 1.000 requisições por dia, lidos dos cabeçalhos de resposta da API. Uma consulta gasta cerca de 2.500 tokens, então cada modelo aguenta umas três consultas novas por minuto; a lista com fallback soma os três.</li>
+<li>Gemini: modelos Flash no plano gratuito, com limites por projeto exibidos no AI Studio.</li>
+</ul>
+<p>Confira <code>GET /api/saude</code> depois de trocar: <code>llm</code> deve ser <code>true</code> e <code>modelos</code> deve listar
+os novos.</p>
+<h2 id="publicar-no-azure">Publicar no Azure</h2>
+<p>O app roda numa máquina virtual do Azure, com o crédito do Azure for Students
+(<a href="../adr/0008-hospedagem/">ADR 0008</a>). Endereço atual: <a href="https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com">https://verdade-ou-fake-megatron.chilecentral.cloudapp.azure.com</a></p>
+<ol>
+<li><strong>Conta.</strong> Ative o Azure for Students com o e-mail institucional em
+   <a href="https://azure.microsoft.com/free/students">https://azure.microsoft.com/free/students</a>. Não pede cartão.</li>
+<li><strong>CLI.</strong> Instale a CLI do Azure e rode <code>az login --use-device-code</code>.</li>
+<li><strong>Chave do LLM.</strong> Tenha o <code>.env</code> na raiz, com <code>LLM_API_KEY</code>. O script copia esse
+   arquivo para a VM, sem comentários e com permissão restrita.</li>
+<li><strong>Publicar.</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nv">ROTULO</span><span class="o">=</span>verdade-ou-fake-megatron<span class="w"> </span><span class="nv">LOCAL</span><span class="o">=</span>chilecentral<span class="w"> </span><span class="nv">TAMANHO</span><span class="o">=</span>Standard_B2ats_v2<span class="w"> </span>scripts/publica_azure.sh
+</code></pre></div>
+<p>O script cria o grupo de recursos e a VM (Ubuntu 22.04, Docker instalado por
+   <code>deploy/cloud-init.yml</code>, 2 GB de swap), abre as portas 80 e 443, constrói a imagem
+   localmente, envia por SSH e sobe <code>deploy/docker-compose.yml</code>. Ele gera a chave
+   <code>~/.ssh/vof_azure</code> na primeira vez. Rodar de novo publica uma versão nova na mesma VM.
+5. <strong>Conferir.</strong> Abra o endereço e consulte <code>/api/saude</code>: <code>documentos</code> deve ser o total
+   da base e <code>llm</code> deve ser <code>true</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Variável do script</th>
+<th>Padrão</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ROTULO</code></td>
+<td>obrigatória</td>
+<td>Prefixo do endereço: <code>&lt;ROTULO&gt;.&lt;LOCAL&gt;.cloudapp.azure.com</code></td>
+</tr>
+<tr>
+<td><code>LOCAL</code></td>
+<td><code>brazilsouth</code></td>
+<td>A assinatura de estudante da UnB só aceitou <code>chilecentral</code>, <code>mexicocentral</code>, <code>eastus</code>, <code>canadacentral</code> e <code>northcentralus</code></td>
+</tr>
+<tr>
+<td><code>TAMANHO</code></td>
+<td><code>Standard_B1s</code></td>
+<td>Em <code>chilecentral</code> os tamanhos pequenos disponíveis eram <code>Standard_B2ats_v2</code> e <code>Standard_B2ts_v2</code></td>
+</tr>
+<tr>
+<td><code>GRUPO</code>, <code>VM</code></td>
+<td><code>verdade-ou-fake</code>, <code>vof</code></td>
+<td>Nomes do grupo de recursos e da máquina</td>
+</tr>
+</tbody>
+</table>
+<p><strong>O que persiste.</strong> O banco fica no volume <code>banco</code>, no disco da VM. Consultas, feedback,
+cache e artigos da busca ampliada sobrevivem a reinícios e a novas publicações. Uma
+publicação com base nova não substitui o banco do volume: os documentos novos entram na
+próxima ingestão ou busca; para reconstruir do zero, apague o volume na VM.</p>
+<p><strong>Custo.</strong> A VM <code>Standard_B2ats_v2</code> (2 vCPU, 1 GB de RAM) custava 0,0132 dólar por hora
+em <code>chilecentral</code> em 07/10/2026, cerca de 9,60 dólares por mês, mais disco e IP público.
+O crédito de estudante é de 100 dólares por ano. Para parar de gastar:
+<code>az vm deallocate -g verdade-ou-fake -n vof</code>; para apagar tudo:
+<code>az group delete -n verdade-ou-fake</code>.</p>
+<p><strong>Memória.</strong> O serviço usa cerca de 380 MB logo após subir numa máquina de 1 GB, com
+parte do sistema em swap. Funciona, mas sem folga.</p>
+<p><strong>Acesso à VM.</strong> <code>ssh -i ~/.ssh/vof_azure vof@&lt;endereço&gt;</code>; os contêineres ficam em
+<code>~/servico</code> (<code>docker compose logs -f app</code>).</p>
+<h2 id="temas-em-alta">Temas em alta</h2>
+<p>A seção "Em alta nesta semana" da página inicial vem de duas fontes
+(<a href="../adr/0010-temas-em-alta/">ADR 0010</a>): uma planilha da equipe e as manchetes de saúde
+do Google Notícias.</p>
+<p><strong>Planilha.</strong> Crie um Google Sheets com a coluna <code>alegacao</code> (uma alegação por linha) e,
+se quiser, a coluna <code>data</code> no formato <code>dd/mm/aaaa</code>; linhas com mais de 7 dias saem
+sozinhas. Em <em>Arquivo, Compartilhar, Publicar na web</em>, escolha a aba e o formato CSV, e
+coloque o link em <code>VOF_PLANILHA_CSV</code>. A planilha publicada é pública para leitura.</p>
+<p><strong>Rodada.</strong> O serviço atualiza os temas um minuto depois de subir e a cada
+<code>VOF_DESTAQUES_HORAS</code>. Para forçar: <code>python scripts/atualiza_destaques.py</code>; na VM,
+<code>cd ~/servico &amp;&amp; docker compose exec app python scripts/atualiza_destaques.py</code>.</p>
+<p>Cada tema passa por busca no PubMed, que alimenta a base, e pela checagem completa, que
+fica no cache. Temas da planilha aparecem sempre. Temas automáticos só aparecem com
+veredito afirmativo de confiança alta, então a seção pode ficar vazia sem planilha.</p>
+<h2 id="atualizar-a-base">Atualizar a base</h2>
+<p>O workflow <code>ingestao-base.yml</code> roda a ingestão do PubMed toda semana e commita a base
+atualizada (<code>dados/base/pubmed.jsonl</code> e <code>manifesto.json</code>). Um novo commit na <code>main</code> leva
+a uma nova imagem, e o banco é reconstruído no build.</p>
+<p>À mão:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/ingere_pubmed.py<span class="w">              </span><span class="c1"># reescreve o JSONL e o manifesto</span>
+python<span class="w"> </span>scripts/constroi_base.py<span class="w">              </span><span class="c1"># indexa no banco local</span>
+</code></pre></div>
+<p><code>constroi_base.py</code> só acrescenta documentos que ainda não estão no banco. Para
+reconstruir do zero, apague <code>dados/vof.db</code> (ou o arquivo de <code>VOF_BANCO</code>) antes.</p>
+<p>Para ampliar o que a ingestão cobre, acrescente linhas a <code>dados/vocabulario_seed.csv</code>
+(<code>termo_pt,termo_en,tipo</code>, com tipo <code>medicamento</code> ou <code>condicao</code>) e rode a ingestão. Cada
+novo medicamento gera uma consulta por condição.</p>
+<p>Uma base nova muda o <code>sha256</code> do manifesto e, com ele, a chave de cache: respostas
+antigas não são reaproveitadas.</p>
+<h2 id="o-que-olhar-em-apimetricas">O que olhar em <code>/api/metricas</code></h2>
+<p>Formato do retorno em <a href="../api/#get-apimetricas">API</a>. O banco fica num volume
+persistente da VM, então os números acumulam entre reinícios e publicações.</p>
+<table>
+<thead>
+<tr>
+<th>Sinal</th>
+<th>O que indica</th>
+<th>O que fazer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>latencia_ms_p50</code> e <code>latencia_ms_p95</code></td>
+<td>Tempo das respostas geradas (sem cache)</td>
+<td>P95 muito acima de P50 aponta para fallback entre modelos, busca ao vivo ou cota perto do limite. Veja <code>/api/saude</code> e os logs</td>
+</tr>
+<tr>
+<td><code>vereditos</code></td>
+<td>Proporção de cada código</td>
+<td>Muitos <code>NAO_VERIFICAVEL</code> e <code>INCONCLUSIVA</code> indicam lacuna de cobertura: ampliar o vocabulário. Muitos <code>FORA_DO_ESCOPO</code> indicam que os usuários colam o que o sistema não trata</td>
+</tr>
+<tr>
+<td><code>com_busca_ao_vivo</code></td>
+<td>Consultas em que a base local não bastou</td>
+<td>Cada uma é uma lacuna candidata. Veja as alegações em <code>consultas.alegacao</code> e decida se entram no vocabulário</td>
+</tr>
+<tr>
+<td><code>citacoes_validas_media</code></td>
+<td>Quantas citações válidas por resposta</td>
+<td>Queda sugere que o modelo (ou o prompt) está seguindo pior o formato; revise <code>LLM_MODELOS</code></td>
+</tr>
+<tr>
+<td><code>feedback_positivo</code> e <code>feedback_negativo</code></td>
+<td>Opinião dos usuários</td>
+<td>Leia as respostas com feedback negativo (<code>consultas.eventos</code>) e classifique: fonte errada, texto errado, veredito errado</td>
+</tr>
+<tr>
+<td><code>respondidas_do_cache</code></td>
+<td>Peso do cache</td>
+<td>Mostra quanta cota de LLM o cache poupa</td>
+</tr>
+<tr>
+<td><code>documentos_por_origem</code></td>
+<td>Quantos documentos vieram do lote e quantos da busca ao vivo</td>
+<td>Documentos <code>ao_vivo</code> mostram o que o uso trouxe além do lote</td>
+</tr>
+</tbody>
+</table>
+<p>As tabelas citadas (<code>consultas</code>, com <code>alegacao</code>, <code>fontes</code>, <code>eventos</code> e <code>feedback</code>) não têm
+endpoint: só se lê o texto delas no arquivo SQLite (<code>sqlite3 dados/vof.db</code>), localmente ou
+onde houver acesso ao contêiner.</p>
+<p><strong>Ciclo de feedback.</strong> O que as métricas mostram só vira melhoria se alguém agir. O
+caminho é: ler as consultas com feedback negativo e as com busca ao vivo; separar o erro
+de cobertura (falta estudo na base: ampliar o vocabulário), de recuperação (o estudo
+existe e não veio: ajustar <code>VOF_SIMILARIDADE_MINIMA</code> ou a busca) e de redação (o estudo
+veio e o texto errou: revisar o prompt ou o modelo); corrigir; e conferir de novo nas
+métricas. Esse ciclo é manual.</p>
+<h2 id="plano-b-para-a-demo">Plano B para a demo</h2>
+<p>Se o provedor de LLM cair, estourar a cota ou a VM estiver indisponível, rode tudo
+numa máquina local com Ollama:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>--profile<span class="w"> </span>local-llm<span class="w"> </span>up<span class="w"> </span>--build
+</code></pre></div>
+<p>O perfil <code>local-llm</code> sobe o Ollama junto com o app. Baixe antes um modelo com
+<code>ollama pull &lt;modelo&gt;</code> e aponte o app para ele: <code>LLM_BASE_URL</code> para o endereço do
+Ollama, <code>LLM_API_KEY=ollama</code>, e <code>LLM_MODELOS</code> e <code>LLM_MODELO_RAPIDO</code> com o nome do modelo
+baixado. Os valores exatos para o <code>docker compose</code> estão em <code>.env.example</code> e
+<code>docker-compose.yml</code>.</p>
+<p>Um modelo local em CPU é mais lento do que o Groq. Teste antes. E mesmo sem nenhum LLM, o
+sistema continua mostrando as fontes recuperadas em modo degradado.</p>
+<p>Preparação para a apresentação: faça uma consulta de teste pouco antes e confira
+<code>/api/saude</code>. A VM não hiberna.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

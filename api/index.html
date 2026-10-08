@@ -1,0 +1,1517 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../avaliacao/">
+      
+      
+        <link rel="next" href="../operacao/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>API - Challenge 1 - Megatron</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Challenge 1 - Megatron" class="md-header__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Challenge 1 - Megatron
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Challenge 1 - Megatron" class="md-nav__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Challenge 1 - Megatron
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../antes-e-depois/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antes e depois
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avaliacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#post-apianalisar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/analisar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /api/analisar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eventos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eventos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplo-de-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplo de fluxo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modo-degradado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modo degradado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-apifeedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/feedback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apisaude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/saude
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apidestaques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/destaques
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apimetricas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/metricas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de arquitetura (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0001-rag-com-llm-de-terceiros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 RAG com LLM de terceiros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0002-sqlite-busca-vetorial-exata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 SQLite e busca vetorial exata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0003-embeddings-multilingues-onnx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Embeddings multilíngues em ONNX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0004-cliente-openai-compativel-groq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Cliente OpenAI-compatível e Groq
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0005-fastapi-sse-front-estatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 FastAPI, SSE e front estático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0006-base-em-lote-com-busca-ao-vivo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Base em lote e busca ao vivo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0007-guardas-deterministicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Guardas determinísticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0008-hospedagem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Hospedagem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0009-bertimbau-sinal-secundario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 BERTimbau como sinal secundário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0010-temas-em-alta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Temas em alta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guiding-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guiding Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#post-apianalisar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/analisar
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="POST /api/analisar">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#eventos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eventos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplo-de-fluxo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplo de fluxo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#erros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Erros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modo-degradado" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modo degradado
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-apifeedback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        POST /api/feedback
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apisaude" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/saude
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apidestaques" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/destaques
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-apimetricas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GET /api/metricas
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="api">API</h1>
+<p>FastAPI, definida em <code>src/verdade_ou_fake/api.py</code>. O front estático (<code>web/index.html</code>) é
+servido na raiz (<code>/</code>) e usa estes mesmos endpoints. Com o servidor rodando, a
+documentação interativa gerada pelo FastAPI fica em <code>/docs</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Método e caminho</th>
+<th>Para quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/analisar</code></td>
+<td>Analisa uma alegação; resposta em Server-Sent Events</td>
+</tr>
+<tr>
+<td><code>POST /api/feedback</code></td>
+<td>Registra se a resposta ajudou</td>
+</tr>
+<tr>
+<td><code>GET /api/saude</code></td>
+<td>Estado do serviço e versão da base</td>
+</tr>
+<tr>
+<td><code>GET /api/metricas</code></td>
+<td>Indicadores de operação</td>
+</tr>
+</tbody>
+</table>
+<h2 id="post-apianalisar"><code>POST /api/analisar</code></h2>
+<p>Corpo JSON:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"entrada"</span><span class="p">:</span><span class="w"> </span><span class="s2">"link de notícia ou texto colado"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+<p><code>entrada</code> tem de 8 a 20.000 caracteres (fora disso, a API responde 422). Se a entrada
+inteira é uma URL <code>http(s)</code>, o sistema extrai o texto da página; senão, trata como texto.</p>
+<p>A resposta tem <code>Content-Type: text/event-stream</code>. Cada evento é uma linha
+<code>data: &lt;JSON&gt;</code> seguida de linha em branco. O campo <code>tipo</code> diz de que evento se trata.</p>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-N<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:7860/api/analisar<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"entrada": "Ivermectina cura a covid-19, diz corrente de WhatsApp"}'</span>
+</code></pre></div>
+<p>(<code>-N</code> desliga o buffer do curl, para ver os eventos chegando.)</p>
+<h3 id="eventos">Eventos</h3>
+<table>
+<thead>
+<tr>
+<th><code>tipo</code></th>
+<th>Campos</th>
+<th>Quando</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>etapa</code></td>
+<td><code>texto</code></td>
+<td>Progresso: "Lendo a notícia" (só links), "Identificando a alegação", "Buscando estudos na base científica", "Ampliando a busca no PubMed" (só se a base local não cobre), "Redigindo a análise"</td>
+</tr>
+<tr>
+<td><code>alegacao</code></td>
+<td><code>texto</code>, <code>titulo_noticia</code></td>
+<td>Alegação identificada. <code>titulo_noticia</code> é o título da página, ou <code>null</code> se a entrada era texto</td>
+</tr>
+<tr>
+<td><code>estilo</code></td>
+<td><code>risco</code></td>
+<td>Sinal de estilo do BERTimbau: probabilidade, de 0 a 1 (3 casas), de o texto ser desinformação segundo o classificador. Desligado por padrão (<code>VOF_SINAL_ESTILO=1</code> para ligar). Só aparece se o modelo está carregado e respondeu em até 4 s</td>
+</tr>
+<tr>
+<td><code>fontes</code></td>
+<td><code>fontes</code></td>
+<td>Lista de fontes (abaixo). Pode ser vazia. Não é enviado quando o veredito é <code>FORA_DO_ESCOPO</code></td>
+</tr>
+<tr>
+<td><code>veredito</code></td>
+<td><code>codigo</code>, <code>rotulo</code>, <code>confianca</code>, <code>resumo</code></td>
+<td>Veredito. Pode chegar uma segunda vez, se as guardas mudaram o veredito ou a confiança: vale o último</td>
+</tr>
+<tr>
+<td><code>texto</code></td>
+<td><code>texto</code></td>
+<td>Pedaço do texto da análise, em ordem. Concatene os pedaços</td>
+</tr>
+<tr>
+<td><code>fim</code></td>
+<td><code>latencia_ms</code>, <code>modelo</code>, <code>do_cache</code>, <code>citadas</code>, <code>aviso</code>, <code>consulta_id</code></td>
+<td>Último evento de uma análise bem-sucedida</td>
+</tr>
+<tr>
+<td><code>erro</code></td>
+<td><code>mensagem</code></td>
+<td>Falha. Encerra o fluxo, sem evento <code>fim</code></td>
+</tr>
+</tbody>
+</table>
+<p>Cada item de <code>fontes</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Conteúdo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n</code></td>
+<td>Número usado nas citações <code>[n]</code> do texto</td>
+</tr>
+<tr>
+<td><code>titulo</code>, <code>url</code>, <code>ano</code></td>
+<td>Dados do artigo; a URL aponta para o PubMed</td>
+</tr>
+<tr>
+<td><code>tipos</code></td>
+<td>Tipos de publicação do PubMed (por exemplo, <code>Systematic Review</code>)</td>
+</tr>
+<tr>
+<td><code>forca</code></td>
+<td><code>forte</code> (revisão sistemática ou meta-análise), <code>moderada</code> (ensaio randomizado) ou <code>fraca</code></td>
+</tr>
+<tr>
+<td><code>origem</code></td>
+<td><code>PubMed</code></td>
+</tr>
+</tbody>
+</table>
+<p>Valores de <code>codigo</code> (<code>ROTULOS</code> em <code>rag.py</code>):</p>
+<table>
+<thead>
+<tr>
+<th><code>codigo</code></th>
+<th><code>rotulo</code></th>
+<th>Quem decide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APOIADA</code></td>
+<td>Tem respaldo científico</td>
+<td>LLM, sujeito às guardas</td>
+</tr>
+<tr>
+<td><code>CONTESTADA</code></td>
+<td>A ciência contradiz</td>
+<td>LLM, sujeito às guardas</td>
+</tr>
+<tr>
+<td><code>EXAGERADA</code></td>
+<td>Há base, mas a alegação exagera</td>
+<td>LLM, sujeito às guardas</td>
+</tr>
+<tr>
+<td><code>INCONCLUSIVA</code></td>
+<td>Evidência insuficiente ou conflitante</td>
+<td>LLM, guardas, ou modo degradado</td>
+</tr>
+<tr>
+<td><code>NAO_VERIFICAVEL</code></td>
+<td>Não foi possível verificar</td>
+<td>Código, quando nenhuma fonte foi encontrada</td>
+</tr>
+<tr>
+<td><code>FORA_DO_ESCOPO</code></td>
+<td>Fora do escopo</td>
+<td>Código, quando o texto não é alegação de saúde</td>
+</tr>
+</tbody>
+</table>
+<p><code>confianca</code> é <code>alta</code>, <code>media</code> ou <code>baixa</code>.</p>
+<p>Campos de <code>fim</code>:</p>
+<ul>
+<li><code>latencia_ms</code>: tempo total da análise.</li>
+<li><code>modelo</code>: modelo de LLM que redigiu o texto, ou <code>null</code> quando nenhum texto foi gerado
+  (ou nenhuma citação válida sobrou).</li>
+<li><code>do_cache</code>: <code>true</code> se a resposta foi reenviada do cache (ver abaixo).</li>
+<li><code>citadas</code>: números das fontes realmente citadas no texto.</li>
+<li><code>aviso</code>: texto de aviso das guardas ("A resposta não citou nenhuma fonte...",
+  "Confiança limitada pelo tipo de estudo...", "Modo degradado...") ou <code>null</code>.</li>
+<li><code>consulta_id</code>: identificador para enviar em <code>/api/feedback</code>.</li>
+</ul>
+<h3 id="exemplo-de-fluxo">Exemplo de fluxo</h3>
+<div class="highlight"><pre><span></span><code>data: {"tipo": "etapa", "texto": "Identificando a alegação"}
+data: {"tipo": "alegacao", "texto": "...", "titulo_noticia": null}
+data: {"tipo": "etapa", "texto": "Buscando estudos na base científica"}
+data: {"tipo": "fontes", "fontes": [{"n": 1, "titulo": "...", "url": "https://pubmed.ncbi.nlm.nih.gov/.../", "ano": 2021, "tipos": ["Meta-Analysis"], "forca": "forte", "origem": "PubMed"}]}
+data: {"tipo": "etapa", "texto": "Redigindo a análise"}
+data: {"tipo": "veredito", "codigo": "...", "rotulo": "...", "confianca": "...", "resumo": "..."}
+data: {"tipo": "texto", "texto": "..."}
+data: {"tipo": "fim", "latencia_ms": 0, "modelo": "...", "do_cache": false, "citadas": [1], "aviso": null, "consulta_id": 1}
+</code></pre></div>
+<p>Os valores acima são só de forma; não são saída real.</p>
+<h3 id="cache">Cache</h3>
+<p>Dentro de <code>VOF_CACHE_HORAS</code>, a mesma entrada (mesmo texto normalizado e mesma versão da
+base) recebe de volta os eventos da resposta anterior: <code>alegacao</code>, <code>estilo</code> e <code>fontes</code>
+(se houve), <code>veredito</code> e <code>texto</code>, e então um <code>fim</code> com <code>do_cache: true</code> e uma nova
+<code>consulta_id</code>. Não há eventos <code>etapa</code> nesse caso. Respostas em modo degradado não são
+guardadas.</p>
+<h3 id="erros">Erros</h3>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Resposta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>entrada</code> fora de 8 a 20.000 caracteres, ou corpo inválido</td>
+<td>HTTP 422</td>
+</tr>
+<tr>
+<td>Limite de requisições por cliente excedido (<code>VOF_LIMITE_POR_MINUTO</code>, 12 por padrão)</td>
+<td>HTTP 429, antes de abrir o fluxo</td>
+</tr>
+<tr>
+<td>Página do link ilegível (login, paywall, bloqueio, URL recusada)</td>
+<td>evento <code>erro</code> pedindo que o texto seja colado</td>
+</tr>
+<tr>
+<td>Texto com menos de 12 caracteres depois de aparado</td>
+<td>evento <code>erro</code> pedindo mais detalhe</td>
+</tr>
+<tr>
+<td>Exceção inesperada</td>
+<td>evento <code>erro</code> genérico ("Erro interno ao analisar"); o detalhe vai para o log</td>
+</tr>
+</tbody>
+</table>
+<p>O cliente é identificado pelo primeiro IP de <code>X-Forwarded-For</code>, quando existe; senão, pelo
+endereço da conexão. O limite fica em memória e vale por processo.</p>
+<h3 id="modo-degradado">Modo degradado</h3>
+<p>Sem LLM configurado, ou com todos os modelos indisponíveis, a análise recupera as fontes
+e responde <code>INCONCLUSIVA</code> com confiança <code>baixa</code> e <code>aviso</code> começando por "Modo
+degradado". O fluxo termina normalmente, com <code>fim</code>.</p>
+<h2 id="post-apifeedback"><code>POST /api/feedback</code></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://localhost:7860/api/feedback<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s1">'Content-Type: application/json'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"consulta_id": 1, "valor": 1}'</span>
+</code></pre></div>
+<p><code>valor</code> é um inteiro de -1 a 1 (1 positivo, -1 negativo). Resposta <code>{"ok": true}</code>, ou HTTP
+404 se a consulta não existe (por exemplo, depois de um reinício que zerou o banco).</p>
+<h2 id="get-apisaude"><code>GET /api/saude</code></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:7860/api/saude
+</code></pre></div>
+<p>Campos: <code>status</code> (<code>"ok"</code>), <code>documentos</code> (total na base), <code>llm</code> (se há LLM configurado),
+<code>modelos</code> (lista de <code>LLM_MODELOS</code>, vazia sem LLM), <code>sinal_estilo</code> (se o BERTimbau está
+carregado) e <code>base</code> com <code>gerado_em</code>, <code>artigos</code> e <code>sha256</code> do manifesto.</p>
+<p>Na subida, o serviço começa a responder antes de terminar o aquecimento (indexação,
+caso o banco esteja vazio, e carga dos modelos), que roda em segundo plano.</p>
+<h2 id="get-apidestaques"><code>GET /api/destaques</code></h2>
+<p>Temas em alta da semana, já checados. <code>atualizado_em</code> é um instante Unix, ou <code>null</code> se
+ainda não houve rodada.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"atualizado_em"</span><span class="p">:</span><span class="w"> </span><span class="mf">1791420228.55</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"temas"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"alegacao"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Creatina faz mal para os rins"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"origem"</span><span class="p">:</span><span class="w"> </span><span class="s2">"curadoria"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"veredito"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONTESTADA"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"confianca"</span><span class="p">:</span><span class="w"> </span><span class="s2">"alta"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"resumo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Evidências de revisões sistemáticas mostram que a creatina não causa dano renal significativo."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"noticias"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">"titulo"</span><span class="p">:</span><span class="w"> </span><span class="s2">"..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://news.google.com/..."</span><span class="p">,</span><span class="w"> </span><span class="nt">"fonte"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Metrópoles"</span><span class="p">}]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><code>origem</code> é <code>curadoria</code> (planilha da equipe) ou <code>google_noticias</code>.</p>
+<h2 id="get-apimetricas"><code>GET /api/metricas</code></h2>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>http://localhost:7860/api/metricas
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Significado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>consultas</code></td>
+<td>Total de consultas registradas desde que o banco foi criado</td>
+</tr>
+<tr>
+<td><code>respondidas_do_cache</code></td>
+<td>Quantas vieram do cache</td>
+</tr>
+<tr>
+<td><code>com_busca_ao_vivo</code></td>
+<td>Quantas precisaram ampliar a busca no PubMed</td>
+</tr>
+<tr>
+<td><code>feedback_positivo</code>, <code>feedback_negativo</code></td>
+<td>Contagem de feedback</td>
+</tr>
+<tr>
+<td><code>citacoes_validas_media</code></td>
+<td>Média de citações válidas por resposta gerada (não conta cache)</td>
+</tr>
+<tr>
+<td><code>latencia_ms_p50</code>, <code>latencia_ms_p95</code></td>
+<td>Percentis da latência das respostas geradas (não conta cache); <code>null</code> sem dados</td>
+</tr>
+<tr>
+<td><code>vereditos</code></td>
+<td>Contagem por código de veredito</td>
+</tr>
+<tr>
+<td><code>documentos_por_origem</code></td>
+<td>Documentos na base por origem (<code>lote</code>, <code>ao_vivo</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>No deploy atual o banco fica num volume persistente, então os números acumulam desde a
+primeira publicação. O uso desses sinais está em <a href="../operacao/">Operação</a>.</p>
+<p>Os endpoints <code>/api/saude</code> e <code>/api/metricas</code> não têm autenticação.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

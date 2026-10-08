@@ -1,0 +1,2088 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="..">
+      
+      
+        <link rel="next" href="../antes-e-depois/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Arquitetura - Challenge 1 - Megatron</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#arquitetura" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Challenge 1 - Megatron" class="md-header__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Challenge 1 - Megatron
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Arquitetura
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Challenge 1 - Megatron" class="md-nav__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Challenge 1 - Megatron
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-uma-consulta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral: uma consulta
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-dados-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral: dados offline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Componentes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingestao-da-pagina-ingestaopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingestão da página (ingestao.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificacao-da-alegacao-ragpy-entender_alegacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificação da alegação (rag.py, entender_alegacao)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#banco-bancopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Banco (banco.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embeddings-embeddingspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embeddings (embeddings.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperacao-recuperacaopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recuperação (recuperacao.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busca-ampliada-evidenciapy-basepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Busca ampliada (evidencia.py, base.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cliente-de-llm-llmpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cliente de LLM (llm.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redacao-e-guardas-ragpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redação e guardas (rag.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache-e-modo-degradado-ragpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache e modo degradado (rag.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-e-front-apipy-webindexhtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API e front (api.py, web/index.html)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temas-em-alta-destaquespy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temas em alta (destaques.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sinal-de-estilo-sinal_estilopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sinal de estilo (sinal_estilo.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-mudou-e-por-que" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que mudou e por quê
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mlops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MLOps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MLOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#principios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#componentes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#papeis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Papéis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requisitos-nao-funcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requisitos não funcionais
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Requisitos não funcionais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#confiabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confiabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manutenibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manutenibilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../antes-e-depois/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antes e depois
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avaliacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de arquitetura (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0001-rag-com-llm-de-terceiros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 RAG com LLM de terceiros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0002-sqlite-busca-vetorial-exata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 SQLite e busca vetorial exata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0003-embeddings-multilingues-onnx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Embeddings multilíngues em ONNX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0004-cliente-openai-compativel-groq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Cliente OpenAI-compatível e Groq
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0005-fastapi-sse-front-estatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 FastAPI, SSE e front estático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0006-base-em-lote-com-busca-ao-vivo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Base em lote e busca ao vivo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0007-guardas-deterministicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Guardas determinísticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0008-hospedagem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Hospedagem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0009-bertimbau-sinal-secundario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 BERTimbau como sinal secundário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0010-temas-em-alta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Temas em alta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guiding-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guiding Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-uma-consulta" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral: uma consulta
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral-dados-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão geral: dados offline
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#componentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Componentes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ingestao-da-pagina-ingestaopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ingestão da página (ingestao.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#identificacao-da-alegacao-ragpy-entender_alegacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Identificação da alegação (rag.py, entender_alegacao)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#banco-bancopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Banco (banco.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#embeddings-embeddingspy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Embeddings (embeddings.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#recuperacao-recuperacaopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Recuperação (recuperacao.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#busca-ampliada-evidenciapy-basepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Busca ampliada (evidencia.py, base.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cliente-de-llm-llmpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cliente de LLM (llm.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#redacao-e-guardas-ragpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redação e guardas (rag.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cache-e-modo-degradado-ragpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cache e modo degradado (rag.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#api-e-front-apipy-webindexhtml" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        API e front (api.py, web/index.html)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#temas-em-alta-destaquespy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Temas em alta (destaques.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sinal-de-estilo-sinal_estilopy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sinal de estilo (sinal_estilo.py)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#stack" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Stack
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-mudou-e-por-que" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que mudou e por quê
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mlops" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MLOps
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="MLOps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#principios" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#componentes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Componentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#papeis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Papéis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#requisitos-nao-funcionais" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Requisitos não funcionais
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Requisitos não funcionais">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#confiabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Confiabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#escalabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Escalabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manutenibilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manutenibilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adaptabilidade" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adaptabilidade
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="arquitetura">Arquitetura</h1>
+<p>Como o sistema transforma <strong>uma alegação de saúde</strong> (um link de notícia ou um texto
+colado) em <strong>um veredito com fontes citadas</strong>.</p>
+<p>O sistema é um RAG (<em>Retrieval-Augmented Generation</em>): primeiro recupera estudos
+científicos relevantes numa base própria; depois um modelo de linguagem redige a
+resposta <strong>usando apenas esses estudos</strong>, e regras determinísticas conferem o que ele
+escreveu. As decisões estão registradas uma a uma nos <a href="../adr/">ADRs</a>.</p>
+<h2 id="visao-geral-uma-consulta">Visão geral: uma consulta</h2>
+<pre class="mermaid"><code>flowchart TD
+    E["Entrada&lt;br/&gt;link ou texto colado"] --&gt; T{"É link?"}
+    T -- sim --&gt; X["Extração da página&lt;br/&gt;(trafilatura, proteção SSRF)&lt;br/&gt;cache em &lt;i&gt;paginas&lt;/i&gt;"]
+    T -- não --&gt; C
+    X --&gt; C{"Cache&lt;br/&gt;entrada + versão da base"}
+    C -- acerto --&gt; R["Reenvia os eventos guardados"]
+    C -- falha --&gt; A["Identificação da alegação&lt;br/&gt;LLM rápido devolve JSON&lt;br/&gt;(reserva: vocabulário)"]
+    A -- "não é saúde" --&gt; F["FORA_DO_ESCOPO"]
+    A --&gt; B["Busca híbrida na base&lt;br/&gt;vetorial + BM25 + RRF"]
+    B --&gt; S{"Cobertura&lt;br/&gt;suficiente?"}
+    S -- "menos de 2 fontes" --&gt; V["Busca ampliada no PubMed&lt;br/&gt;os artigos entram na base"]
+    V --&gt; B2["Nova busca híbrida"]
+    S -- sim --&gt; W
+    B2 --&gt; W{"Há fontes?"}
+    W -- não --&gt; N["NAO_VERIFICAVEL"]
+    W -- sim --&gt; L["Redação com citações [n]&lt;br/&gt;LLM em streaming&lt;br/&gt;(fallback entre modelos)"]
+    L --&gt; G["Guardas&lt;br/&gt;citação inválida removida&lt;br/&gt;sem citação: rebaixa&lt;br/&gt;teto de confiança pelo tipo de estudo"]
+    G --&gt; D["Registro em &lt;i&gt;consultas&lt;/i&gt;&lt;br/&gt;veredito, fontes, latência, modelo"]
+    N --&gt; D
+    F --&gt; D
+    L -. "LLM fora do ar" .-&gt; M["Modo degradado:&lt;br/&gt;só as fontes"]
+    M --&gt; D
+    D --&gt; O["Resposta em SSE&lt;br/&gt;+ feedback do usuário"]</code></pre>
+<p>O sinal de estilo do BERTimbau (ver <a href="../adr/0009-bertimbau-sinal-secundario/">ADR 0009</a>)
+roda em paralelo à identificação da alegação, quando está disponível, e aparece como
+um indicador à parte. Não entra no veredito.</p>
+<h2 id="visao-geral-dados-offline">Visão geral: dados offline</h2>
+<pre class="mermaid"><code>flowchart LR
+    P["PubMed E-utilities"] --&gt; I["scripts/ingere_pubmed.py&lt;br/&gt;(workflow semanal)"]
+    I --&gt; J["dados/base/pubmed.jsonl&lt;br/&gt;+ manifesto.json (SHA-256)&lt;br/&gt;versionados no git"]
+    J --&gt; K["scripts/constroi_base.py&lt;br/&gt;embeddings + índice FTS5"]
+    K --&gt; Q["SQLite: vof.db"]
+    Q --&gt; M["Imagem Docker&lt;br/&gt;(banco construído no build)"]
+    M --&gt; H["VM no Azure&lt;br/&gt;(scripts/publica_azure.sh)"]
+    H -. "consultas, páginas e artigos&lt;br/&gt;da busca ao vivo" .-&gt; Q2["vof.db em volume&lt;br/&gt;persistente"]</code></pre>
+<p>O JSONL é a fonte da verdade da base. O banco é <strong>derivado</strong> dele e pode ser
+reconstruído a qualquer momento. O hash do manifesto entra na chave de cache e aparece
+em <code>/api/saude</code>, então cada resposta é rastreável até a versão da base que a gerou.</p>
+<h2 id="componentes">Componentes</h2>
+<h3 id="ingestao-da-pagina-ingestaopy">Ingestão da página (<code>ingestao.py</code>)</h3>
+<p>Baixa o link e extrai título e corpo com <code>trafilatura</code>. O servidor só baixa URLs
+<code>http(s)</code> que resolvem para IPs públicos, inclusive em cada redirecionamento (no máximo
+5), e recusa páginas acima de 5 MB. Isso evita que o serviço sirva de ponte para a rede
+interna (SSRF).</p>
+<p><strong>Por quê:</strong> o produto aceita links, e links são entrada hostil por natureza. Quando a
+página não abre (login, paywall, bloqueio de robô), o sistema não tenta adivinhar: pede
+que o usuário cole o texto. O texto extraído fica em cache na tabela <code>paginas</code>.</p>
+<h3 id="identificacao-da-alegacao-ragpy-entender_alegacao">Identificação da alegação (<code>rag.py</code>, <code>entender_alegacao</code>)</h3>
+<p>Um modelo pequeno (<code>LLM_MODELO_RAPIDO</code>) recebe o texto e devolve um JSON com: se o
+assunto é saúde, a alegação em português, a mesma alegação em inglês científico e uma
+consulta de PubMed com dois conceitos (intervenção AND condição). Se o LLM não está
+configurado ou falha, entra uma reserva: o casamento por dicionário de <code>vocabulario.py</code>
+(23 medicamentos e 15 condições em <code>dados/vocabulario_seed.csv</code>).</p>
+<p><strong>Por quê:</strong> a versão anterior só funcionava para pares do dicionário. O LLM generaliza
+a extração para qualquer alegação, e o dicionário continua como plano B auditável.
+Texto que não é alegação de saúde recebe <code>FORA_DO_ESCOPO</code> sem gastar busca nem redação.</p>
+<h3 id="banco-bancopy">Banco (<code>banco.py</code>)</h3>
+<p>Um único arquivo SQLite com quatro papéis: <code>documentos</code> (resumos, embeddings e índice
+FTS5), <code>consultas</code> (cada análise, com veredito, fontes, latência, modelo, se veio do
+cache ou de busca ao vivo, e o feedback), <code>paginas</code> (cache de links) e <code>destaques</code> (os
+temas em alta da rodada mais recente). Decisão em
+<a href="../adr/0002-sqlite-busca-vetorial-exata/">ADR 0002</a>.</p>
+<h3 id="embeddings-embeddingspy">Embeddings (<code>embeddings.py</code>)</h3>
+<p><code>paraphrase-multilingual-MiniLM-L12-v2</code> rodando em CPU por ONNX (<code>fastembed</code>), sem
+PyTorch. É multilíngue de propósito: a pergunta chega em português e a literatura está
+em inglês, e os dois idiomas ficam no mesmo espaço vetorial. Decisão em
+<a href="../adr/0003-embeddings-multilingues-onnx/">ADR 0003</a>.</p>
+<h3 id="recuperacao-recuperacaopy">Recuperação (<code>recuperacao.py</code>)</h3>
+<p>Busca híbrida. A vetorial (cosseno exato em numpy) entende paráfrase e cruza idiomas,
+mas confunde fármacos de nome parecido. A lexical (BM25 do FTS5) acerta o nome exato,
+mas não sabe que "pressão alta" é <em>hypertension</em>. As duas listas (30 candidatos cada)
+são fundidas por Reciprocal Rank Fusion (k = 60), que dispensa calibrar escalas de
+score diferentes. A pontuação final recebe um bônus pela hierarquia de evidência:
+x1,20 para revisão sistemática e meta-análise, x1,08 para ensaio randomizado. A busca
+leva cerca de 10 ms na base atual (medido pela equipe).</p>
+<p>Depois da busca, <code>selecionar</code> filtra os 15 melhores candidatos. Prefere os que contêm
+todos os conceitos da consulta de PubMed e têm similaridade de cosseno de pelo menos
+<code>VOF_SIMILARIDADE_MINIMA</code> menos 0,12; se não há nenhum, exige a similaridade mínima
+mais 0,12. Ficam no máximo 5 fontes por resposta.</p>
+<h3 id="busca-ampliada-evidenciapy-basepy">Busca ampliada (<code>evidencia.py</code>, <code>base.py</code>)</h3>
+<p>Se a seleção devolve menos de 2 fontes e a busca ao vivo está ligada, o sistema consulta
+o PubMed na hora: primeiro só revisões sistemáticas, meta-análises e ensaios
+randomizados (sem estudos só em animais) e, se nada vier, qualquer tipo. Os artigos
+encontrados são indexados na base com origem <code>ao_vivo</code>, e a busca é refeita. A base
+cresce com o uso. Falha de rede vira lista vazia: o sistema responde com o que já tinha.
+Decisão em <a href="../adr/0006-base-em-lote-com-busca-ao-vivo/">ADR 0006</a>.</p>
+<h3 id="cliente-de-llm-llmpy">Cliente de LLM (<code>llm.py</code>)</h3>
+<p>Cliente HTTP mínimo (<code>httpx</code>) para qualquer API compatível com a de chat da OpenAI, com
+streaming. Os modelos de <code>LLM_MODELOS</code> são tentados em ordem: se um responde 429 (cota
+gratuita esgotada), 400 (por exemplo, JSON inválido) ou erro de servidor, o próximo
+assume, desde que nenhum texto tenha sido entregue ainda. Os modelos atuais do Groq são
+de raciocínio: o cliente envia <code>reasoning_effort</code> (<code>LLM_ESFORCO_RACIOCINIO</code>, <code>low</code> por
+padrão) e remove blocos <code>&lt;think&gt;</code>. Decisão em
+<a href="../adr/0004-cliente-openai-compativel-groq/">ADR 0004</a>.</p>
+<h3 id="redacao-e-guardas-ragpy">Redação e guardas (<code>rag.py</code>)</h3>
+<p>O prompt de veredito manda usar <strong>exclusivamente</strong> as fontes numeradas, citar cada frase
+factual no formato <code>[n]</code>, tratar falta de estudo como <code>INCONCLUSIVA</code> e escrever para
+leigo, sem orientação médica individual. De cada resumo o modelo recebe o início e o
+fim, porque as conclusões ficam no fim. A saída tem um cabeçalho fixo (<code>VEREDITO</code>,
+<code>CONFIANCA</code>, <code>RESUMO</code>), um separador <code>---</code> e o texto; se o modelo omite o separador, o
+código separa o cabeçalho pelas linhas reconhecidas. As guardas rodam sobre essa saída,
+sem depender do modelo:</p>
+<ul>
+<li><code>FiltroDeCitacoes</code> remove, durante o streaming, citações <code>[n]</code> que não existem na
+  lista de fontes.</li>
+<li><code>aplicar_guardas</code>: veredito afirmativo (<code>APOIADA</code>, <code>CONTESTADA</code>, <code>EXAGERADA</code>) sem
+  nenhuma citação válida vira <code>INCONCLUSIVA</code> com confiança baixa.</li>
+<li>Teto de confiança pelo tipo de estudo citado: se as fontes citadas são todas fracas
+  (nem revisão nem ensaio randomizado), o teto é <code>baixa</code>; se a mais forte é um ensaio
+  randomizado, <code>media</code>; <code>alta</code> exige ao menos uma revisão sistemática ou meta-análise
+  entre as citadas.</li>
+</ul>
+<p>Vereditos possíveis (<code>ROTULOS</code>): <code>APOIADA</code>, <code>CONTESTADA</code>, <code>EXAGERADA</code>, <code>INCONCLUSIVA</code>,
+<code>NAO_VERIFICAVEL</code> e <code>FORA_DO_ESCOPO</code>. Os dois últimos nunca vêm do LLM: são decididos
+pelo código (sem fontes encontradas, ou assunto fora de saúde). Decisão em
+<a href="../adr/0007-guardas-deterministicas/">ADR 0007</a>.</p>
+<h3 id="cache-e-modo-degradado-ragpy">Cache e modo degradado (<code>rag.py</code>)</h3>
+<p>A chave de cache é o SHA-256 de <code>versão da base + entrada normalizada</code>. Dentro de
+<code>VOF_CACHE_HORAS</code> (168 por padrão), a mesma entrada recebe de volta os eventos da
+resposta anterior, sem nova chamada ao LLM. Mudou a base, mudou a chave. Respostas em
+modo degradado não são guardadas no cache.</p>
+<p>Sem <code>LLM_API_KEY</code>, ou se todos os modelos falham, o sistema mostra as fontes recuperadas
+com veredito <code>INCONCLUSIVA</code> e o aviso "Modo degradado".</p>
+<h3 id="api-e-front-apipy-webindexhtml">API e front (<code>api.py</code>, <code>web/index.html</code>)</h3>
+<p>FastAPI com resposta em streaming por Server-Sent Events, limite de requisições por
+cliente e o front estático servido na raiz. O front é um único HTML, sem etapa de
+build. Contrato em <a href="../api/">API</a>; decisão em
+<a href="../adr/0005-fastapi-sse-front-estatico/">ADR 0005</a>.</p>
+<h3 id="temas-em-alta-destaquespy">Temas em alta (<code>destaques.py</code>)</h3>
+<p>Uma rotina periódica lê a planilha da equipe (Google Sheets publicado como CSV) e as
+manchetes de saúde do Google Notícias, das quais o LLM extrai alegações com intervenção
+e doença nomeadas. Para cada tema ela busca estudos no PubMed e os indexa, roda a
+checagem completa e guarda o resultado na tabela <code>destaques</code>, servida por
+<code>GET /api/destaques</code>. O texto das notícias não entra na base. Tema automático só aparece
+com veredito afirmativo de confiança alta (<a href="../adr/0010-temas-em-alta/">ADR 0010</a>).</p>
+<h3 id="sinal-de-estilo-sinal_estilopy">Sinal de estilo (<code>sinal_estilo.py</code>)</h3>
+<p>O BERTimbau treinado pelo grupo continua no repositório, com seu model card
+(<code>modelos/cards/bertimbau.json</code>) e o gate em <code>model_card.py</code>. Fica <strong>desligado por
+padrão</strong>: só é carregado com <code>VOF_SINAL_ESTILO=1</code>, e se PyTorch e os pesos estiverem
+disponíveis. Ligado, a interface mostra um "sinal de estilo do texto". Ele não decide o
+veredito. Decisão em
+<a href="../adr/0009-bertimbau-sinal-secundario/">ADR 0009</a>.</p>
+<h2 id="stack">Stack</h2>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Tecnologia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linguagem</td>
+<td>Python 3.11</td>
+</tr>
+<tr>
+<td>API</td>
+<td>FastAPI + uvicorn, Server-Sent Events</td>
+</tr>
+<tr>
+<td>Front</td>
+<td>HTML e JavaScript estáticos, sem build</td>
+</tr>
+<tr>
+<td>Banco, busca lexical, cache e registro</td>
+<td>SQLite com FTS5</td>
+</tr>
+<tr>
+<td>Busca vetorial</td>
+<td>numpy (cosseno exato em memória)</td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td><code>fastembed</code> (ONNX), <code>paraphrase-multilingual-MiniLM-L12-v2</code></td>
+</tr>
+<tr>
+<td>LLM</td>
+<td>API compatível com OpenAI via <code>httpx</code> (Groq por padrão; Gemini ou Ollama)</td>
+</tr>
+<tr>
+<td>Extração de links</td>
+<td><code>trafilatura</code></td>
+</tr>
+<tr>
+<td>Literatura</td>
+<td>PubMed E-utilities</td>
+</tr>
+<tr>
+<td>Classificador opcional</td>
+<td>BERTimbau (PyTorch, <code>transformers</code>), só para o sinal de estilo</td>
+</tr>
+<tr>
+<td>Contêiner e hospedagem</td>
+<td>Docker e Caddy numa VM do Azure (Azure for Students)</td>
+</tr>
+<tr>
+<td>CI/CD</td>
+<td>GitHub Actions</td>
+</tr>
+<tr>
+<td>Documentação</td>
+<td>MkDocs Material + GitHub Pages</td>
+</tr>
+</tbody>
+</table>
+<p>As dependências ficam separadas em <code>requirements.txt</code> (runtime leve),
+<code>requirements-treino.txt</code> (PyTorch e afins) e <code>requirements-dev.txt</code> (testes).</p>
+<h2 id="o-que-mudou-e-por-que">O que mudou e por quê</h2>
+<p>Esta seção é o registro de processo que o método CBL pede: documentar, refletir,
+compartilhar. A versão anterior não deu certo, e vale dizer como e por quê.</p>
+<p>A comparação lado a lado, com os benefícios e o comportamento atual, está em
+<a href="../antes-e-depois/">Antes e depois</a>.</p>
+<p><strong>A versão anterior.</strong> Um app Streamlit. A cada consulta, o sistema baixava a página,
+passava o texto por um BERTimbau (classificador de estilo), procurava um par
+medicamento + condição num dicionário de 38 termos, consultava o PubMed ao vivo (limite
+de 3 requisições por segundo) e rodava um modelo NLI mDeBERTa zero-shot, em CPU, sobre
+até 10 resumos. Regras de fusão combinavam os sinais. Não havia banco nem persistência.
+A demo rodava num túnel temporário do Cloudflare, a partir de um notebook do Colab.</p>
+<p><strong>O que falhou.</strong></p>
+<ul>
+<li><strong>Lento.</strong> Cada resposta levava dezenas de segundos: busca ao vivo com limite de
+  taxa, mais NLI em CPU sobre vários resumos, tudo no caminho da requisição.</li>
+<li><strong>Estreito.</strong> Só funcionava para os 38 termos do dicionário. Qualquer alegação fora
+  dele caía em "não foi possível verificar".</li>
+<li><strong>Pouco convincente.</strong> O NLI zero-shot errava em texto biomédico, que era a hipótese
+  D3 da nossa lista de decisões pendentes. E a resposta final era um rótulo de regra,
+  sem texto que um leigo pudesse ler.</li>
+<li><strong>Mediu a coisa errada.</strong> O BERTimbau teve F1 macro alto no teste (0,96 no model card
+  atual), mas o produto não servia. O classificador aprende <strong>estilo de portal</strong>, não
+  fato: as falsas vinham quase todas de um único site. Uma alegação falsa bem redigida
+  passa, e uma verdadeira mal escrita é marcada.</li>
+<li><strong>Frágil para demonstrar.</strong> Sem persistência, sem registro de uso e com um link que
+  mudava a cada execução do Colab.</li>
+</ul>
+<p><strong>Armadilhas que isso ilustra</strong> (discutidas em aula):</p>
+<ul>
+<li><strong>Métrica de ML alta não é problema resolvido.</strong> O F1 do BERTimbau era alto e o
+  produto, inútil. A métrica respondia a outra pergunta.</li>
+<li><strong>Métrica certa no dataset errado.</strong> O Fake.br cobre 2016 a 2018, quase não trata de
+  saúde (3 notícias com medicamento e condição no recorte, ver <a href="../dados/">Dados</a>) e não
+  tem COVID-19. F1 alto num corpus que não é o do problema não prova nada sobre o
+  problema.</li>
+<li><strong>Otimizar o proxy.</strong> Treinamos e comparamos modelos (TF-IDF, BERTimbau) para subir um
+  número que era proxy do que o usuário precisa: saber se a alegação tem respaldo
+  científico. Quem responde a isso é a evidência, e ela estava na camada menos
+  desenvolvida.</li>
+</ul>
+<p><strong>O que fizemos.</strong> Trocamos o desenho por um RAG: a evidência virou o centro, a base é
+ingerida em lote e indexada, e a pergunta "isso tem respaldo?" passou a ser respondida
+por um LLM que só pode falar o que as fontes dizem, com guardas conferindo. O BERTimbau
+ficou como sinal secundário opcional. As decisões estão nos <a href="../adr/">ADRs</a>.</p>
+<p><strong>O que ganhamos e o que perdemos.</strong> Ganhamos cobertura de alegações além do
+dicionário, resposta em streaming, texto legível com citações, um banco com registro de
+uso e uma demo hospedada. Perdemos a independência de serviços externos: agora
+dependemos de um LLM de terceiros e da cota gratuita dele. Os números de qualidade do
+sistema novo são medidos por <code>scripts/avalia_rag.py</code>; os resultados ficam em
+<a href="../avaliacao/">Avaliação</a>.</p>
+<h2 id="mlops">MLOps</h2>
+<p>O artigo-base é Kreuzberger, Kühl e Hirschl, <em>Machine Learning Operations (MLOps):
+Overview, Definition, and Architecture</em> (IEEE Access, 2023). Ele foi apresentado em aula
+com a recomendação de justificar cada componente adotado. Para uma equipe de quatro
+pessoas, sem orçamento próprio (só cotas gratuitas e o crédito de estudante do Azure) e
+com prazo curto, adotamos uma versão leve e dizemos por que
+não adotamos o resto.</p>
+<h3 id="principios">Princípios</h3>
+<table>
+<thead>
+<tr>
+<th>Princípio</th>
+<th>Adotado</th>
+<th>Onde está</th>
+<th>Não adotado, e por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>P1 CI/CD</td>
+<td><code>ci.yml</code> roda os testes offline (<code>pytest -m "not rede"</code>) a cada push e confere que o serviço importa só com o runtime leve. A entrega é um comando que constrói a imagem e publica na VM</td>
+<td><code>.github/workflows/ci.yml</code>, <code>scripts/publica_azure.sh</code></td>
+<td>A entrega não é automática a cada push: exige a CLI do Azure autenticada na máquina de quem publica.</td>
+</tr>
+<tr>
+<td>P2 Orquestração de workflow</td>
+<td>Agendamento semanal da ingestão pelo GitHub Actions; rotina periódica dos temas em alta dentro do serviço</td>
+<td><code>ingestao-base.yml</code>, <code>api.py</code> (<code>_manter_destaques</code>)</td>
+<td>Sem orquestrador dedicado (Airflow, Kubeflow): são poucos passos lineares, um agendador resolve.</td>
+</tr>
+<tr>
+<td>P3 Reprodutibilidade</td>
+<td>Versões fixadas nos <code>requirements*.txt</code>; banco reconstruído do JSONL com um comando; Dockerfile</td>
+<td><code>requirements*.txt</code>, <code>scripts/constroi_base.py</code>, <code>Dockerfile</code></td>
+<td>O LLM de terceiros não é reprodutível: o provedor pode atualizar o modelo. Mitigação parcial: temperatura baixa e registro do modelo usado em cada consulta.</td>
+</tr>
+<tr>
+<td>P4 Versionamento</td>
+<td>Código, base de conhecimento (JSONL) e model card no git; manifesto com SHA-256</td>
+<td><code>dados/base/</code>, <code>modelos/cards/</code></td>
+<td>Sem DVC: o JSONL é texto e cabe no git. Os pesos do BERTimbau ficam fora do git, no Hub.</td>
+</tr>
+<tr>
+<td>P5 Colaboração</td>
+<td>Repositório único, branches, ADRs e documentação no repositório</td>
+<td><code>docs/adr/</code>, <code>docs/</code></td>
+<td>Sem ferramenta de experimentos compartilhada.</td>
+</tr>
+<tr>
+<td>P6 Treino e avaliação contínuos</td>
+<td>Gate de qualidade do classificador opcional; avaliação do RAG por script</td>
+<td><code>scripts/verifica_gate.py</code>, <code>treino-gate.yml</code>, <code>scripts/avalia_rag.py</code></td>
+<td>O RAG não treina nada, então não há retreino contínuo. O que se atualiza é a base, toda semana.</td>
+</tr>
+<tr>
+<td>P7 Metadados de ML</td>
+<td>Model card com métricas, hashes dos dados e do artefato; manifesto da base; cada consulta registra modelo e latência</td>
+<td><code>modelos/cards/</code>, <code>dados/base/manifesto.json</code>, tabela <code>consultas</code></td>
+<td>Sem MLflow nem armazenamento de experimentos.</td>
+</tr>
+<tr>
+<td>P8 Monitoramento contínuo</td>
+<td><code>GET /api/metricas</code> (latência p50 e p95, vereditos, cache, busca ao vivo) e <code>GET /api/saude</code></td>
+<td><code>api.py</code>, <code>banco.py</code> (<code>metricas</code>)</td>
+<td>Sem alertas automáticos nem painel externo. Alguém precisa olhar.</td>
+</tr>
+<tr>
+<td>P9 Ciclos de feedback</td>
+<td>Feedback por resposta, gravado em <code>consultas.feedback</code>; consultas com busca ao vivo apontam lacunas da base</td>
+<td><code>POST /api/feedback</code>, <a href="../operacao/">Operação</a></td>
+<td>O ciclo é manual: uma pessoa lê os sinais e decide ampliar o vocabulário ou ajustar prompts.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="componentes_1">Componentes</h3>
+<table>
+<thead>
+<tr>
+<th>Componente</th>
+<th>Adotado</th>
+<th>Onde está</th>
+<th>Não adotado, e por quê</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C1 CI/CD</td>
+<td>GitHub Actions</td>
+<td><code>.github/workflows/</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>C2 Repositório de código</td>
+<td>GitHub</td>
+<td>o próprio repositório</td>
+<td>—</td>
+</tr>
+<tr>
+<td>C3 Orquestração de workflow</td>
+<td>Só o agendamento do GitHub Actions</td>
+<td><code>ingestao-base.yml</code></td>
+<td>Sem orquestrador dedicado, ver P2.</td>
+</tr>
+<tr>
+<td>C4 Feature store</td>
+<td>Nenhum</td>
+<td>—</td>
+<td>Não há features compartilhadas: o RAG consome texto e embeddings calculados na construção do banco.</td>
+</tr>
+<tr>
+<td>C5 Infraestrutura de treino</td>
+<td>Máquina local ou Colab, só para o classificador opcional</td>
+<td><code>scripts/treina_bert.py</code></td>
+<td>Sem cluster nem GPU dedicada. O RAG não treina.</td>
+</tr>
+<tr>
+<td>C6 Registro de modelos</td>
+<td>Model card em JSON no git; pesos no Hugging Face Hub</td>
+<td><code>modelos/cards/</code>, <code>scripts/publica_modelo.py</code></td>
+<td>Sem registro remoto (MLflow): um JSON legível em diff basta para um modelo.</td>
+</tr>
+<tr>
+<td>C7 Repositório de metadados</td>
+<td>Model card, manifesto da base e tabela <code>consultas</code></td>
+<td>ver P7</td>
+<td>Sem armazenamento dedicado.</td>
+</tr>
+<tr>
+<td>C8 Serviço de modelo</td>
+<td>FastAPI em contêiner Docker numa VM do Azure, atrás de um proxy Caddy</td>
+<td><code>api.py</code>, <code>Dockerfile</code></td>
+<td>Sem Kubernetes: uma réplica de uma imagem, numa VM pequena, não justifica.</td>
+</tr>
+<tr>
+<td>C9 Monitoramento</td>
+<td>Endpoint de métricas sobre o próprio SQLite</td>
+<td><code>banco.py</code> (<code>metricas</code>)</td>
+<td>Sem Prometheus nem Grafana.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="papeis">Papéis</h3>
+<p>O artigo define sete papéis (R1 a R7). Com quatro pessoas, cada uma acumula vários. O
+mapeamento abaixo é por frente de trabalho, não por nome.</p>
+<table>
+<thead>
+<tr>
+<th>Papel</th>
+<th>Quem exerce</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1 Interessado de negócio</td>
+<td>Os usuários finais e a banca da disciplina; a equipe traduz o problema nas Guiding Questions.</td>
+</tr>
+<tr>
+<td>R2 Arquiteto de solução</td>
+<td>Decisão coletiva, registrada em ADRs; quem propõe a decisão a escreve.</td>
+</tr>
+<tr>
+<td>R3 Cientista de dados</td>
+<td>Frente de modelo e avaliação: classificador opcional, conjunto de alegações com gabarito, prompts.</td>
+</tr>
+<tr>
+<td>R4 Engenheiro de dados</td>
+<td>Frente de dados e evidência: ingestão do PubMed, vocabulário, construção da base, datasheets.</td>
+</tr>
+<tr>
+<td>R5 Engenheiro de software</td>
+<td>Frente de produto: API, front, extração de links, guardas.</td>
+</tr>
+<tr>
+<td>R6 Engenheiro DevOps</td>
+<td>Frente de infraestrutura: Docker, workflows, deploy na VM do Azure.</td>
+</tr>
+<tr>
+<td>R7 Engenheiro de ML (MLOps)</td>
+<td>Acumulado entre as frentes de modelo e infraestrutura: gate, model card, monitoramento.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="requisitos-nao-funcionais">Requisitos não funcionais</h2>
+<h3 id="confiabilidade">Confiabilidade</h3>
+<ul>
+<li><strong>O LLM erra.</strong> As guardas reduzem o dano (citação inexistente removida, afirmação sem
+  citação rebaixada, confiança limitada pelo tipo de estudo), mas não o eliminam: o
+  modelo pode citar uma fonte real e interpretá-la mal. Por isso o texto sempre
+  acompanha as fontes com link, e o usuário pode conferir.</li>
+<li><strong>O LLM cai ou estoura a cota.</strong> Primeiro o fallback tenta o próximo modelo da lista.
+  Se todos falham, o sistema entra em modo degradado e mostra as fontes recuperadas
+  com aviso.</li>
+<li><strong>A página não abre.</strong> O usuário recebe uma mensagem pedindo que cole o texto. Nada é
+  inventado a partir de uma página que não foi lida.</li>
+<li><strong>O PubMed está fora.</strong> A busca ampliada devolve lista vazia e a resposta usa o que a
+  base local tem.</li>
+<li><strong>Não há estudo sobre a alegação.</strong> Resposta <code>NAO_VERIFICAVEL</code>, com o texto explícito
+  de que ausência de estudo não prova que a alegação é falsa.</li>
+<li><strong>Erro inesperado.</strong> A API envia um evento <code>erro</code> genérico e registra a exceção no log.</li>
+<li><strong>Máquina única.</strong> O serviço roda numa VM só, sem réplica. Se ela cair, a demo cai.
+  O banco fica num volume no disco da VM e sobrevive a reinícios, mas não há cópia de
+  segurança automática.</li>
+</ul>
+<h3 id="escalabilidade">Escalabilidade</h3>
+<p>O desenho serve para demonstração e uso leve. O que muda de 10 para 10 mil consultas por
+dia:</p>
+<ul>
+<li><strong>Cota do LLM.</strong> É o primeiro gargalo. Limites do plano gratuito do Groq na data da
+  consulta (07/10/2026), sujeitos a mudança: os três modelos de chat disponíveis (<code>openai/gpt-oss-120b</code>, <code>qwen/qwen3.8-27b</code> e <code>openai/gpt-oss-20b</code>) têm, cada um, 8.000 tokens por minuto e 1.000 requisições por dia, lidos dos cabeçalhos de resposta da API. Uma consulta gasta cerca de 2.500 tokens, então cada modelo aguenta umas três consultas novas por minuto; a lista com fallback soma os três.
+  Cada consulta nova usa duas chamadas (identificação da alegação e redação). Com muito
+  mais consultas por dia, é preciso um plano pago ou outro provedor.</li>
+<li><strong>Cache.</strong> Consultas repetidas não chamam o LLM. Ajuda quando muita gente cola a mesma
+  corrente de WhatsApp, e nada quando cada entrada é única.</li>
+<li><strong>SQLite de processo único.</strong> Uma réplica, uma conexão protegida por trava. A busca
+  vetorial exata compara a consulta com todos os embeddings em memória: funciona bem em
+  milhares de documentos e deixa de fazer sentido em milhões. Várias réplicas
+  exigiriam outro armazenamento.</li>
+<li><strong>Limite por cliente.</strong> <code>VOF_LIMITE_POR_MINUTO</code> (12 por padrão) protege a cota
+  compartilhada de um único usuário, mas fica em memória e vale por processo.</li>
+<li><strong>PubMed.</strong> O cliente espaça as requisições para respeitar 3 por segundo sem chave;
+  com <code>NCBI_API_KEY</code> o intervalo cai para respeitar 10 por segundo.</li>
+</ul>
+<h3 id="manutenibilidade">Manutenibilidade</h3>
+<ul>
+<li>Um módulo por responsabilidade, com nomes que dizem o que cada parte faz. O código
+  não leva comentários; o porquê das decisões fica nos ADRs e nesta página.</li>
+<li>O orquestrador (<code>rag.py</code>) recebe as dependências por um objeto <code>Servico</code>, o que
+  permite testar com LLM, PubMed e extração simulados. A suíte <code>pytest -m "not rede"</code>
+  roda offline no CI.</li>
+<li>Dependências fixadas e separadas por uso (runtime, treino, desenvolvimento).</li>
+<li>Decisões em ADRs; datasheets da base e do corpus de treino em <a href="../dados/">Dados</a>.</li>
+</ul>
+<h3 id="adaptabilidade">Adaptabilidade</h3>
+<ul>
+<li><strong>Base nova:</strong> ingestão semanal pelo workflow <code>ingestao-base.yml</code>, que commita o JSONL
+  atualizado.</li>
+<li><strong>Alegação fora da base:</strong> busca ao vivo no PubMed, cujos artigos passam a fazer parte
+  da base local.</li>
+<li><strong>Troca de provedor de LLM:</strong> três variáveis de ambiente, sem tocar no código
+  (<a href="../operacao/">Operação</a>).</li>
+<li><strong>Novos medicamentos e condições:</strong> acrescentar linhas a <code>dados/vocabulario_seed.csv</code>
+  e rodar a ingestão.</li>
+<li><strong>Limite honesto:</strong> o vocabulário define o que a ingestão em lote cobre. Fora dele, a
+  qualidade depende da busca ao vivo.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

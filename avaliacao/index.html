@@ -1,0 +1,1345 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../antes-e-depois/">
+      
+      
+        <link rel="next" href="../api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Avaliação - Challenge 1 - Megatron</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#avaliacao" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Challenge 1 - Megatron" class="md-header__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Challenge 1 - Megatron
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Avaliação
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Challenge 1 - Megatron" class="md-nav__button md-logo" aria-label="Challenge 1 - Megatron" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Challenge 1 - Megatron
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/unb-Sistemas-de-Machine-learning/challenge_1_megatron" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../antes-e-depois/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Antes e depois
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Avaliação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-medir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como medir
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-foi-medido-em-07102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que foi medido em 07/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que foi medido em 07/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-sem-o-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sistema sem o LLM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-completo-com-os-modelos-de-producao-groq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo completo com os modelos de produção (Groq)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rajada-de-consultas-novas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rajada de consultas novas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-completo-com-llm-local-pequeno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo completo com LLM local pequeno
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-falta-medir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que falta medir
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-do-metodo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações do método
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testes-automatizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testes automatizados
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dados/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dados
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Decisões (ADRs)
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de arquitetura (ADRs)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0001-rag-com-llm-de-terceiros/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0001 RAG com LLM de terceiros
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0002-sqlite-busca-vetorial-exata/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0002 SQLite e busca vetorial exata
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0003-embeddings-multilingues-onnx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0003 Embeddings multilíngues em ONNX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0004-cliente-openai-compativel-groq/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0004 Cliente OpenAI-compatível e Groq
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0005-fastapi-sse-front-estatico/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0005 FastAPI, SSE e front estático
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0006-base-em-lote-com-busca-ao-vivo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0006 Base em lote e busca ao vivo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0007-guardas-deterministicas/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0007 Guardas determinísticas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0008-hospedagem/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0008 Hospedagem
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0009-bertimbau-sinal-secundario/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0009 BERTimbau como sinal secundário
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adr/0010-temas-em-alta/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    0010 Temas em alta
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guiding-questions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guiding Questions
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../canva/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Canvas
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#como-medir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Como medir
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-foi-medido-em-07102026" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que foi medido em 07/10/2026
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="O que foi medido em 07/10/2026">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sistema-sem-o-llm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sistema sem o LLM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-completo-com-os-modelos-de-producao-groq" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo completo com os modelos de produção (Groq)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rajada-de-consultas-novas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rajada de consultas novas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-completo-com-llm-local-pequeno" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo completo com LLM local pequeno
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#o-que-falta-medir" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que falta medir
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitacoes-do-metodo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitações do método
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testes-automatizados" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testes automatizados
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="avaliacao">Avaliação</h1>
+<p>Como o sistema é medido, o que já foi medido e o que ainda falta medir.</p>
+<h2 id="como-medir">Como medir</h2>
+<p><code>scripts/avalia_rag.py</code> roda o fluxo completo sobre <code>dados/avaliacao/alegacoes.json</code>, um
+conjunto de 20 alegações com gabarito escrito pela equipe. Cada caso lista os vereditos
+aceitáveis, porque em várias alegações mais de uma leitura é defensável (por exemplo,
+"contestada" ou "exagerada"). O script usa um banco temporário, então o cache não
+interfere.</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/avalia_rag.py<span class="w">            </span><span class="c1"># os 20 casos</span>
+python<span class="w"> </span>scripts/avalia_rag.py<span class="w"> </span>--limite<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="c1"># subconjunto</span>
+</code></pre></div>
+<p>O resultado vai para <code>dados/avaliacao/resultado_rag.json</code>, com o modelo usado e o hash
+da base, e traz quatro medidas:</p>
+<table>
+<thead>
+<tr>
+<th>Medida</th>
+<th>O que responde</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acurácia do veredito</td>
+<td>O veredito ficou entre os aceitáveis do gabarito?</td>
+</tr>
+<tr>
+<td>Afirmativos com citação válida</td>
+<td>Todo veredito afirmativo cita ao menos uma fonte que existe?</td>
+</tr>
+<tr>
+<td>Casos com fontes</td>
+<td>A recuperação encontrou estudos para a alegação?</td>
+</tr>
+<tr>
+<td>Latência (mediana, p95, primeiro texto)</td>
+<td>A resposta é rápida o bastante para o usuário esperar?</td>
+</tr>
+</tbody>
+</table>
+<h2 id="o-que-foi-medido-em-07102026">O que foi medido em 07/10/2026</h2>
+<h3 id="sistema-sem-o-llm">Sistema sem o LLM</h3>
+<p>Medido na máquina de desenvolvimento (8 núcleos, sem GPU), com a base de 1.069 resumos.</p>
+<table>
+<thead>
+<tr>
+<th>Etapa</th>
+<th>Tempo</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Busca híbrida na base</td>
+<td>cerca de 10 ms por consulta</td>
+</tr>
+<tr>
+<td>Fluxo completo com um LLM simulado de resposta imediata</td>
+<td>83 ms</td>
+</tr>
+<tr>
+<td>Construção do banco a partir do JSONL</td>
+<td>72 s</td>
+</tr>
+<tr>
+<td>Inicialização do contêiner até <code>/api/saude</code> responder</td>
+<td>poucos segundos</td>
+</tr>
+</tbody>
+</table>
+<p>A imagem Docker tem 671 MB e o serviço usa cerca de 630 MB de RAM em repouso.</p>
+<p>O tempo que o usuário espera é, portanto, quase todo do provedor de LLM: duas chamadas
+por consulta, uma curta para identificar a alegação e uma em streaming para redigir.</p>
+<h3 id="fluxo-completo-com-os-modelos-de-producao-groq">Fluxo completo com os modelos de produção (Groq)</h3>
+<p>Os 20 casos, com <code>openai/gpt-oss-120b</code> na redação e <code>openai/gpt-oss-20b</code> na
+identificação da alegação, <code>reasoning_effort</code> baixo, e 12 s de pausa entre casos para
+respeitar o limite de tokens por minuto.</p>
+<table>
+<thead>
+<tr>
+<th>Medida</th>
+<th>Resultado</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Acurácia do veredito</td>
+<td>20 de 20</td>
+</tr>
+<tr>
+<td>Afirmativos com citação válida</td>
+<td>17 de 17</td>
+</tr>
+<tr>
+<td>Casos com fontes</td>
+<td>18 de 20 (os outros dois são o caso sem literatura e o fora de escopo, como esperado)</td>
+</tr>
+<tr>
+<td>Latência mediana</td>
+<td>1,5 s</td>
+</tr>
+<tr>
+<td>Latência p95</td>
+<td>3,8 s</td>
+</tr>
+<tr>
+<td>Respostas degradadas</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>Distribuição dos vereditos: 7 apoiadas, 5 contestadas, 5 exageradas, 1 inconclusiva,
+1 não verificável e 1 fora do escopo.</p>
+<p><strong>Como ler esse 20 de 20.</strong> A primeira rodada deu 19 de 20, e a rodada anterior a ela
+classificou "Ivermectina cura covid-19" como "exagera", quando o mais preciso é
+"contradiz". Depois disso a definição dos vereditos no prompt foi ajustada e um defeito
+na detecção de texto fora de escopo foi corrigido, e a rodada foi repetida. O número
+final foi obtido, portanto, <strong>num conjunto que serviu de guia para os ajustes</strong>. Ele
+mostra que o sistema não tem erro grosseiro nos temas que a base cobre. Não é uma
+estimativa de acerto em alegações novas.</p>
+<h3 id="rajada-de-consultas-novas">Rajada de consultas novas</h3>
+<p>Oito alegações fora do conjunto, enviadas em sequência sem pausa, pela API:</p>
+<ul>
+<li>Todas responderam, entre 1,1 s e 2,9 s.</li>
+<li>Cinco foram redigidas pelo <code>gpt-oss-120b</code>. Quando o limite de tokens por minuto dele
+  estourou, duas passaram para o <code>qwen3.8-27b</code> e uma para o <code>gpt-oss-20b</code>, sem erro
+  para o usuário.</li>
+<li>Em uma delas o modelo reserva não citou fonte, e a guarda rebaixou o veredito para
+  "evidência insuficiente", com aviso.</li>
+<li>Em duas a confiança foi limitada por só haver estudo isolado entre as fontes citadas.</li>
+</ul>
+<p>Um link real (o verbete da Wikipédia sobre ivermectina) foi lido, analisado e
+respondido em 2,8 s, com o download da página incluído.</p>
+<h3 id="fluxo-completo-com-llm-local-pequeno">Fluxo completo com LLM local pequeno</h3>
+<p>Antes de haver chave do Groq, o fluxo foi exercitado com <code>qwen2.5:3b</code> no Ollama, em
+CPU, nos 8 primeiros casos: 5 de 8 corretos, com mediana de 70 s por resposta. No caso
+da ivermectina o modelo recebeu meta-análises que não mostram benefício e concluiu o
+contrário, citando as próprias fontes. Duas lições ficaram:</p>
+<ul>
+<li>Um modelo de 3 bilhões de parâmetros não serve para redigir o veredito, e as guardas
+  de código não pegam esse erro: elas conferem se a citação existe, não se a fonte diz
+  o que o texto afirma.</li>
+<li>LLM local em CPU é inviável para uso interativo. Serve só como plano de contingência.</li>
+</ul>
+<h3 id="o-que-falta-medir">O que falta medir</h3>
+<ul>
+<li>Acerto em alegações reais colhidas de redes sociais, com gabarito feito por alguém de
+  fora da equipe.</li>
+<li>Fidelidade: se cada frase da explicação é sustentada pela fonte que ela cita.</li>
+<li>Qualidade das respostas quando o fallback cai nos modelos menores.</li>
+<li>Compreensão da resposta por pessoas leigas (GQ3), taxa de extração limpa nos portais
+  de notícia brasileiros (GQ8) e o efeito na decisão do usuário, que é o objetivo de
+  negócio.</li>
+</ul>
+<h2 id="limitacoes-do-metodo">Limitações do método</h2>
+<ul>
+<li>O conjunto tem 20 casos e foi escrito pela própria equipe, com alegações escolhidas
+  entre os temas que a base cobre. Ele detecta regressões, mas não estima o desempenho
+  em alegações reais colhidas de redes sociais.</li>
+<li>O gabarito aceita mais de um veredito por caso, o que infla a acurácia.</li>
+<li>"Citação válida" mede se a fonte citada existe, não se ela sustenta a frase. Medir
+  fidelidade exige leitura humana ou um segundo modelo como juiz.</li>
+</ul>
+<h2 id="testes-automatizados">Testes automatizados</h2>
+<p><code>pytest -m "not rede"</code> roda a suíte offline. Ela cobre o banco, a recuperação, o
+cliente de LLM com transporte simulado, o orquestrador do RAG com LLM falso (cache,
+guardas, busca ampliada, modo degradado) e a API.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": [], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
