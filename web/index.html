@@ -68,6 +68,21 @@ textarea:focus-visible{outline-offset:0}
 .aviso-medico{display:flex;gap:8px;align-items:flex-start;margin:14px 2px 0;color:var(--muted);font-size:.88rem}
 .aviso-medico svg{margin-top:.2em}
 
+.alta{margin-top:22px}
+.alta h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.alta h2 small{font-size:.76rem;text-transform:none;letter-spacing:0;font-weight:400}
+.alta ul.cartoes{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.alta li.cartao{border:1px solid var(--border);border-left:4px solid var(--vbd);background:var(--surface);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.alta .topo{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.alta .selo{border-radius:999px;padding:2px 10px;font-size:.76rem;font-weight:700;background:var(--vbg);color:var(--vfg);border:1px solid var(--vbd)}
+.alta .origem{font-size:.74rem;color:var(--muted)}
+.alta button.tema{all:unset;cursor:pointer;font-weight:600;line-height:1.35}
+.alta button.tema:hover{color:var(--accent);text-decoration:underline}
+.alta button.tema:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.alta p.res{margin:0;color:var(--muted);font-size:.88rem;line-height:1.45}
+.alta ul.noticias{list-style:none;margin:0;padding:0;font-size:.8rem;display:flex;flex-direction:column;gap:3px}
+.alta ul.noticias a{color:var(--accent)}
+.alta ul.noticias span{color:var(--muted)}
 .hist{margin-top:18px}
 .hist h2{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 6px;display:flex;justify-content:space-between;align-items:center}
 .hist button.limpar{background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;font-size:.8rem;text-transform:none;letter-spacing:0}
@@ -207,6 +222,11 @@ footer p[hidden]{display:none}
     </form>
 
     <ul class="chips" aria-label="Exemplos para testar" id="chips"></ul>
+
+    <section class="alta" id="alta" hidden aria-label="Temas em alta">
+      <h2><span>Em alta nesta semana</span><small id="altaData"></small></h2>
+      <ul class="cartoes" id="altaLista"></ul>
+    </section>
 
     <section class="hist" id="hist" hidden aria-label="Consultas recentes">
       <h2><span>Consultas recentes</span><button type="button" class="limpar" id="limpar">limpar</button></h2>
@@ -738,6 +758,64 @@ async function enviarFeedback(valor){
 }
 $("fbSim").addEventListener("click", function(){ enviarFeedback(1); });
 $("fbNao").addEventListener("click", function(){ enviarFeedback(-1); });
+
+var ORIGENS = {curadoria:"Seleção da equipe", google_noticias:"Google Notícias"};
+
+(async function carregarDestaques(){
+  try {
+    var r = await fetch("/api/destaques");
+    if (!r.ok) return;
+    var dados = await r.json();
+    var temas = Array.isArray(dados.temas) ? dados.temas : [];
+    if (!temas.length) return;
+    var ul = $("altaLista");
+    temas.forEach(function(t){
+      var cod = codigoValido(t.veredito);
+      var li = document.createElement("li");
+      li.className = "cartao v-" + cod;
+      var topo = document.createElement("div");
+      topo.className = "topo";
+      var selo = document.createElement("span");
+      selo.className = "selo";
+      selo.textContent = NOMES[cod];
+      var origem = document.createElement("span");
+      origem.className = "origem";
+      origem.textContent = ORIGENS[t.origem] || "";
+      topo.appendChild(selo); topo.appendChild(origem);
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "tema";
+      b.textContent = String(t.alegacao || "");
+      b.addEventListener("click", function(){ enviar(String(t.alegacao || "")); window.scrollTo({top:0, behavior:"smooth"}); });
+      var res = document.createElement("p");
+      res.className = "res";
+      res.textContent = String(t.resumo || "");
+      li.appendChild(topo); li.appendChild(b); li.appendChild(res);
+      var noticias = (Array.isArray(t.noticias) ? t.noticias : []).slice(0, 2);
+      if (noticias.length) {
+        var lista = document.createElement("ul");
+        lista.className = "noticias";
+        noticias.forEach(function(n){
+          var url = urlSegura(n.url);
+          if (!url) return;
+          var item = document.createElement("li");
+          var link = document.createElement("a");
+          link.href = url; link.target = "_blank"; link.rel = "noopener noreferrer";
+          link.textContent = String(n.titulo || "");
+          item.appendChild(link);
+          if (n.fonte) { var f = document.createElement("span"); f.textContent = " · " + n.fonte; item.appendChild(f); }
+          lista.appendChild(item);
+        });
+        if (lista.children.length) li.appendChild(lista);
+      }
+      ul.appendChild(li);
+    });
+    if (dados.atualizado_em) {
+      $("altaData").textContent = "atualizado em " + new Date(dados.atualizado_em * 1000).toLocaleString("pt-BR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit"});
+    }
+    $("alta").hidden = false;
+  } catch (e) {}
+})();
 
 (function checarPelaUrl(){
   try {

@@ -11,7 +11,7 @@ from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
-from verdade_ou_fake import rag, sinal_estilo
+from verdade_ou_fake import destaques, rag, sinal_estilo
 from verdade_ou_fake.banco import Banco
 from verdade_ou_fake.base import construir, ler_manifesto
 from verdade_ou_fake.config import Config, carregar_env
@@ -22,6 +22,7 @@ from verdade_ou_fake.vocabulario import carregar_vocabulario
 
 registro = logging.getLogger("verdade_ou_fake")
 JANELA_SEGUNDOS = 60
+ESPERA_INICIAL_DESTAQUES = 60
 
 
 class Entrada(BaseModel):
@@ -84,16 +85,33 @@ def _aquecer(servico: rag.Servico) -> None:
     registro.info("Serviço pronto: %d documentos", servico.banco.total_documentos())
 
 
+async def _manter_destaques(servico: rag.Servico) -> None:
+    config = servico.config
+    if servico.llm is None or not (config.planilha_csv or config.destaques_automaticos):
+        return
+    await asyncio.sleep(ESPERA_INICIAL_DESTAQUES)
+    while True:
+        try:
+            await destaques.atualizar(servico)
+        except Exception:
+            registro.exception("Falha ao atualizar os destaques")
+        await asyncio.sleep(config.destaques_horas * 3600)
+
+
 @asynccontextmanager
 async def ciclo_de_vida(app: FastAPI):
     servico = getattr(app.state, "servico", None)
+    tarefa_destaques = None
     if servico is None:
         carregar_env()
         servico = criar_servico(Config())
+        tarefa_destaques = asyncio.create_task(_manter_destaques(servico))
     app.state.servico = servico
     app.state.limite = LimiteDeRequisicoes(servico.config.limite_por_minuto)
     threading.Thread(target=_aquecer, args=(servico,), daemon=True).start()
     yield
+    if tarefa_destaques is not None:
+        tarefa_destaques.cancel()
     if servico.llm is not None:
         await servico.llm.fechar()
     servico.banco.fechar()
@@ -149,6 +167,18 @@ async def saude(request: Request) -> dict:
         "modelos": servico.config.llm_modelos if servico.llm else [],
         "sinal_estilo": servico.calcular_estilo is not None,
         "base": {k: manifesto.get(k) for k in ("gerado_em", "artigos", "sha256")},
+    }
+
+
+@app.get("/api/destaques")
+async def listar_destaques(request: Request) -> dict:
+    temas = request.app.state.servico.banco.listar_destaques()
+    return {
+        "atualizado_em": max((t["atualizado_em"] for t in temas), default=None),
+        "temas": [
+            {k: t[k] for k in ("alegacao", "origem", "veredito", "confianca", "resumo", "noticias")}
+            for t in temas
+        ],
     }
 
 

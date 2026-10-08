@@ -70,3 +70,39 @@ def test_erro_inesperado_vira_evento_de_erro(monkeypatch):
     with cliente(criar_servico(None), monkeypatch) as http:
         eventos = eventos_de(http.post("/api/analisar", json={"entrada": "Ivermectina cura covid"}))
         assert eventos == [{"tipo": "erro", "mensagem": "Erro interno ao analisar. Tente de novo."}]
+
+
+def test_destaques_lista_os_temas_sem_campos_internos(monkeypatch):
+    servico = criar_servico(None)
+    servico.banco.substituir_destaques(
+        [
+            {
+                "tema": "bruto",
+                "alegacao": "Ivermectina cura covid-19",
+                "origem": "curadoria",
+                "veredito": "CONTESTADA",
+                "confianca": "alta",
+                "resumo": "Não funciona.",
+                "noticias": [{"titulo": "t", "url": "https://x", "fonte": "f"}],
+                "novos_artigos": 3,
+            }
+        ]
+    )
+    with cliente(servico, monkeypatch) as http:
+        corpo = http.get("/api/destaques").json()
+        assert corpo["atualizado_em"] > 0
+        assert corpo["temas"] == [
+            {
+                "alegacao": "Ivermectina cura covid-19",
+                "origem": "curadoria",
+                "veredito": "CONTESTADA",
+                "confianca": "alta",
+                "resumo": "Não funciona.",
+                "noticias": [{"titulo": "t", "url": "https://x", "fonte": "f"}],
+            }
+        ]
+
+
+def test_destaques_vazio(monkeypatch):
+    with cliente(criar_servico(None), monkeypatch) as http:
+        assert http.get("/api/destaques").json() == {"atualizado_em": None, "temas": []}

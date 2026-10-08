@@ -55,6 +55,7 @@ flowchart LR
 | Interface | Streamlit, resposta só no fim | Página estática, resposta em streaming |
 | Hospedagem | Túnel temporário a partir do Colab | VM no Azure com endereço fixo, HTTPS e disco persistente |
 | Monitoramento | Nenhum | `/api/metricas`: latência, vereditos, feedback, uso de cache |
+| Temas em alta | Não existia | Planilha da equipe e Google Notícias, com checagem pronta e base alimentada a cada rodada |
 | Atualização dos dados | Não se aplicava | Workflow semanal + artigos da busca ampliada |
 | Quando um serviço externo cai | Resposta vazia ou erro | Modo degradado: mostra as fontes sem o veredito |
 

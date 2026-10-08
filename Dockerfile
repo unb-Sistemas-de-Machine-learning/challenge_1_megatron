@@ -24,6 +24,7 @@ COPY --chown=app:app src/ src/
 COPY --chown=app:app scripts/__init__.py scripts/constroi_base.py scripts/
 RUN python scripts/constroi_base.py
 
+COPY --chown=app:app scripts/atualiza_destaques.py scripts/
 COPY --chown=app:app web/ web/
 COPY --chown=app:app modelos/cards/ modelos/cards/
 

@@ -146,6 +146,29 @@ carregado) e `base` com `gerado_em`, `artigos` e `sha256` do manifesto.
 Na subida, o serviço começa a responder antes de terminar o aquecimento (indexação,
 caso o banco esteja vazio, e carga dos modelos), que roda em segundo plano.
 
+## `GET /api/destaques`
+
+Temas em alta da semana, já checados. `atualizado_em` é um instante Unix, ou `null` se
+ainda não houve rodada.
+
+```json
+{
+  "atualizado_em": 1791420228.55,
+  "temas": [
+    {
+      "alegacao": "Creatina faz mal para os rins",
+      "origem": "curadoria",
+      "veredito": "CONTESTADA",
+      "confianca": "alta",
+      "resumo": "Evidências de revisões sistemáticas mostram que a creatina não causa dano renal significativo.",
+      "noticias": [{"titulo": "...", "url": "https://news.google.com/...", "fonte": "Metrópoles"}]
+    }
+  ]
+}
+```
+
+`origem` é `curadoria` (planilha da equipe) ou `google_noticias`.
+
 ## `GET /api/metricas`
 
 ```bash

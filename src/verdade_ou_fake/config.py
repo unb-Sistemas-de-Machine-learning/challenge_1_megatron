@@ -75,6 +75,20 @@ class Config:
         default_factory=lambda: os.environ.get("VOF_BUSCA_AO_VIVO", "1") != "0"
     )
 
+    planilha_csv: str = field(default_factory=lambda: os.environ.get("VOF_PLANILHA_CSV", ""))
+    destaques_automaticos: bool = field(
+        default_factory=lambda: os.environ.get("VOF_DESTAQUES_AUTOMATICOS", "1") != "0"
+    )
+    destaques_maximo: int = field(
+        default_factory=lambda: int(os.environ.get("VOF_DESTAQUES_MAXIMO", "6"))
+    )
+    destaques_horas: float = field(
+        default_factory=lambda: float(os.environ.get("VOF_DESTAQUES_HORAS", "6"))
+    )
+    destaques_pausa: float = field(
+        default_factory=lambda: float(os.environ.get("VOF_DESTAQUES_PAUSA", "25"))
+    )
+
     @property
     def llm_ativo(self) -> bool:
         return bool(self.llm_api_key and self.llm_modelos)

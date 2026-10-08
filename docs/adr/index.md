@@ -14,5 +14,6 @@ consequências. O formato é curto de propósito.
 | [0007](0007-guardas-deterministicas.md) | Guardas determinísticas sobre a saída do LLM | Aceita |
 | [0008 Hospedagem: de Hugging Face Spaces para VM no Azure](0008-hospedagem.md) | VM no Azure com o crédito de estudante, depois que o Space gratuito deixou de existir | Revista em 07/10/2026 |
 | [0009](0009-bertimbau-sinal-secundario.md) | BERTimbau como sinal secundário opcional | Aceita |
+| [0010](0010-temas-em-alta.md) | Temas em alta vindos de planilha da equipe e do Google Notícias, alimentando a base | Aceita |
 
 Visão de conjunto em [Arquitetura](../arquitetura.md).

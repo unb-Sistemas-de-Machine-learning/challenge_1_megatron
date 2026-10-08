@@ -159,6 +159,15 @@ A hospedagem gratuita no Hugging Face Spaces, planejada no início, deixou de ex
 para contêineres Docker. Passo a passo e custos em [Operação](docs/operacao.md); a
 decisão está no [ADR 0008](docs/adr/0008-hospedagem.md).
 
+## Temas em alta
+
+A página inicial mostra os temas de saúde da semana, já checados. Eles vêm de uma
+planilha do Google Sheets mantida pela equipe e das manchetes de saúde do Google
+Notícias. Para cada tema o sistema busca estudos no PubMed e os acrescenta à base, de
+modo que as respostas sobre o que está em pauta melhoram e saem do cache. O texto das
+notícias não entra na base, que guarda só evidência científica. Configuração em
+[Operação](docs/operacao.md) e decisão no [ADR 0010](docs/adr/0010-temas-em-alta.md).
+
 ## Como a base se atualiza
 
 `scripts/ingere_pubmed.py` busca no PubMed, para cada medicamento e cada par

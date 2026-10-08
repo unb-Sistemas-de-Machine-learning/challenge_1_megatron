@@ -55,6 +55,11 @@ modo degradado: recupera e mostra as fontes, mas não redige o veredito.
 | `VOF_CACHE_HORAS` | `168` | Validade do cache de respostas |
 | `VOF_LIMITE_POR_MINUTO` | `12` | Requisições por minuto por cliente em `/api/analisar` |
 | `VOF_BUSCA_AO_VIVO` | `1` | `0` desliga a busca ampliada no PubMed |
+| `VOF_PLANILHA_CSV` | vazio | Link CSV da planilha de temas em alta, publicada na web |
+| `VOF_DESTAQUES_AUTOMATICOS` | `1` | `0` desliga os temas tirados do Google Notícias |
+| `VOF_DESTAQUES_MAXIMO` | `6` | Temas por rodada |
+| `VOF_DESTAQUES_HORAS` | `6` | Intervalo entre rodadas |
+| `VOF_DESTAQUES_PAUSA` | `25` | Segundos entre um tema e outro, para caber no limite do LLM |
 | `VOF_SINAL_ESTILO` | `0` | `1` liga o sinal de estilo do BERTimbau; desligado por padrão porque marca texto legítimo como arriscado |
 | `VOF_MODELO_RISCO` | `modelos/bertimbau` (se existir) | Pasta ou id no Hub dos pesos do BERTimbau (sinal de estilo, opcional) |
 | `VOF_MODELO_RISCO_REVISAO` | vazio | Commit do repositório do modelo no Hub, para fixar a versão |
@@ -130,6 +135,25 @@ parte do sistema em swap. Funciona, mas sem folga.
 
 **Acesso à VM.** `ssh -i ~/.ssh/vof_azure vof@<endereço>`; os contêineres ficam em
 `~/servico` (`docker compose logs -f app`).
+
+## Temas em alta
+
+A seção "Em alta nesta semana" da página inicial vem de duas fontes
+([ADR 0010](adr/0010-temas-em-alta.md)): uma planilha da equipe e as manchetes de saúde
+do Google Notícias.
+
+**Planilha.** Crie um Google Sheets com a coluna `alegacao` (uma alegação por linha) e,
+se quiser, a coluna `data` no formato `dd/mm/aaaa`; linhas com mais de 7 dias saem
+sozinhas. Em *Arquivo, Compartilhar, Publicar na web*, escolha a aba e o formato CSV, e
+coloque o link em `VOF_PLANILHA_CSV`. A planilha publicada é pública para leitura.
+
+**Rodada.** O serviço atualiza os temas um minuto depois de subir e a cada
+`VOF_DESTAQUES_HORAS`. Para forçar: `python scripts/atualiza_destaques.py`; na VM,
+`cd ~/servico && docker compose exec app python scripts/atualiza_destaques.py`.
+
+Cada tema passa por busca no PubMed, que alimenta a base, e pela checagem completa, que
+fica no cache. Temas da planilha aparecem sempre. Temas automáticos só aparecem com
+veredito afirmativo de confiança alta, então a seção pode ficar vazia sem planilha.
 
 ## Atualizar a base
 

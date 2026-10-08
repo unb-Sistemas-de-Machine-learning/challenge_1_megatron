@@ -43,6 +43,18 @@ CREATE TABLE IF NOT EXISTS consultas (
     feedback INTEGER
 );
 CREATE INDEX IF NOT EXISTS consultas_chave ON consultas (chave, criado_em);
+CREATE TABLE IF NOT EXISTS destaques (
+    id INTEGER PRIMARY KEY,
+    tema TEXT NOT NULL,
+    alegacao TEXT NOT NULL,
+    origem TEXT NOT NULL,
+    veredito TEXT NOT NULL,
+    confianca TEXT NOT NULL,
+    resumo TEXT NOT NULL,
+    noticias TEXT NOT NULL DEFAULT '[]',
+    novos_artigos INTEGER NOT NULL DEFAULT 0,
+    atualizado_em REAL NOT NULL
+);
 CREATE TABLE IF NOT EXISTS paginas (
     url TEXT PRIMARY KEY,
     titulo TEXT NOT NULL,
@@ -256,6 +268,35 @@ class Banco:
                 (url, titulo, texto, time.time()),
             )
             self._con.commit()
+
+    def substituir_destaques(self, destaques: list[dict]) -> None:
+        agora = time.time()
+        with self._trava:
+            self._con.execute("DELETE FROM destaques")
+            self._con.executemany(
+                "INSERT INTO destaques (tema, alegacao, origem, veredito, confianca, resumo, "
+                "noticias, novos_artigos, atualizado_em) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    (
+                        d["tema"],
+                        d["alegacao"],
+                        d["origem"],
+                        d["veredito"],
+                        d["confianca"],
+                        d["resumo"],
+                        json.dumps(d.get("noticias", []), ensure_ascii=False),
+                        d.get("novos_artigos", 0),
+                        agora,
+                    )
+                    for d in destaques
+                ],
+            )
+            self._con.commit()
+
+    def listar_destaques(self) -> list[dict]:
+        with self._trava:
+            linhas = self._con.execute("SELECT * FROM destaques ORDER BY id").fetchall()
+        return [{**dict(linha), "noticias": json.loads(linha["noticias"])} for linha in linhas]
 
     def fechar(self) -> None:
         with self._trava:

@@ -167,6 +167,15 @@ cliente e o front estático servido na raiz. O front é um único HTML, sem etap
 build. Contrato em [API](api.md); decisão em
 [ADR 0005](adr/0005-fastapi-sse-front-estatico.md).
 
+### Temas em alta (`destaques.py`)
+
+Uma rotina periódica lê a planilha da equipe (Google Sheets publicado como CSV) e as
+manchetes de saúde do Google Notícias, das quais o LLM extrai alegações com intervenção
+e doença nomeadas. Para cada tema ela busca estudos no PubMed e os indexa, roda a
+checagem completa e guarda o resultado na tabela `destaques`, servida por
+`GET /api/destaques`. O texto das notícias não entra na base. Tema automático só aparece
+com veredito afirmativo de confiança alta ([ADR 0010](adr/0010-temas-em-alta.md)).
+
 ### Sinal de estilo (`sinal_estilo.py`)
 
 O BERTimbau treinado pelo grupo continua no repositório, com seu model card

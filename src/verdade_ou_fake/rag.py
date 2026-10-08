@@ -390,7 +390,9 @@ def _sem_llm(fontes: list[dict]) -> Resultado:
     )
 
 
-async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
+async def analisar(
+    servico: Servico, entrada: str, tipo_entrada: str | None = None
+) -> AsyncIterator[dict]:
     inicio = time.monotonic()
     entrada = entrada.strip()
     eh_link = bool(PADRAO_URL.match(entrada))
@@ -430,7 +432,7 @@ async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
         veredito = next((e for e in reversed(guardados) if e["tipo"] == "veredito"), {})
         consulta_id = servico.banco.registrar_consulta(
             chave=chave,
-            tipo_entrada="link" if eh_link else "texto",
+            tipo_entrada=tipo_entrada or ("link" if eh_link else "texto"),
             veredito=veredito.get("codigo"),
             confianca=veredito.get("confianca"),
             do_cache=1,
@@ -549,7 +551,7 @@ async def analisar(servico: Servico, entrada: str) -> AsyncIterator[dict]:
     degradado = resultado.aviso is not None and resultado.aviso.startswith("Modo degradado")
     consulta_id = servico.banco.registrar_consulta(
         chave=chave,
-        tipo_entrada="link" if eh_link else "texto",
+        tipo_entrada=tipo_entrada or ("link" if eh_link else "texto"),
         alegacao=alegacao.texto,
         veredito=resultado.codigo,
         confianca=resultado.confianca,

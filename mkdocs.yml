@@ -35,5 +35,6 @@ nav:
       - "0007 Guardas determinísticas": adr/0007-guardas-deterministicas.md
       - "0008 Hospedagem": adr/0008-hospedagem.md
       - "0009 BERTimbau como sinal secundário": adr/0009-bertimbau-sinal-secundario.md
+      - "0010 Temas em alta": adr/0010-temas-em-alta.md
   - Guiding Questions: guiding-questions.md
   - Canvas: canva.md
