@@ -1,9 +1,9 @@
 {
   "fonte": "PubMed E-utilities",
-  "gerado_em": "2026-10-26",
+  "gerado_em": "2026-11-02",
   "consultas": 345,
-  "falhas": 0,
-  "artigos": 1074,
-  "sha256": "7df701d3bc4998c766923dc50e7895638df412681a0d61643c7d57092df391a6",
+  "falhas": 33,
+  "artigos": 948,
+  "sha256": "7931a4d619c031e78b1c4f9178b592bd094201fbe941f3c481aa3a12a0d5336d",
   "script": "scripts/ingere_pubmed.py"
 }
